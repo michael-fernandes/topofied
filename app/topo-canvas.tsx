@@ -2,10 +2,10 @@
 
 import { useEffect, useRef } from "react";
 
-const BASE_IMPORTANCE = 10;
+const BASE_IMPORTANCE = 11;
 const MULTIPLIERS: Record<string, number> = {
-  BUTTON: 3,
-  H1: 2, H2: 2, H3: 2, H4: 2, H5: 2, H6: 2,
+  BUTTON: 1.5,
+  H1: 1, H2: 1, H3: 1, H4: 1, H5: 1, H6: 1,
 };
 
 function elementImportance(el: Element): number {
@@ -152,76 +152,46 @@ export default function TopoCanvas() {
       const rows = Math.ceil(docHeight / RES) + 1;
       const field = new Float32Array(cols * rows);
 
-      // ── Base terrain: multi-octave value noise ──
-      // Covers every cell so contour lines fill the whole canvas.
-      // Base amplitude is calibrated so empty areas show ~8 contour rings.
-      // Element Gaussian hills are added on top, compressing rings locally.
+      // ── Select elements, containers absorb their children ──
+      // Query all interactive/content elements. For each one, if
+      // an ancestor was already selected, skip it — the parent
+      // "owns" the terrain for that region.
 
-      // Deterministic per-cell hash → smooth value noise
-      const hash = (xi: number, yi: number) => {
-        let n = xi * 1619 + yi * 31337;
-        n = (n ^ (n >> 8)) * 0x6c50b47c;
-        n = (n ^ (n >> 8)) * 0xb82f1e52;
-        n = n ^ (n >> 8);
-        return (n & 0x7fffffff) / 0x7fffffff;
-      };
-
-      const valueNoise = (px: number, py: number, scale: number) => {
-        const x = px / scale;
-        const y = py / scale;
-        const xi = Math.floor(x);
-        const yi = Math.floor(y);
-        const fx = x - xi;
-        const fy = y - yi;
-        // Hermite smoothstep
-        const ux = fx * fx * (3 - 2 * fx);
-        const uy = fy * fy * (3 - 2 * fy);
-        const a = hash(xi,     yi);
-        const b = hash(xi + 1, yi);
-        const c = hash(xi,     yi + 1);
-        const d = hash(xi + 1, yi + 1);
-        return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
-      };
-
-      // 3 octaves: rolling hills + mid detail + fine texture
-      // Scales at 500/220/90px give good coverage at any viewport size.
-      // BASE_AMP=58 → after normalization, empty areas span ~30% of range
-      // → ~7 visible contour lines from the 24 total.
-      const BASE_AMP = 58;
-      for (let row = 0; row < rows; row++) {
-        const py = row * RES;
-        for (let col = 0; col < cols; col++) {
-          const px = col * RES;
-          const v =
-            0.50 * valueNoise(px, py, 500) +
-            0.32 * valueNoise(px, py, 220) +
-            0.18 * valueNoise(px, py, 90);
-          field[row * cols + col] = v * BASE_AMP;
-        }
-      }
-
-      // Measure all meaningful elements and add Gaussian hills
       const selector =
         "h1,h2,h3,h4,h5,h6,p,button,a,img,video,input,textarea,select," +
-        "nav,header,footer,main,section,article,form,blockquote,pre,figure,table,label";
+        "article,blockquote,pre,figure,table,label,li";
 
-      const elements = document.querySelectorAll(selector);
+      const candidates = document.querySelectorAll(selector);
+      const claimed = new Set<Element>();
+      const selected: { el: Element; rect: DOMRect }[] = [];
 
-      elements.forEach((el) => {
+      candidates.forEach((el) => {
         if (el === canvas) return;
         const rect = el.getBoundingClientRect();
-        if (rect.width < 4 || rect.height < 4) return;
+        if (rect.width < 8 || rect.height < 8) return;
 
-        // Absolute document coordinates
-        const cx = rect.left + window.scrollX + rect.width / 2;
-        const cy = rect.top + window.scrollY + rect.height / 2;
+        // If any ancestor is already claimed, skip this element
+        let parent = el.parentElement;
+        while (parent && parent !== document.body) {
+          if (claimed.has(parent)) return;
+          parent = parent.parentElement;
+        }
+
+        // Select this element and claim it so children are skipped
+        claimed.add(el);
+        selected.push({ el, rect });
+      });
+
+      // ── Add a Gaussian hill for each selected element ──
+      for (const { el, rect } of selected) {
+        const elLeft   = rect.left + window.scrollX;
+        const elTop    = rect.top  + window.scrollY;
+        const cx = elLeft + rect.width / 2;
+        const cy = elTop  + rect.height / 2;
 
         const importance = elementImportance(el);
         const elementRadius = Math.sqrt(rect.width * rect.height) * 0.5;
-
-        // Tight sigma so each element creates a distinct, localised peak.
-        // Importance adds a small bonus so headings radiate a bit further.
-        const sigma = elementRadius * 0.65 + importance * 0.55;
+        const sigma = elementRadius * 2 + importance * 0.8;
         const twoSigmaSq = 2 * sigma * sigma;
         const amplitude = importance;
         const spread = sigma * 3.5;
@@ -242,7 +212,7 @@ export default function TopoCanvas() {
               amplitude * Math.exp(-(dx * dx + dy2) / twoSigmaSq);
           }
         }
-      });
+      }
 
       // Normalize to 0–100
       let maxVal = 0;
@@ -259,15 +229,13 @@ export default function TopoCanvas() {
         const t = l / NUM_LEVELS; // 0→1 low→high elevation
         const threshold = t * 100;
 
-        // Hue: deep teal (180) → olive/amber (55) as elevation rises
-        const hue = 180 - t * 125;
-        const sat = 50 + t * 25;
-        const lit = 18 + t * 38;
-        const alpha = 0.1 + t * 0.55;
+        // Retro grayscale: dark lines at low elevation, bright at high
+        const lit = 18 + t * 42;
+        const alpha = 0.18 + t * 0.68;
 
         // Every 4th line is an "index contour" — thicker
         ctx.lineWidth = l % 4 === 0 ? 1.6 : 0.7;
-        ctx.strokeStyle = `hsla(${hue}, ${sat}%, ${lit}%, ${alpha})`;
+        ctx.strokeStyle = `hsla(0, 0%, ${lit}%, ${alpha})`;
 
         ctx.beginPath();
         drawContourLevel(ctx, field, cols, rows, RES, threshold);

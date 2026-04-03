@@ -38,9 +38,9 @@ export default function Video() {
           <input
             type="search"
             placeholder="Search videos…"
-            className="flex-1 px-5 py-2.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-sm text-[#d4d0c8] placeholder-[#3a3830] outline-none focus:border-[#c8a96e]/30 transition-colors"
+            className="flex-1 px-5 py-2.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-sm text-[#d0d0d0] placeholder-[#383838] outline-none focus:border-[#a0a0a0]/30 transition-colors"
           />
-          <button className="px-5 py-2.5 rounded-full border border-white/[0.08] text-xs text-[#6a6860] hover:text-[#8a8880] transition-colors">
+          <button className="px-5 py-2.5 rounded-full border border-white/[0.08] text-xs text-[#686868] hover:text-[#888888] transition-colors">
             Search
           </button>
         </div>
@@ -70,25 +70,25 @@ export default function Video() {
                 </div>
               </div>
             </div>
-            <h1 className="text-xl font-bold text-[#e8e4dc] mb-2 leading-snug">{featured.title}</h1>
-            <div className="flex items-center gap-3 mb-4 text-xs text-[#4a4840]">
-              <span className="text-[#8a8880] font-medium">{featured.channel}</span>
+            <h1 className="text-xl font-bold text-[#e8e8e8] mb-2 leading-snug">{featured.title}</h1>
+            <div className="flex items-center gap-3 mb-4 text-xs text-[#484848]">
+              <span className="text-[#888888] font-medium">{featured.channel}</span>
               <span>·</span>
               <span>{featured.views}</span>
               <span>·</span>
               <span>{featured.time}</span>
             </div>
-            <p className="text-sm text-[#5a5852] leading-relaxed mb-4 border-l border-white/[0.07] pl-4">
+            <p className="text-sm text-[#585858] leading-relaxed mb-4 border-l border-white/[0.07] pl-4">
               {featured.desc}
             </p>
             <div className="flex gap-3">
-              <button className="px-5 py-2 rounded-full bg-[#c8a96e] text-[#0d0d0d] text-xs font-semibold hover:bg-[#d4b87e] transition-colors">
+              <button className="px-5 py-2 rounded-full bg-[#a0a0a0] text-[#000000] text-xs font-semibold hover:bg-[#b8b8b8] transition-colors">
                 ▶ Watch now
               </button>
-              <button className="px-5 py-2 rounded-full border border-white/[0.08] text-xs text-[#6a6860] hover:text-[#8a8880] transition-colors">
+              <button className="px-5 py-2 rounded-full border border-white/[0.08] text-xs text-[#686868] hover:text-[#888888] transition-colors">
                 + Save
               </button>
-              <button className="px-5 py-2 rounded-full border border-white/[0.08] text-xs text-[#6a6860] hover:text-[#8a8880] transition-colors">
+              <button className="px-5 py-2 rounded-full border border-white/[0.08] text-xs text-[#686868] hover:text-[#888888] transition-colors">
                 Share
               </button>
             </div>
@@ -96,7 +96,7 @@ export default function Video() {
 
           {/* Queue */}
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-widest text-[#4a4840] mb-4">Up next</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#484848] mb-4">Up next</h2>
             <div className="space-y-4">
               {queue.map((v) => (
                 <article key={v.title} className="flex gap-3 cursor-pointer group">
@@ -113,11 +113,11 @@ export default function Video() {
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-xs font-semibold text-[#d4d0c8] leading-snug mb-1 line-clamp-2 group-hover:text-[#e8e4dc] transition-colors">
+                    <h3 className="text-xs font-semibold text-[#d0d0d0] leading-snug mb-1 line-clamp-2 group-hover:text-[#e8e8e8] transition-colors">
                       {v.title}
                     </h3>
-                    <p className="text-[10px] text-[#4a4840]">{v.channel}</p>
-                    <p className="text-[10px] text-[#3a3830]">{v.views}</p>
+                    <p className="text-[10px] text-[#484848]">{v.channel}</p>
+                    <p className="text-[10px] text-[#383838]">{v.views}</p>
                   </div>
                 </article>
               ))}
@@ -126,7 +126,7 @@ export default function Video() {
         </div>
 
         {/* Recommended grid */}
-        <h2 className="text-xs font-bold uppercase tracking-widest text-[#4a4840] mb-6">Recommended</h2>
+        <h2 className="text-xs font-bold uppercase tracking-widest text-[#484848] mb-6">Recommended</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
           {recommended.map((v) => (
             <article key={v.title} className="cursor-pointer group">
@@ -142,11 +142,11 @@ export default function Video() {
                   {v.duration}
                 </span>
               </div>
-              <h3 className="text-xs font-semibold text-[#c8c4bc] leading-snug mb-1 group-hover:text-[#e8e4dc] transition-colors line-clamp-2">
+              <h3 className="text-xs font-semibold text-[#c0c0c0] leading-snug mb-1 group-hover:text-[#e8e8e8] transition-colors line-clamp-2">
                 {v.title}
               </h3>
-              <p className="text-[10px] text-[#4a4840]">{v.channel}</p>
-              <p className="text-[10px] text-[#3a3830]">{v.views}</p>
+              <p className="text-[10px] text-[#484848]">{v.channel}</p>
+              <p className="text-[10px] text-[#383838]">{v.views}</p>
             </article>
           ))}
         </div>

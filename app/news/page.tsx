@@ -52,19 +52,19 @@ export default function News() {
 
         {/* Masthead */}
         <div className="text-center py-8 mb-6 border-b border-white/[0.06]">
-          <h1 className="text-4xl font-black tracking-tight text-[#e8e4dc]">The Terrain</h1>
-          <p className="text-xs text-[#3a3830] tracking-[0.3em] mt-1 uppercase">Geography · Science · Culture · Technology</p>
+          <h1 className="text-4xl font-black tracking-tight text-[#e8e8e8]">The Terrain</h1>
+          <p className="text-xs text-[#383838] tracking-[0.3em] mt-1 uppercase">Geography · Science · Culture · Technology</p>
         </div>
 
         {/* Lead story + secondary stack */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10 pb-10 border-b border-white/[0.05]">
 
           <article className="lg:col-span-2">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-rose-400/80 mb-3 block">{lead.label}</span>
-            <h2 className="text-3xl font-black leading-tight text-[#e8e4dc] mb-4">{lead.headline}</h2>
-            <p className="text-[#6a6860] leading-relaxed mb-5 text-base">{lead.sub}</p>
-            <div className="flex items-center gap-3 text-xs text-[#3a3830]">
-              <span className="text-[#8a8880]">{lead.author}</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400/80 mb-3 block">{lead.label}</span>
+            <h2 className="text-3xl font-black leading-tight text-[#e8e8e8] mb-4">{lead.headline}</h2>
+            <p className="text-[#686868] leading-relaxed mb-5 text-base">{lead.sub}</p>
+            <div className="flex items-center gap-3 text-xs text-[#383838]">
+              <span className="text-[#888888]">{lead.author}</span>
               <span>·</span>
               <span>{lead.time}</span>
               <span>·</span>
@@ -75,9 +75,9 @@ export default function News() {
           <div className="divide-y divide-white/[0.05]">
             {secondary.map((s) => (
               <article key={s.headline} className="py-5 first:pt-0 last:pb-0">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#c8a96e]/60 mb-2 block">{s.label}</span>
-                <h3 className="text-sm font-semibold text-[#d4d0c8] leading-snug mb-2">{s.headline}</h3>
-                <p className="text-xs text-[#3a3830]">{s.author} · {s.time}</p>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#a0a0a0]/60 mb-2 block">{s.label}</span>
+                <h3 className="text-sm font-semibold text-[#d0d0d0] leading-snug mb-2">{s.headline}</h3>
+                <p className="text-xs text-[#383838]">{s.author} · {s.time}</p>
               </article>
             ))}
           </div>
@@ -89,9 +89,9 @@ export default function News() {
             <article key={a.headline} className="cursor-pointer group">
               {/* Placeholder image */}
               <div className="w-full h-40 rounded-lg bg-white/[0.03] mb-4 border border-white/[0.05]" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#c8a96e]/60 mb-2 block">{a.label}</span>
-              <h3 className="text-sm font-semibold text-[#d4d0c8] leading-snug mb-2 group-hover:text-[#e8e4dc] transition-colors">{a.headline}</h3>
-              <p className="text-xs text-[#3a3830]">{a.author} · {a.time}</p>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#a0a0a0]/60 mb-2 block">{a.label}</span>
+              <h3 className="text-sm font-semibold text-[#d0d0d0] leading-snug mb-2 group-hover:text-[#e8e8e8] transition-colors">{a.headline}</h3>
+              <p className="text-xs text-[#383838]">{a.author} · {a.time}</p>
             </article>
           ))}
         </div>
@@ -100,14 +100,14 @@ export default function News() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
 
           <div className="lg:col-span-2">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-[#6a6860] mb-5">Opinion</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#686868] mb-5">Opinion</h2>
             <div className="divide-y divide-white/[0.05]">
               {opinion.map((o, i) => (
                 <article key={o.headline} className="flex items-start gap-4 py-4 first:pt-0">
-                  <span className="text-2xl font-black text-[#c8a96e]/20 tabular-nums w-6 shrink-0">{i + 1}</span>
+                  <span className="text-2xl font-black text-[#a0a0a0]/20 tabular-nums w-6 shrink-0">{i + 1}</span>
                   <div>
-                    <h3 className="text-sm font-semibold text-[#d4d0c8] leading-snug mb-1">{o.headline}</h3>
-                    <p className="text-xs text-[#4a4840]">{o.author}</p>
+                    <h3 className="text-sm font-semibold text-[#d0d0d0] leading-snug mb-1">{o.headline}</h3>
+                    <p className="text-xs text-[#484848]">{o.author}</p>
                   </div>
                 </article>
               ))}
@@ -116,8 +116,8 @@ export default function News() {
 
           <div className="p-6 rounded-xl border border-white/[0.07] bg-white/[0.02] flex flex-col justify-between">
             <div>
-              <h2 className="text-sm font-bold text-[#e8e4dc] mb-2">The Weekly Contour</h2>
-              <p className="text-xs text-[#5a5852] leading-relaxed mb-5">
+              <h2 className="text-sm font-bold text-[#e8e8e8] mb-2">The Weekly Contour</h2>
+              <p className="text-xs text-[#585858] leading-relaxed mb-5">
                 Five stories about the physical world, curated every Friday. No noise.
               </p>
             </div>
@@ -125,9 +125,9 @@ export default function News() {
               <input
                 type="email"
                 placeholder="your@email.com"
-                className="w-full px-4 py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-sm text-[#d4d0c8] placeholder-[#3a3830] outline-none text-xs"
+                className="w-full px-4 py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-sm text-[#d0d0d0] placeholder-[#383838] outline-none text-xs"
               />
-              <button className="w-full py-2.5 rounded-lg bg-[#c8a96e] text-[#0d0d0d] text-xs font-bold hover:bg-[#d4b87e] transition-colors">
+              <button className="w-full py-2.5 rounded-lg bg-[#a0a0a0] text-[#000000] text-xs font-bold hover:bg-[#b8b8b8] transition-colors">
                 Subscribe free
               </button>
             </div>
@@ -136,9 +136,9 @@ export default function News() {
         </div>
 
         {/* Footer nav */}
-        <footer className="pt-6 border-t border-white/[0.04] flex flex-wrap gap-6 justify-center text-xs text-[#3a3830]">
+        <footer className="pt-6 border-t border-white/[0.04] flex flex-wrap gap-6 justify-center text-xs text-[#383838]">
           {["World","Science","Technology","Climate","Culture","Photography","Podcast","Archive"].map(s => (
-            <a key={s} href="#" className="hover:text-[#6a6860] transition-colors">{s}</a>
+            <a key={s} href="#" className="hover:text-[#686868] transition-colors">{s}</a>
           ))}
         </footer>
 
