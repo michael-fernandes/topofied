@@ -182,34 +182,51 @@ export default function TopoCanvas() {
         selected.push({ el, rect });
       });
 
-      // ── Add a Gaussian hill for each selected element ──
+      // ── Distance field: elevation = distance to nearest element ──
+      // Elements sit at elevation 0 (no contour lines on content).
+      // Space between elements rises with distance, so contour
+      // lines flow AROUND content like water between islands.
+
+      const MAX_DIST = 400;
+      field.fill(MAX_DIST);
+
       for (const { el, rect } of selected) {
         const elLeft   = rect.left + window.scrollX;
         const elTop    = rect.top  + window.scrollY;
-        const cx = elLeft + rect.width / 2;
-        const cy = elTop  + rect.height / 2;
+        const elRight  = elLeft + rect.width;
+        const elBottom = elTop  + rect.height;
 
+        // More important elements pull contour lines tighter
         const importance = elementImportance(el);
-        const elementRadius = Math.sqrt(rect.width * rect.height) * 0.5;
-        const sigma = elementRadius * 2 + importance * 0.8;
-        const twoSigmaSq = 2 * sigma * sigma;
-        const amplitude = importance;
-        const spread = sigma * 3.5;
+        const weight = 0.7 + (importance - BASE_IMPORTANCE) * 0.06;
 
-        const gxMin = Math.max(0, Math.floor((cx - spread) / RES));
-        const gxMax = Math.min(cols - 1, Math.ceil((cx + spread) / RES));
-        const gyMin = Math.max(0, Math.floor((cy - spread) / RES));
-        const gyMax = Math.min(rows - 1, Math.ceil((cy + spread) / RES));
+        const gxMin = Math.max(0, Math.floor((elLeft  - MAX_DIST) / RES));
+        const gxMax = Math.min(cols - 1, Math.ceil((elRight  + MAX_DIST) / RES));
+        const gyMin = Math.max(0, Math.floor((elTop   - MAX_DIST) / RES));
+        const gyMax = Math.min(rows - 1, Math.ceil((elBottom + MAX_DIST) / RES));
 
         for (let gy = gyMin; gy <= gyMax; gy++) {
           const py = gy * RES;
-          const dy = py - cy;
-          const dy2 = dy * dy;
+          const sdY = Math.max(elTop - py, py - elBottom);
+
           for (let gx = gxMin; gx <= gxMax; gx++) {
             const px = gx * RES;
-            const dx = px - cx;
-            field[gy * cols + gx] +=
-              amplitude * Math.exp(-(dx * dx + dy2) / twoSigmaSq);
+            const sdX = Math.max(elLeft - px, px - elRight);
+
+            let dist: number;
+            if (sdX <= 0 && sdY <= 0) {
+              dist = 0; // inside element — no contour lines here
+            } else if (sdX > 0 && sdY > 0) {
+              dist = Math.sqrt(sdX * sdX + sdY * sdY);
+            } else {
+              dist = Math.max(sdX, sdY);
+            }
+
+            // Weight: important elements compress distance → denser contours nearby
+            const weighted = dist * weight;
+
+            const idx = gy * cols + gx;
+            if (weighted < field[idx]) field[idx] = weighted;
           }
         }
       }
@@ -223,20 +240,21 @@ export default function TopoCanvas() {
       const invMax = 100 / maxVal;
       for (let i = 0; i < field.length; i++) field[i] *= invMax;
 
-      // Draw contour lines — warm topo palette on dark background.
+      // Draw contour lines — brightest near content, fading outward
       const NUM_LEVELS = 28;
       for (let l = 1; l < NUM_LEVELS; l++) {
-        const t = l / NUM_LEVELS; // 0→1 low→high elevation
-        const threshold = t * 100;
+        const t = l / NUM_LEVELS; // 0→1, near content→far from content
 
-        // Retro grayscale: dark lines at low elevation, bright at high
-        const lit = 18 + t * 42;
-        const alpha = 0.18 + t * 0.68;
+        // Invert: lines closest to content are brightest
+        const nearness = 1 - t;
+        const lit = 14 + nearness * 46;
+        const alpha = 0.08 + nearness * 0.62;
 
         // Every 4th line is an "index contour" — thicker
         ctx.lineWidth = l % 4 === 0 ? 1.6 : 0.7;
         ctx.strokeStyle = `hsla(0, 0%, ${lit}%, ${alpha})`;
 
+        const threshold = t * 100;
         ctx.beginPath();
         drawContourLevel(ctx, field, cols, rows, RES, threshold);
         ctx.stroke();
