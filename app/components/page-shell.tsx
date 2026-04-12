@@ -1,4 +1,4 @@
-import TopoCanvas from "../topo-canvas";
+import TopoSvg from "../topo-svg";
 import Link from "next/link";
 
 const PAGES = [
@@ -20,7 +20,7 @@ export default function PageShell({
 
   return (
     <div className="relative min-h-screen bg-[#000000] text-[#d0d0d0] font-sans overflow-x-hidden">
-      <TopoCanvas />
+      <TopoSvg />
       <div className="relative z-10 pb-12">
         {/* ── Top instrument strip: page switcher ── */}
         <div className="flex items-center gap-1 px-6 py-3 border-b border-white/[0.05] bg-[#000000]/80 backdrop-blur-sm sticky top-0 z-20">
