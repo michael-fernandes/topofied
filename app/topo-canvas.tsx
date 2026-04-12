@@ -234,7 +234,7 @@ export default function TopoCanvas() {
               dist = Math.max(sdX, sdY);
             }
 
-            const contribution = peak * Math.exp(-dist * invFalloff);
+            const contribution = peak * Math.exp(-Math.pow(dist * invFalloff, 1.6));
             const idx = gy * cols + gx;
             // Add, don't max — overlapping contributions raise the saddle
             // between nearby peaks, which is exactly the effect we want.
@@ -262,14 +262,15 @@ export default function TopoCanvas() {
       // High thresholds hug the peaks → brightest, thickest.
       // Low thresholds trace valley curves in open space.
       const NUM_LEVELS = 32;
+      const INDEX_EVERY = 5;
       for (let l = 1; l < NUM_LEVELS; l++) {
-        const t = l / NUM_LEVELS; // 0 = valley, 1 = summit
+        const t = l / NUM_LEVELS;
+        const isIndex = l % INDEX_EVERY === 0;
 
-        // Bias toward summit lines being bolder
-        const lit = 20 + t * 62;
-        const alpha = 0.14 + t * 0.6;
+        const lit = isIndex ? 70 : 20 + t * 50;
+        const alpha = isIndex ? 0.75 : 0.12 + t * 0.45;
 
-        ctx.lineWidth = l % 5 === 0 ? 1.6 : 0.75;
+        ctx.lineWidth = isIndex ? 1.8 : 0.7;
         ctx.strokeStyle = `hsla(0, 0%, ${lit}%, ${alpha})`;
 
         const threshold = t * 100;
