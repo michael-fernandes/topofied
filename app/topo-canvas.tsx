@@ -267,8 +267,8 @@ export default function TopoCanvas() {
         const t = l / NUM_LEVELS;
         const isIndex = l % INDEX_EVERY === 0;
 
-        const lit = isIndex ? 70 : 20 + t * 50;
-        const alpha = isIndex ? 0.75 : 0.12 + t * 0.45;
+        const lit = isIndex ? 70 : 38 + t * 32;
+        const alpha = isIndex ? 0.75 : 0.35 + t * 0.3;
 
         ctx.lineWidth = isIndex ? 1.8 : 0.7;
         ctx.strokeStyle = `hsla(0, 0%, ${lit}%, ${alpha})`;

@@ -1,0 +1,1 @@
+Contour map canvas: marching squares over an elevation field built from DOM element peaks + multi-octave noise. Bold index lines every 5th level. Keep terrain organic — no rectangular artifacts. Avoid hypsometric fills.
