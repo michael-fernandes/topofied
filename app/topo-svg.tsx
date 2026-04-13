@@ -52,18 +52,18 @@ function contourPathData(
       const leftY = edgeLerp(y0, y1, tl, bl, threshold);
 
       switch (c) {
-        case 1:  parts.push(`M${x0},${leftY}L${bottomX},${y1}`); break;
-        case 2:  parts.push(`M${bottomX},${y1}L${x1},${rightY}`); break;
-        case 3:  parts.push(`M${x0},${leftY}L${x1},${rightY}`); break;
-        case 4:  parts.push(`M${topX},${y0}L${x1},${rightY}`); break;
+        case 1: parts.push(`M${x0},${leftY}L${bottomX},${y1}`); break;
+        case 2: parts.push(`M${bottomX},${y1}L${x1},${rightY}`); break;
+        case 3: parts.push(`M${x0},${leftY}L${x1},${rightY}`); break;
+        case 4: parts.push(`M${topX},${y0}L${x1},${rightY}`); break;
         case 5:
           parts.push(`M${topX},${y0}L${x1},${rightY}`);
           parts.push(`M${x0},${leftY}L${bottomX},${y1}`);
           break;
-        case 6:  parts.push(`M${topX},${y0}L${bottomX},${y1}`); break;
-        case 7:  parts.push(`M${topX},${y0}L${x0},${leftY}`); break;
-        case 8:  parts.push(`M${topX},${y0}L${x0},${leftY}`); break;
-        case 9:  parts.push(`M${topX},${y0}L${bottomX},${y1}`); break;
+        case 6: parts.push(`M${topX},${y0}L${bottomX},${y1}`); break;
+        case 7: parts.push(`M${topX},${y0}L${x0},${leftY}`); break;
+        case 8: parts.push(`M${topX},${y0}L${x0},${leftY}`); break;
+        case 9: parts.push(`M${topX},${y0}L${bottomX},${y1}`); break;
         case 10:
           parts.push(`M${topX},${y0}L${x0},${leftY}`);
           parts.push(`M${bottomX},${y1}L${x1},${rightY}`);
@@ -89,8 +89,8 @@ type ContourLevel = {
   isIndex: boolean;
 };
 
-const NUM_LEVELS = 32;
-const INDEX_EVERY = 5;
+const NUM_LEVELS = 28;
+const INDEX_EVERY = 7;
 
 function buildLevels(fr: FieldResult): ContourLevel[] {
   const levels: ContourLevel[] = [];
@@ -99,9 +99,9 @@ function buildLevels(fr: FieldResult): ContourLevel[] {
     const t = l / NUM_LEVELS;
     const isIndex = l % INDEX_EVERY === 0;
 
-    const lit = isIndex ? 70 : 38 + t * 32;
-    const alpha = isIndex ? 0.75 : 0.35 + t * 0.3;
-    const strokeWidth = isIndex ? 1.8 : 0.7;
+    const lit = isIndex ? 78 : 25 + t * 50;
+    const alpha = isIndex ? 0.85 : 0.12 + t * 0.58;
+    const strokeWidth = isIndex ? 2.2 : 0.4 + t * 0.6;
     const stroke = `hsla(0,0%,${lit}%,${alpha})`;
 
     const threshold = t * 100;

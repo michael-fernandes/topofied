@@ -10,7 +10,7 @@ export default function Home() {
           <p className="font-mono text-[10px] tracking-[0.35em] text-[#a0a0a0]/60 uppercase">
             ◂ Elevation Intelligence ▸
           </p>
-          <h1 className="text-6xl font-black leading-none tracking-tight max-w-2xl text-[#e8e8e8]">
+          <h1 className="text-4xl font-black leading-none tracking-tight max-w-2xl text-[#e8e8e8]">
             Read the Landscape of Every Page
           </h1>
           <p className="max-w-md text-lg leading-relaxed text-[#787878]">
@@ -28,19 +28,13 @@ export default function Home() {
         </section>
 
         {/* ── Features ── */}
-        <section id="features" className="px-12 py-32 max-w-5xl mx-auto">
-          <p className="font-mono text-[10px] tracking-[0.3em] text-[#a0a0a0]/50 uppercase text-center mb-3">
-            § 01 · Method
-          </p>
-          <h2 className="text-3xl font-bold text-center text-[#e8e8e8] mb-20">
+        <section id="features" className="px-6 py-48 max-w-5xl mx-auto">
+          <h2 className="text-2xl font-bold text-center text-[#e8e8e8] mb-24">
             How the Terrain Forms
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <article className="p-8 border border-white/[0.08]">
-              <p className="font-mono text-[10px] tracking-[0.25em] text-[#585858] uppercase mb-6">
-                I · Measure
-              </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+            <article className="p-8">
               <h3 className="text-lg font-semibold text-[#e8e8e8] mb-3">DOM Measurement</h3>
               <p className="text-sm text-[#686868] leading-relaxed">
                 Every element is measured — position, size, and tag type
@@ -48,10 +42,7 @@ export default function Home() {
               </p>
             </article>
 
-            <article className="p-8 border border-white/[0.08]">
-              <p className="font-mono text-[10px] tracking-[0.25em] text-[#585858] uppercase mb-6">
-                II · Field
-              </p>
+            <article className="p-8">
               <h3 className="text-lg font-semibold text-[#e8e8e8] mb-3">Distance Field</h3>
               <p className="text-sm text-[#686868] leading-relaxed">
                 Contour lines flow around content, tracing equal-distance
@@ -59,10 +50,7 @@ export default function Home() {
               </p>
             </article>
 
-            <article className="p-8 border border-white/[0.08]">
-              <p className="font-mono text-[10px] tracking-[0.25em] text-[#585858] uppercase mb-6">
-                III · Trace
-              </p>
+            <article className="p-8">
               <h3 className="text-lg font-semibold text-[#e8e8e8] mb-3">Marching Squares</h3>
               <p className="text-sm text-[#686868] leading-relaxed">
                 Smooth isolines extracted at 32 thresholds using the

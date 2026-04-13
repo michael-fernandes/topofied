@@ -1,9 +1,10 @@
 // Peak elevation per tag — a mountain's "height" is its semantic weight.
 const PEAK_HEIGHTS: Record<string, number> = {
+  SECTION: 70,
   H1: 100, H2: 68, H3: 46, H4: 34, H5: 28, H6: 25,
   BUTTON: 58,
   IMG: 72, VIDEO: 72,
-  ARTICLE: 40, BLOCKQUOTE: 36, PRE: 36, FIGURE: 40, TABLE: 40,
+  ARTICLE: 80, BLOCKQUOTE: 36, PRE: 36, FIGURE: 40, TABLE: 40,
   P: 24,
   INPUT: 30, TEXTAREA: 30, SELECT: 30,
   LABEL: 18, LI: 18,
@@ -64,12 +65,15 @@ export function buildElevationField(): FieldResult | null {
 
   // Select elements, containers absorb their children
   const selector =
-    "h1,h2,h3,h4,h5,h6,p,button,a,img,video,input,textarea,select," +
+    "section,h1,h2,h3,h4,h5,h6,p,button,a,img,video,input,textarea,select," +
     "article,blockquote,pre,figure,table,label,li";
 
   const candidates = document.querySelectorAll(selector);
   const claimed = new Set<Element>();
   const selected: { rect: DOMRect; peak: number; falloff: number }[] = [];
+
+  // Container elements form the base terrain but let children create peaks on top
+  const CONTAINER_TAGS = new Set(["SECTION", "ARTICLE", "FIGURE"]);
 
   candidates.forEach((el) => {
     const rect = el.getBoundingClientRect();
@@ -80,10 +84,16 @@ export function buildElevationField(): FieldResult | null {
       if (claimed.has(parent)) return;
       parent = parent.parentElement;
     }
-    claimed.add(el);
+
+    // Only non-container elements claim — so section/article children still get processed
+    if (!CONTAINER_TAGS.has(el.tagName)) {
+      claimed.add(el);
+    }
 
     const peak = elementPeak(el);
-    const falloff = 70 + peak * 3.1;
+    // Containers get a shorter falloff → steeper cliff at mesa edges
+    const isContainer = CONTAINER_TAGS.has(el.tagName);
+    const falloff = isContainer ? 50 + peak * 2.0 : 70 + peak * 3.1;
     selected.push({ rect, peak, falloff });
   });
 

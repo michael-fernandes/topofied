@@ -7,10 +7,10 @@ import { useEffect, useRef } from "react";
 // the same way Guyot Flat bridges Mt Guyot to its neighbors.
 const PEAK_HEIGHTS: Record<string, number> = {
   H1: 100, H2: 68, H3: 46, H4: 34, H5: 28, H6: 25,
-  BUTTON: 58,
+  BUTTON: 70,
   IMG: 72, VIDEO: 72,
-  ARTICLE: 40, BLOCKQUOTE: 36, PRE: 36, FIGURE: 40, TABLE: 40,
-  P: 24,
+  ARTICLE: 60, BLOCKQUOTE: 36, PRE: 36, FIGURE: 40, TABLE: 40,
+  P: 40,
   INPUT: 30, TEXTAREA: 30, SELECT: 30,
   LABEL: 18, LI: 18,
   A: 14,
@@ -38,9 +38,9 @@ function valueNoise(x: number, y: number, seed: number): number {
   // smoothstep for C1 continuity
   const sx = fx * fx * (3 - 2 * fx);
   const sy = fy * fy * (3 - 2 * fy);
-  const a = hash2(ix,     iy,     seed);
-  const b = hash2(ix + 1, iy,     seed);
-  const c = hash2(ix,     iy + 1, seed);
+  const a = hash2(ix, iy, seed);
+  const b = hash2(ix + 1, iy, seed);
+  const c = hash2(ix, iy + 1, seed);
   const d = hash2(ix + 1, iy + 1, seed);
   const ab = a + (b - a) * sx;
   const cd = c + (d - c) * sx;
@@ -88,32 +88,32 @@ function drawContourLevel(
       const x1 = x0 + res;
       const y1 = y0 + res;
 
-      const topX    = edgeLerp(x0, x1, tl, tr, threshold);
-      const rightY  = edgeLerp(y0, y1, tr, br, threshold);
+      const topX = edgeLerp(x0, x1, tl, tr, threshold);
+      const rightY = edgeLerp(y0, y1, tr, br, threshold);
       const bottomX = edgeLerp(x0, x1, bl, br, threshold);
-      const leftY   = edgeLerp(y0, y1, tl, bl, threshold);
+      const leftY = edgeLerp(y0, y1, tl, bl, threshold);
 
       switch (c) {
-        case 1:  ctx.moveTo(x0, leftY);   ctx.lineTo(bottomX, y1); break;
-        case 2:  ctx.moveTo(bottomX, y1); ctx.lineTo(x1, rightY);  break;
-        case 3:  ctx.moveTo(x0, leftY);   ctx.lineTo(x1, rightY);  break;
-        case 4:  ctx.moveTo(topX, y0);    ctx.lineTo(x1, rightY);  break;
+        case 1: ctx.moveTo(x0, leftY); ctx.lineTo(bottomX, y1); break;
+        case 2: ctx.moveTo(bottomX, y1); ctx.lineTo(x1, rightY); break;
+        case 3: ctx.moveTo(x0, leftY); ctx.lineTo(x1, rightY); break;
+        case 4: ctx.moveTo(topX, y0); ctx.lineTo(x1, rightY); break;
         case 5:  // saddle
-          ctx.moveTo(topX, y0);  ctx.lineTo(x1, rightY);
+          ctx.moveTo(topX, y0); ctx.lineTo(x1, rightY);
           ctx.moveTo(x0, leftY); ctx.lineTo(bottomX, y1);
           break;
-        case 6:  ctx.moveTo(topX, y0);    ctx.lineTo(bottomX, y1); break;
-        case 7:  ctx.moveTo(topX, y0);    ctx.lineTo(x0, leftY);   break;
-        case 8:  ctx.moveTo(topX, y0);    ctx.lineTo(x0, leftY);   break;
-        case 9:  ctx.moveTo(topX, y0);    ctx.lineTo(bottomX, y1); break;
+        case 6: ctx.moveTo(topX, y0); ctx.lineTo(bottomX, y1); break;
+        case 7: ctx.moveTo(topX, y0); ctx.lineTo(x0, leftY); break;
+        case 8: ctx.moveTo(topX, y0); ctx.lineTo(x0, leftY); break;
+        case 9: ctx.moveTo(topX, y0); ctx.lineTo(bottomX, y1); break;
         case 10: // saddle
-          ctx.moveTo(topX, y0);    ctx.lineTo(x0, leftY);
+          ctx.moveTo(topX, y0); ctx.lineTo(x0, leftY);
           ctx.moveTo(bottomX, y1); ctx.lineTo(x1, rightY);
           break;
-        case 11: ctx.moveTo(topX, y0);    ctx.lineTo(x1, rightY);  break;
-        case 12: ctx.moveTo(x0, leftY);   ctx.lineTo(x1, rightY);  break;
-        case 13: ctx.moveTo(bottomX, y1); ctx.lineTo(x1, rightY);  break;
-        case 14: ctx.moveTo(x0, leftY);   ctx.lineTo(bottomX, y1); break;
+        case 11: ctx.moveTo(topX, y0); ctx.lineTo(x1, rightY); break;
+        case 12: ctx.moveTo(x0, leftY); ctx.lineTo(x1, rightY); break;
+        case 13: ctx.moveTo(bottomX, y1); ctx.lineTo(x1, rightY); break;
+        case 14: ctx.moveTo(x0, leftY); ctx.lineTo(bottomX, y1); break;
       }
     }
   }
@@ -127,10 +127,10 @@ export default function TopoCanvas() {
     if (!canvas) return;
 
     const render = () => {
-      const docWidth  = document.documentElement.scrollWidth;
+      const docWidth = document.documentElement.scrollWidth;
       const docHeight = document.documentElement.scrollHeight;
 
-      canvas.width  = docWidth;
+      canvas.width = docWidth;
       canvas.height = docHeight;
 
       const ctx = canvas.getContext("2d");
@@ -138,8 +138,8 @@ export default function TopoCanvas() {
 
       ctx.clearRect(0, 0, docWidth, docHeight);
 
-      const RES  = 3;
-      const cols = Math.ceil(docWidth  / RES) + 1;
+      const RES = 3;
+      const cols = Math.ceil(docWidth / RES) + 1;
       const rows = Math.ceil(docHeight / RES) + 1;
       const field = new Float32Array(cols * rows);
 
@@ -186,7 +186,7 @@ export default function TopoCanvas() {
 
       const NS1 = 1 / 540, AMP1 = 30;  // big asymmetric ridges
       const NS2 = 1 / 190, AMP2 = 12;  // shoulders, knolls
-      const NS3 = 1 / 68,  AMP3 = 4;   // gentle line flow
+      const NS3 = 1 / 68, AMP3 = 4;   // gentle line flow
 
       // First pass: fill with noise only (valleys)
       for (let gy = 0; gy < rows; gy++) {
@@ -194,7 +194,7 @@ export default function TopoCanvas() {
         for (let gx = 0; gx < cols; gx++) {
           const wx = gx * RES;
           const n =
-            (valueNoise(wx * NS1, wy * NS1, seed)     - 0.5) * 2 * AMP1 +
+            (valueNoise(wx * NS1, wy * NS1, seed) - 0.5) * 2 * AMP1 +
             (valueNoise(wx * NS2, wy * NS2, seed + 1) - 0.5) * 2 * AMP2 +
             (valueNoise(wx * NS3, wy * NS3, seed + 2) - 0.5) * 2 * AMP3;
           field[gy * cols + gx] = n;
@@ -203,16 +203,16 @@ export default function TopoCanvas() {
 
       // Second pass: add peak contributions on top of the noise field
       for (const { rect, peak, falloff } of selected) {
-        const elLeft   = rect.left + window.scrollX;
-        const elTop    = rect.top  + window.scrollY;
-        const elRight  = elLeft + rect.width;
-        const elBottom = elTop  + rect.height;
+        const elLeft = rect.left + window.scrollX;
+        const elTop = rect.top + window.scrollY;
+        const elRight = elLeft + rect.width;
+        const elBottom = elTop + rect.height;
 
         // 4.5× falloff → exp(-4.5) ≈ 0.011, residual ~1% of peak. Fine.
         const reach = falloff * 4.5;
-        const gxMin = Math.max(0, Math.floor((elLeft   - reach) / RES));
-        const gxMax = Math.min(cols - 1, Math.ceil((elRight  + reach) / RES));
-        const gyMin = Math.max(0, Math.floor((elTop    - reach) / RES));
+        const gxMin = Math.max(0, Math.floor((elLeft - reach) / RES));
+        const gxMax = Math.min(cols - 1, Math.ceil((elRight + reach) / RES));
+        const gyMin = Math.max(0, Math.floor((elTop - reach) / RES));
         const gyMax = Math.min(rows - 1, Math.ceil((elBottom + reach) / RES));
 
         const invFalloff = 1 / falloff;
