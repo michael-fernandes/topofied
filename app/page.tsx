@@ -7,9 +7,6 @@ export default function Home() {
 
         {/* ── Hero ── */}
         <section className="flex flex-col items-center text-center px-12 pt-44 pb-40 gap-8">
-          <p className="font-mono text-[10px] tracking-[0.35em] text-[#a0a0a0]/60 uppercase">
-            ◂ Elevation Intelligence ▸
-          </p>
           <h1 className="text-4xl font-black leading-none tracking-tight max-w-2xl text-[#e8e8e8]">
             Read the Landscape of Every Page
           </h1>
@@ -28,8 +25,8 @@ export default function Home() {
         </section>
 
         {/* ── Features ── */}
-        <section id="features" className="px-6 py-48 max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-center text-[#e8e8e8] mb-24">
+        <section id="features" className="mx-24 py-24 max-w-5xl mx-auto">
+          <h2 className="text-2xl font-bold text-center text-[#e8e8e8] mb-12">
             How the Terrain Forms
           </h2>
 

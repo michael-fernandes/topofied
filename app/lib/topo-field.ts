@@ -1,8 +1,8 @@
 // Peak elevation per tag — a mountain's "height" is its semantic weight.
 const PEAK_HEIGHTS: Record<string, number> = {
-  SECTION: 70,
+  SECTION: 100,
   H1: 100, H2: 68, H3: 46, H4: 34, H5: 28, H6: 25,
-  BUTTON: 58,
+  BUTTON: 100,
   IMG: 72, VIDEO: 72,
   ARTICLE: 80, BLOCKQUOTE: 36, PRE: 36, FIGURE: 40, TABLE: 40,
   P: 24,
@@ -70,7 +70,7 @@ export function buildElevationField(): FieldResult | null {
 
   const candidates = document.querySelectorAll(selector);
   const claimed = new Set<Element>();
-  const selected: { rect: DOMRect; peak: number; falloff: number }[] = [];
+  const selected: { rect: DOMRect; peak: number; falloff: number; sharpness: number }[] = [];
 
   // Container elements form the base terrain but let children create peaks on top
   const CONTAINER_TAGS = new Set(["SECTION", "ARTICLE", "FIGURE"]);
@@ -91,15 +91,20 @@ export function buildElevationField(): FieldResult | null {
     }
 
     const peak = elementPeak(el);
-    // Containers get a shorter falloff → steeper cliff at mesa edges
+    // Containers get a short falloff + high sharpness → steep "mesa" cliffs
+    // that bunch contour lines at the element boundary (= visual container).
+    // Regular elements get a gentler Gaussian-ish peak.
     const isContainer = CONTAINER_TAGS.has(el.tagName);
-    const falloff = isContainer ? 50 + peak * 2.0 : 70 + peak * 3.1;
-    selected.push({ rect, peak, falloff });
+    const falloff   = isContainer ? 18 + peak * 0.4  : 40 + peak * 2.0;
+    const sharpness = isContainer ? 3.0               : 1.6;
+    selected.push({ rect, peak, falloff, sharpness });
   });
 
-  const NS1 = 1 / 540, AMP1 = 30;
-  const NS2 = 1 / 190, AMP2 = 12;
-  const NS3 = 1 / 68,  AMP3 = 4;
+  // Noise amplitudes kept low so peak/mesa signals dominate.
+  // Raise these to add more organic warping at the cost of containment clarity.
+  const NS1 = 1 / 540, AMP1 = 14;
+  const NS2 = 1 / 190, AMP2 = 6;
+  const NS3 = 1 / 68,  AMP3 = 2;
 
   // First pass: fill with noise only (valleys)
   for (let gy = 0; gy < rows; gy++) {
@@ -115,7 +120,7 @@ export function buildElevationField(): FieldResult | null {
   }
 
   // Second pass: add peak contributions on top of the noise field
-  for (const { rect, peak, falloff } of selected) {
+  for (const { rect, peak, falloff, sharpness } of selected) {
     const elLeft   = rect.left + window.scrollX;
     const elTop    = rect.top  + window.scrollY;
     const elRight  = elLeft + rect.width;
@@ -146,7 +151,7 @@ export function buildElevationField(): FieldResult | null {
           dist = Math.max(sdX, sdY);
         }
 
-        const contribution = peak * Math.exp(-Math.pow(dist * invFalloff, 1.6));
+        const contribution = peak * Math.exp(-Math.pow(dist * invFalloff, sharpness));
         field[gy * cols + gx] += contribution;
       }
     }

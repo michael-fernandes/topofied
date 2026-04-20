@@ -90,7 +90,7 @@ type ContourLevel = {
 };
 
 const NUM_LEVELS = 28;
-const INDEX_EVERY = 7;
+const INDEX_EVERY = 4;
 
 function buildLevels(fr: FieldResult): ContourLevel[] {
   const levels: ContourLevel[] = [];
