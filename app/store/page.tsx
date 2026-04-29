@@ -14,8 +14,8 @@ export default function Store() {
 
         {/* Header */}
         <div className="mb-16">
-          <h1 className="text-4xl font-black text-[#e8e8e8] mb-3">The Collection</h1>
-          <p className="text-[#484848] text-sm">Gear shaped by the land. Spring 2026.</p>
+          <h1 className="text-4xl font-black text-[#ebe2d4] mb-3">The Collection</h1>
+          <p className="text-[#5a4f43] text-sm">Gear shaped by the land. Spring 2026.</p>
         </div>
 
         {/* Product grid */}
@@ -35,22 +35,22 @@ export default function Store() {
                   />
                 </div>
                 {p.tag && (
-                  <span className="absolute top-3 left-3 px-2 py-1 rounded text-[10px] bg-[#a0a0a0] text-[#000000] font-semibold">
+                  <span className="absolute top-3 left-3 px-2 py-1 rounded text-[10px] bg-[#ebe2d4] text-[#1f1a16] font-semibold">
                     {p.tag}
                   </span>
                 )}
               </div>
-              <h3 className="text-sm font-semibold text-[#d0d0d0] mb-2">{p.name}</h3>
-              <p className="text-sm text-[#a0a0a0]">{p.price}</p>
+              <h3 className="text-sm font-semibold text-[#ebe2d4] mb-2">{p.name}</h3>
+              <p className="text-sm text-[#a89a86]">{p.price}</p>
             </article>
           ))}
         </div>
 
         {/* Footer */}
-        <footer className="flex flex-wrap gap-8 justify-center text-xs text-[#383838] pt-8 border-t border-white/[0.04]">
-          <a href="#" className="hover:text-[#686868] transition-colors">Size Guide</a>
-          <a href="#" className="hover:text-[#686868] transition-colors">Returns</a>
-          <a href="#" className="hover:text-[#686868] transition-colors">Sustainability</a>
+        <footer className="flex flex-wrap gap-8 justify-center text-xs text-[#5a4f43] pt-8 border-t border-[#5a4f43]/30">
+          <a href="#" className="hover:text-[#a89a86] transition-colors">Size Guide</a>
+          <a href="#" className="hover:text-[#a89a86] transition-colors">Returns</a>
+          <a href="#" className="hover:text-[#a89a86] transition-colors">Sustainability</a>
         </footer>
 
       </div>
