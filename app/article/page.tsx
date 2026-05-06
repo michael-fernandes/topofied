@@ -1,154 +1,390 @@
 import PageShell from "../components/page-shell";
 
+const ACCENT = "hsl(24 22% 70%)";
+const ACCENT_DIM = "hsl(24 22% 55%)";
+const INK = "#ebe2d4";
+const DIM = "#a89a86";
+const FAINT = "#5a4f43";
+
 export default function Article() {
   return (
     <PageShell current="/article">
-      <div className="max-w-3xl mx-auto px-8 py-16">
+      <div className="max-w-6xl mx-auto px-12">
 
-        {/* Metadata */}
-        <div className="flex items-center gap-3 mb-8 text-xs text-[#5a4f43]">
-          <span className="px-2 py-1 rounded bg-[#ebe2d4]/[0.03] text-[#a89a86]/70">Cartography</span>
-          <span>March 18, 2026</span>
-          <span>·</span>
-          <span>9 min read</span>
-        </div>
-
-        <h1 className="text-5xl font-black leading-tight text-[#ebe2d4] mb-6 tracking-tight">
-          The Hidden Shape of Information: What Topographic Thinking Reveals About Design
-        </h1>
-
-        <p className="text-xl text-[#a89a86] leading-relaxed mb-10 border-l-2 border-[#5a4f43] pl-6">
-          Every interface has topography. Most designers never see it. The ones who do
-          build things that feel inevitable.
-        </p>
-
-        {/* Author */}
-        <div className="flex items-center gap-3 mb-12 pb-8 border-b border-[#5a4f43]/30">
-          <div className="w-9 h-9 rounded-full bg-[#ebe2d4]/20 flex items-center justify-center text-xs text-[#a89a86]">
-            MK
+        {/* ── Hero ── */}
+        <section className="pt-44 pb-16">
+          <div
+            data-topo-id="title"
+            data-topo-hover-id="title"
+            data-topo-important=""
+            data-topo-height="90"
+            data-topo-falloff="200"
+            className="grid items-end gap-14"
+            style={{ gridTemplateColumns: "1fr auto" }}
+          >
+            <div>
+              <div
+                data-topo-hidden=""
+                className="font-mono uppercase flex items-center mb-6"
+                style={{ fontSize: 10, letterSpacing: "0.32em", color: ACCENT, gap: 14 }}
+              >
+                <a href="/" className="no-underline" style={{ color: DIM }}>
+                  ← Work
+                </a>
+                <span style={{ color: FAINT }}>/</span>
+                <span>Case 01</span>
+                <span style={{ width: 22, height: 1, background: ACCENT_DIM }} />
+                <span>2,340 m · 2014–2018</span>
+              </div>
+              <h1
+                className="font-medium m-0"
+                style={{ fontSize: 72, letterSpacing: "-0.03em", lineHeight: 1.0, color: INK, maxWidth: 1100 }}
+              >
+                Uncertainty displays for on-the-go decision making
+              </h1>
+            </div>
+            <div
+              data-topo-hidden=""
+              className="font-mono uppercase text-right"
+              style={{ fontSize: 10, letterSpacing: "0.22em", color: FAINT, minWidth: 220 }}
+            >
+              <div style={{ color: DIM }}>N 47°39′ W 122°18′</div>
+              <div style={{ marginTop: 6 }}>UW Interactive Data Lab</div>
+            </div>
           </div>
-          <div>
-            <p className="text-sm text-[#ebe2d4] font-medium">Mira Kessler</p>
-            <p className="text-xs text-[#5a4f43]">Design Systems · Cartography</p>
-          </div>
-        </div>
+        </section>
 
-        <h2 className="text-2xl font-bold text-[#ebe2d4] mb-4">The Elevation Problem</h2>
-
-        <p className="text-[#a89a86] leading-relaxed mb-5">
-          In the summer of 1854, a physician named John Snow plotted cholera deaths on a map of London&apos;s
-          Soho district. The clustering — the topography of disease — pointed directly to a contaminated
-          water pump on Broad Street. The map didn&apos;t just represent data. It made the invisible
-          visible by giving it shape.
-        </p>
-
-        <p className="text-[#a89a86] leading-relaxed mb-5">
-          Modern web interfaces have a similar problem: they contain enormous amounts of information
-          arranged according to invisible hierarchies. A heading matters more than a caption. A call-to-action
-          outweighs a footer link. But these relative weights are never rendered — they exist only as
-          assumptions embedded in font sizes, whitespace, and colour.
-        </p>
-
-        <p className="text-[#a89a86] leading-relaxed mb-10">
-          What if we made that hierarchy literal? What if every element cast a shadow of importance
-          across the canvas, and those shadows accumulated into terrain?
-        </p>
-
-        <h2 className="text-2xl font-bold text-[#ebe2d4] mb-4">How Contour Lines Work</h2>
-
-        <p className="text-[#a89a86] leading-relaxed mb-5">
-          A topographic contour line connects all points at equal elevation. The closer the lines,
-          the steeper the gradient. Wide spacing means gentle terrain; tight rings mean a sharp peak.
-          A trained eye reads contour maps the way a musician reads sheet music — fluently, instinctively,
-          extracting three-dimensional structure from flat marks on paper.
-        </p>
-
-        <blockquote className="border-l-2 border-[#5a4f43] pl-6 my-8">
-          <p className="text-[#a89a86] italic leading-relaxed text-lg">
-            &ldquo;The map is not the territory, but a good map reveals the territory&apos;s
-            structure in ways direct observation never could.&rdquo;
-          </p>
-          <cite className="text-xs text-[#5a4f43] mt-3 block not-italic">— Alfred Korzybski, paraphrased</cite>
-        </blockquote>
-
-        <p className="text-[#a89a86] leading-relaxed mb-5">
-          The marching squares algorithm, developed by Lorensen and Cline in 1987, provides a
-          systematic method for extracting these lines from a scalar field. For every 2×2 grid cell,
-          it classifies each corner as inside or outside the current elevation threshold, then
-          draws line segments through the cell accordingly. Sixteen cases, all precomputed.
-          Applied at 28 threshold levels, it produces a full contour map from any height field.
-        </p>
-
-        <h2 className="text-2xl font-bold text-[#ebe2d4] mb-4">Semantic Weight as Elevation</h2>
-
-        <p className="text-[#a89a86] leading-relaxed mb-5">
-          The key insight is that HTML already encodes a partial importance hierarchy. A
-          <code className="text-[#a89a86]/80 bg-[#ebe2d4]/[0.03] px-1.5 py-0.5 rounded mx-1 text-xs">&lt;h1&gt;</code>
-          outranks
-          <code className="text-[#a89a86]/80 bg-[#ebe2d4]/[0.03] px-1.5 py-0.5 rounded mx-1 text-xs">&lt;h2&gt;</code>,
-          which outranks
-          <code className="text-[#a89a86]/80 bg-[#ebe2d4]/[0.03] px-1.5 py-0.5 rounded mx-1 text-xs">&lt;p&gt;</code>.
-          Interactive elements — buttons, links, inputs — carry higher attentional weight than passive containers.
-          Images and media interrupt the reading flow in ways that text alone does not.
-        </p>
-
-        <p className="text-[#a89a86] leading-relaxed mb-5">
-          Assigning numeric elevation scores to each tag type, then placing a Gaussian
-          &ldquo;hill&rdquo; at each element&apos;s centre with amplitude proportional to its score
-          and spread proportional to its physical size, converts a DOM tree into a continuous
-          scalar field. Contour lines extracted from that field become a literal map of the
-          page&apos;s information architecture.
-        </p>
-
-        <h2 className="text-2xl font-bold text-[#ebe2d4] mb-4">What You See When You Look</h2>
-
-        <p className="text-[#a89a86] leading-relaxed mb-5">
-          The pattern is immediately legible once you know what to look for. A page with a strong
-          single-column hierarchy — one dominant heading, supporting subheadings, body text —
-          produces a mountain range running down the centre. An e-commerce grid of equal-weight
-          product cards produces a regular constellation of identical peaks, like a volcanic
-          island chain seen from orbit.
-        </p>
-
-        <p className="text-[#a89a86] leading-relaxed mb-5">
-          A form page is perhaps the most interesting. Input fields, labels, and a submit button
-          create a tight cluster of moderate-elevation peaks surrounded by near-flat plains.
-          The submit button usually rises highest — its importance score outpaces its small physical
-          size. You can see, quite literally, where the form is trying to take you.
-        </p>
-
-        <p className="text-[#a89a86] leading-relaxed mb-10">
-          None of this requires machine learning, user research, or eye-tracking. It requires
-          only a weighted DOM traversal, a 5-pixel grid, and the marching squares algorithm running
-          at page load. The terrain renders in under 50ms on most modern hardware.
-        </p>
-
-        <h2 className="text-2xl font-bold text-[#ebe2d4] mb-4">Further Reading</h2>
-
-        <ul className="space-y-2 mb-10">
+        {/* ── Meta strip ── */}
+        <div
+          data-topo-hidden=""
+          className="grid font-mono uppercase"
+          style={{
+            borderTop: `1px solid ${FAINT}`,
+            borderBottom: `1px solid ${FAINT}`,
+            padding: "22px 0",
+            gridTemplateColumns: "repeat(5, 1fr)",
+            gap: 32,
+            fontSize: 10,
+            letterSpacing: "0.2em",
+          }}
+        >
           {[
-            "Marching Squares, Lorensen & Cline (1987)",
-            "Semiology of Graphics, Jacques Bertin (1967)",
-            "The Visual Display of Quantitative Information, Edward Tufte (1983)",
-            "Information Architecture for the World Wide Web, Morville & Rosenfeld",
-          ].map((ref) => (
-            <li key={ref} className="text-sm text-[#a89a86] flex items-start gap-2">
-              <span className="text-[#a89a86]/40 mt-0.5">▸</span>
-              <a href="#" className="hover:text-[#a89a86]/70 transition-colors">{ref}</a>
-            </li>
-          ))}
-        </ul>
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 pt-8 border-t border-[#5a4f43]/30">
-          {["Cartography", "Information Design", "DOM", "Marching Squares", "Data Visualization"].map((tag) => (
-            <span key={tag} className="px-3 py-1 rounded-full border border-[#5a4f43]/30 text-xs text-[#a89a86]">
-              {tag}
-            </span>
+            { k: "Role", v: "Designer + researcher" },
+            { k: "Year", v: "2014 – 2018" },
+            { k: "Lab", v: "UW IDL" },
+            { k: "Funded by", v: "NSF" },
+            { k: "Published", v: "ACM CHI 2018" },
+          ].map((m) => (
+            <div key={m.k}>
+              <div style={{ color: FAINT, marginBottom: 8 }}>{m.k}</div>
+              <div
+                className="font-sans"
+                style={{ color: INK, letterSpacing: "0.05em", textTransform: "none", fontSize: 14 }}
+              >
+                {m.v}
+              </div>
+            </div>
           ))}
         </div>
 
+        {/* ── Pull quote / problem statement ── */}
+        <section className="py-24">
+          <div className="grid gap-14 items-start" style={{ gridTemplateColumns: "180px 1fr" }}>
+            <div
+              className="font-mono uppercase flex items-center"
+              style={{ fontSize: 10, letterSpacing: "0.32em", color: ACCENT, paddingTop: 12, gap: 10 }}
+            >
+              <span style={{ width: 22, height: 1, background: ACCENT_DIM }} />
+              01 — The problem
+            </div>
+            <div>
+              <p
+                className="m-0"
+                style={{
+                  fontSize: 32,
+                  letterSpacing: "-0.018em",
+                  lineHeight: 1.25,
+                  color: INK,
+                  textWrap: "pretty",
+                }}
+              >
+                People do real things with the bus they catch. Showing them a single arrival time hides
+                a probability distribution that — most of the time — is the actual thing they care about.
+              </p>
+              <p style={{ fontSize: 16, lineHeight: 1.6, color: DIM, marginTop: 28, maxWidth: 760 }}>
+                We worked with the UW Interactive Data Lab to design and rank visual encodings of
+                uncertainty for real-time transit data. The deliverable was a perceptual ranking;
+                the byproduct was a much better understanding of how people actually decide under
+                time pressure.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Process ── */}
+        <section className="py-16">
+          <SectionHeader kicker="02 — Process" title="Encodings, then experiments, then ranking." />
+          <div className="grid gap-6" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+            {[
+              {
+                n: "01",
+                t: "Catalog the encodings",
+                b: "Dot plots, gradient plots, density strips, intervals, pdf overlays. Five families, twenty-something variants. Mostly drawing.",
+              },
+              {
+                n: "02",
+                t: "Run the studies",
+                b: "Crowdsourced experiments where participants made transit decisions under simulated pressure. Two studies, ~600 participants total.",
+              },
+              {
+                n: "03",
+                t: "Rank and write",
+                b: "Quantile dot plots came out near the top — a finding that's since shown up in weather, election, and finance dataviz. Published at CHI 2018.",
+              },
+            ].map((step) => (
+              <div key={step.n} style={{ border: `1px solid ${FAINT}`, padding: 28, minHeight: 240 }}>
+                <div
+                  className="font-mono uppercase"
+                  style={{ fontSize: 10, letterSpacing: "0.28em", color: ACCENT, marginBottom: 16 }}
+                >
+                  ▲ Step {step.n}
+                </div>
+                <h3
+                  className="font-medium"
+                  style={{
+                    fontSize: 20,
+                    letterSpacing: "-0.012em",
+                    lineHeight: 1.2,
+                    margin: "0 0 12px",
+                    color: INK,
+                  }}
+                >
+                  {step.t}
+                </h3>
+                <p style={{ fontSize: 14, lineHeight: 1.6, color: DIM, margin: 0 }}>{step.b}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid gap-8" style={{ marginTop: 40, gridTemplateColumns: "1.6fr 1fr" }}>
+            <PlaceholderImage height={300} label="Encoding catalog · Figure 4" ratio="16:9" />
+            <div>
+              <div
+                className="font-mono uppercase"
+                style={{ fontSize: 10, letterSpacing: "0.22em", color: FAINT, marginBottom: 12 }}
+              >
+                Figure 4 · encodings tested
+              </div>
+              <p style={{ fontSize: 14, lineHeight: 1.6, color: DIM, margin: 0 }}>
+                Each row is a different way of drawing the same arrival distribution — 11 minutes,
+                σ ≈ 3.4. The question is which one people actually use to decide whether to start
+                walking now.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Outcomes ── */}
+        <section className="py-16">
+          <SectionHeader kicker="03 — Outcomes" title="The chart that won, and what it changed." />
+          <div className="grid gap-6" style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
+            {[
+              { stat: "≈600", l: "participants across two studies" },
+              { stat: "CHI '18", l: "honorable mention, peer-reviewed" },
+              { stat: "+34%", l: "decision accuracy with quantile dot plots vs. point estimate" },
+            ].map((s) => (
+              <div key={s.l} style={{ border: `1px solid ${FAINT}`, padding: 32 }}>
+                <div
+                  className="font-medium"
+                  style={{
+                    fontSize: 56,
+                    letterSpacing: "-0.02em",
+                    color: ACCENT,
+                    lineHeight: 1,
+                    marginBottom: 14,
+                  }}
+                >
+                  {s.stat}
+                </div>
+                <div style={{ fontSize: 13, lineHeight: 1.5, color: DIM }}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 40 }}>
+            <PlaceholderImage height={260} label="Final ranking — Figure 11" ratio="21:9" />
+          </div>
+        </section>
+
+        {/* ── Reflection ── */}
+        <section className="py-16">
+          <div className="grid gap-14 items-start" style={{ gridTemplateColumns: "180px 1fr" }}>
+            <div
+              className="font-mono uppercase flex items-center"
+              style={{ fontSize: 10, letterSpacing: "0.32em", color: ACCENT, paddingTop: 12, gap: 10 }}
+            >
+              <span style={{ width: 22, height: 1, background: ACCENT_DIM }} />
+              04 — Reflection
+            </div>
+            <div>
+              <p
+                className="m-0"
+                style={{
+                  fontSize: 22,
+                  letterSpacing: "-0.012em",
+                  lineHeight: 1.4,
+                  color: INK,
+                  textWrap: "pretty",
+                  maxWidth: 820,
+                }}
+              >
+                The thing I keep returning to: the perceptual job of a chart is sometimes lower-level than
+                we admit. People aren&apos;t reading axes. They&apos;re counting dots, eyeballing density, doing
+                fast-and-frugal arithmetic. Designing for that, instead of for the conference talk, was
+                the real lesson.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Links / artifacts ── */}
+        <section style={{ borderTop: `1px solid ${FAINT}`, paddingTop: 36, paddingBottom: 36 }}>
+          <div className="grid gap-6" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+            {[
+              { k: "Read", v: "Paper · CHI 2018 (PDF)" },
+              { k: "Code", v: "github.com/uwdata" },
+              { k: "Talk", v: "CHI 2018 · 18 min" },
+            ].map((l) => (
+              <a
+                key={l.k}
+                href="#"
+                data-topo-id={`link-${l.k}`}
+                data-topo-hover-id={`link-${l.k}`}
+                data-topo-important=""
+                data-topo-height="30"
+                data-topo-falloff="80"
+                className="block no-underline"
+                style={{ padding: 24, border: `1px solid ${FAINT}`, color: INK }}
+              >
+                <div
+                  className="font-mono uppercase"
+                  style={{ fontSize: 10, letterSpacing: "0.28em", color: ACCENT, marginBottom: 12 }}
+                >
+                  ▲ {l.k}
+                </div>
+                <div style={{ fontSize: 16, color: INK }}>{l.v}</div>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Next case ── */}
+        <section style={{ paddingBottom: 40 }}>
+          <a
+            href="#"
+            className="flex justify-between items-center no-underline text-inherit"
+            style={{ padding: "32px 0", borderTop: `1px solid ${FAINT}` }}
+          >
+            <div>
+              <div
+                className="font-mono uppercase"
+                style={{ fontSize: 10, letterSpacing: "0.28em", color: FAINT, marginBottom: 8 }}
+              >
+                Next ridge →
+              </div>
+              <div
+                className="font-medium"
+                style={{ fontSize: 24, color: INK, letterSpacing: "-0.015em" }}
+              >
+                Communicating exponential risk · IHME COVID-19
+              </div>
+            </div>
+            <div
+              className="font-mono uppercase"
+              style={{ fontSize: 11, letterSpacing: "0.28em", color: ACCENT }}
+            >
+              Case 02 →
+            </div>
+          </a>
+        </section>
       </div>
     </PageShell>
+  );
+}
+
+function SectionHeader({
+  kicker,
+  title,
+  subtitle,
+}: {
+  kicker: string;
+  title: string;
+  subtitle?: string;
+}) {
+  return (
+    <div style={{ marginBottom: 64 }}>
+      <div
+        data-topo-hidden=""
+        className="font-mono uppercase flex items-center"
+        style={{ fontSize: 10, letterSpacing: "0.32em", color: ACCENT, marginBottom: 18, gap: 14 }}
+      >
+        <span style={{ width: 22, height: 1, background: ACCENT_DIM }} />
+        {kicker}
+      </div>
+      <h2
+        className="font-medium m-0"
+        style={{
+          fontSize: 56,
+          letterSpacing: "-0.025em",
+          lineHeight: 1.05,
+          color: INK,
+          maxWidth: 900,
+        }}
+      >
+        {title}
+      </h2>
+      {subtitle && (
+        <p style={{ fontSize: 17, lineHeight: 1.55, color: DIM, maxWidth: 620, margin: "20px 0 0" }}>
+          {subtitle}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function PlaceholderImage({
+  height,
+  label,
+  ratio,
+}: {
+  height: number;
+  label: string;
+  ratio: string;
+}) {
+  return (
+    <div
+      data-topo-hidden=""
+      className="flex items-center justify-center font-mono uppercase relative"
+      style={{
+        width: "100%",
+        height,
+        background: "rgba(235,226,212,0.025)",
+        border: `1px dashed ${FAINT}`,
+        fontSize: 10,
+        letterSpacing: "0.22em",
+        color: FAINT,
+      }}
+    >
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(135deg, transparent 0 8px, rgba(235,226,212,0.025) 8px 9px)",
+        }}
+      />
+      <div className="text-center" style={{ lineHeight: 1.6 }}>
+        <div style={{ color: DIM }}>{label}</div>
+        <div style={{ color: FAINT, marginTop: 4, fontSize: 9 }}>{ratio}</div>
+      </div>
+    </div>
   );
 }

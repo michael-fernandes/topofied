@@ -1,3 +1,4 @@
+import JoyDivision from "./joy-division";
 import TopoDensity from "../topo-density";
 import Link from "next/link";
 
@@ -7,20 +8,23 @@ const PAGES = [
   { href: "/article", label: "Article", coords: "N 51°30'26\" · W 000°07'39\"" },
   { href: "/video",   label: "Video",   coords: "N 35°41'22\" · E 139°41'30\"" },
   { href: "/learn",   label: "Course",  coords: "N 47°36'35\" · W 122°19'59\"" },
+  { href: "/about",   label: "About",   coords: "N 47°36'12\" · W 122°20'40\"" },
 ];
 
 export default function PageShell({
   children,
   current,
+  background = "topo",
 }: {
   children: React.ReactNode;
   current: string;
+  background?: "topo" | "joy";
 }) {
   const sector = PAGES.find((p) => p.href === current) ?? PAGES[0];
 
   return (
     <div className="relative min-h-screen bg-[#1f1a16] text-[#ebe2d4] font-sans overflow-x-hidden">
-      <TopoDensity />
+      {background === "joy" ? <JoyDivision /> : <TopoDensity />}
       <div className="relative z-10 pb-12">
         {/* ── Top instrument strip: page switcher ── */}
         <div className="flex items-center gap-1 px-6 py-3 border-b border-[#5a4f43]/40 bg-[#1f1a16]/80 backdrop-blur-sm sticky top-0 z-20">

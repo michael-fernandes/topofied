@@ -6,7 +6,7 @@ const INK = "#ebe2d4";
 const DIM = "#a89a86";
 const FAINT = "#5a4f43";
 
-const events = [
+const TIMELINE: { y: string; h: number; t: string; b: string }[] = [
   {
     y: "2014",
     h: 1200,
@@ -45,7 +45,7 @@ const events = [
   },
 ];
 
-const tools = [
+const TOOLS = [
   "TypeScript",
   "React / Next.js",
   "d3",
@@ -60,29 +60,30 @@ const tools = [
   "interviewing",
 ];
 
-const recognition = [
+const RECOGNITION = [
   { y: "2020", t: "IHME COVID-19 dashboard · briefed by The White House" },
   { y: "2018", t: "ACM CHI · Honorable Mention, uncertainty displays" },
   { y: "2017", t: "VIS · poster, quantile dot plots" },
   { y: "2016", t: "InfoVis · workshop talk, transit data" },
 ];
 
-export default function Dashboard() {
+export default function About() {
   return (
-    <PageShell current="/dashboard">
+    <PageShell current="/about" background="joy">
       <div className="max-w-6xl mx-auto px-12">
 
-        {/* Hero band */}
+        {/* ── Hero ── */}
         <section className="pt-44 pb-16">
-          <div className="grid gap-20 items-start" style={{ gridTemplateColumns: "1fr 320px" }}>
-            <div
-              data-topo-id="bio"
-              data-topo-hover-id="bio"
-              data-topo-important=""
-              data-topo-height="80"
-              data-topo-falloff="200"
-              style={{ padding: 4 }}
-            >
+          <div
+            data-topo-id="bio"
+            data-topo-hover-id="bio"
+            data-topo-important=""
+            data-topo-height="80"
+            data-topo-falloff="200"
+            className="grid items-start gap-20"
+            style={{ gridTemplateColumns: "1fr 320px" }}
+          >
+            <div>
               <div
                 data-topo-hidden=""
                 className="font-mono uppercase flex items-center mb-6"
@@ -94,79 +95,87 @@ export default function Dashboard() {
               <h1
                 className="font-medium m-0"
                 style={{
-                  fontSize: 56,
-                  letterSpacing: "-0.025em",
+                  fontSize: 72,
+                  letterSpacing: "-0.03em",
                   lineHeight: 1.05,
                   color: INK,
-                  maxWidth: 800,
+                  maxWidth: 1100,
                 }}
               >
-                Hi, I&apos;m Michael Fernandes — a designer who became an engineer in order to
-                come up with better designs.
+                Hi, I&apos;m Michael Fernandes — a designer who became an engineer in order to come up with better designs.
               </h1>
               <p style={{ fontSize: 17, lineHeight: 1.6, color: DIM, marginTop: 28, maxWidth: 640 }}>
                 I work on tools for thinking — usually with data, often with uncertainty,
-                occasionally for fun. I learned to code so the prototypes wouldn&apos;t keep
-                dying in handoff. It mostly worked.
+                occasionally for fun. I learned to code so the prototypes wouldn&apos;t keep dying
+                in handoff. It mostly worked.
               </p>
             </div>
-            <PlaceholderImage height={320} label="Portrait" ratio="4:5" />
+            <PlaceholderImage height={400} label="Portrait" ratio="4:5" />
           </div>
         </section>
 
-        {/* Now */}
-        <section style={{ borderTop: `1px solid ${FAINT}`, paddingTop: 36, paddingBottom: 60 }}>
-          <div className="grid gap-14" style={{ gridTemplateColumns: "180px 1fr" }}>
-            <div
-              className="font-mono uppercase flex items-center"
-              style={{ fontSize: 10, letterSpacing: "0.32em", color: ACCENT, paddingTop: 8, gap: 10 }}
+        {/* ── Now strip ── */}
+        <section
+          className="grid gap-14 items-start"
+          style={{
+            gridTemplateColumns: "180px 1fr",
+            borderTop: `1px solid ${FAINT}`,
+            paddingTop: 36,
+            paddingBottom: 36,
+          }}
+        >
+          <div
+            data-topo-hidden=""
+            className="font-mono uppercase flex items-center"
+            style={{ fontSize: 10, letterSpacing: "0.32em", color: ACCENT, paddingTop: 8, gap: 10 }}
+          >
+            <span style={{ width: 22, height: 1, background: ACCENT_DIM }} />
+            Now
+          </div>
+          <div>
+            <p
+              className="m-0"
+              style={{
+                fontSize: 22,
+                letterSpacing: "-0.012em",
+                lineHeight: 1.45,
+                color: INK,
+                textWrap: "pretty",
+                maxWidth: 820,
+              }}
             >
-              <span style={{ width: 22, height: 1, background: ACCENT_DIM }} />
-              Now
-            </div>
-            <div>
-              <p
-                className="m-0"
-                style={{
-                  fontSize: 22,
-                  lineHeight: 1.45,
-                  color: INK,
-                  textWrap: "pretty",
-                  maxWidth: 820,
-                }}
-              >
-                UX engineer working on internal tooling and design systems. Reading too much about
-                probabilistic forecasting. Drawing contour lines on things that don&apos;t need them.
-              </p>
-              <div
-                className="font-mono uppercase flex"
-                style={{
-                  gap: 32,
-                  marginTop: 24,
-                  fontSize: 10,
-                  letterSpacing: "0.22em",
-                  color: DIM,
-                }}
-              >
-                <span>📍 Seattle, WA</span>
-                <span>·</span>
-                <span>↻ Last updated · April 2026</span>
-              </div>
+              UX engineer working on internal tooling and design systems. Reading too much about
+              probabilistic forecasting. Drawing contour lines on things that don&apos;t need them.
+            </p>
+            <div
+              className="font-mono uppercase flex"
+              style={{
+                gap: 32,
+                marginTop: 24,
+                fontSize: 10,
+                letterSpacing: "0.22em",
+                color: DIM,
+              }}
+            >
+              <span>📍 Seattle, WA</span>
+              <span>·</span>
+              <span>↻ Last updated · April 2026</span>
             </div>
           </div>
         </section>
 
-        {/* Timeline */}
-        <section className="pb-24">
+        {/* ── Trajectory / Timeline ── */}
+        <section className="py-16">
           <SectionHeader kicker="Trajectory" title="A short topographic survey." />
           <Timeline />
         </section>
 
-        {/* Skills + Recognition */}
-        <section className="pb-24">
+        {/* ── Skills + Recognition ── */}
+        <section className="py-16">
           <div className="grid gap-14" style={{ gridTemplateColumns: "1fr 1fr" }}>
             <div>
               <div
+                data-topo-hidden=""
                 className="font-mono uppercase flex items-center"
                 style={{ fontSize: 10, letterSpacing: "0.32em", color: ACCENT, marginBottom: 22, gap: 10 }}
               >
@@ -174,9 +183,10 @@ export default function Dashboard() {
                 Tools I reach for
               </div>
               <ul
-                style={{ listStyle: "none", padding: 0, margin: 0, columnCount: 2, columnGap: 32 }}
+                className="m-0 p-0"
+                style={{ listStyle: "none", columnCount: 2, columnGap: 32 }}
               >
-                {tools.map((t) => (
+                {TOOLS.map((t) => (
                   <li
                     key={t}
                     style={{
@@ -194,14 +204,15 @@ export default function Dashboard() {
             </div>
             <div>
               <div
+                data-topo-hidden=""
                 className="font-mono uppercase flex items-center"
                 style={{ fontSize: 10, letterSpacing: "0.32em", color: ACCENT, marginBottom: 22, gap: 10 }}
               >
                 <span style={{ width: 22, height: 1, background: ACCENT_DIM }} />
                 Recognition · publications
               </div>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                {recognition.map((r) => (
+              <ul className="m-0 p-0" style={{ listStyle: "none" }}>
+                {RECOGNITION.map((r) => (
                   <li
                     key={r.y}
                     className="grid"
@@ -227,10 +238,14 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* ── CTA / Contact ── */}
         <section
           className="flex justify-between items-baseline"
-          style={{ borderTop: `1px solid ${FAINT}`, paddingTop: 32, paddingBottom: 60 }}
+          style={{
+            borderTop: `1px solid ${FAINT}`,
+            paddingTop: 32,
+            paddingBottom: 40,
+          }}
         >
           <div>
             <div
@@ -239,10 +254,21 @@ export default function Dashboard() {
             >
               ✉ Get in touch
             </div>
-            <div style={{ fontSize: 24, color: INK }}>michael.fernandes@example.com</div>
+            <a
+              href="mailto:m.fern93@gmail.com"
+              className="no-underline"
+              style={{ fontSize: 24, color: INK }}
+            >
+              m.fern93@gmail.com
+            </a>
           </div>
           <a
             href="https://github.com/michael-fernandes"
+            data-topo-id="github"
+            data-topo-hover-id="github"
+            data-topo-important=""
+            data-topo-height="30"
+            data-topo-falloff="80"
             className="font-mono uppercase no-underline"
             style={{
               fontSize: 11,
@@ -264,9 +290,16 @@ function Timeline() {
   return (
     <div className="relative">
       <div
-        style={{ position: "absolute", left: 78, top: 12, bottom: 12, width: 1, background: FAINT }}
+        className="absolute"
+        style={{
+          left: 78,
+          top: 12,
+          bottom: 12,
+          width: 1,
+          background: FAINT,
+        }}
       />
-      {events.map((e, i) => (
+      {TIMELINE.map((e, i) => (
         <div
           key={e.y}
           className="grid items-start"
@@ -285,12 +318,12 @@ function Timeline() {
           </div>
           <div className="relative" style={{ paddingTop: 4 }}>
             <div
+              className="absolute"
               style={{
                 width: 8,
                 height: 8,
                 transform: "rotate(45deg)",
                 background: ACCENT,
-                position: "absolute",
                 left: 8,
                 top: 8,
               }}
@@ -322,7 +355,12 @@ function Timeline() {
           </div>
           <div
             className="font-mono uppercase text-right"
-            style={{ fontSize: 10, letterSpacing: "0.22em", color: FAINT, paddingTop: 6 }}
+            style={{
+              fontSize: 10,
+              letterSpacing: "0.22em",
+              color: FAINT,
+              paddingTop: 6,
+            }}
           >
             {e.h.toLocaleString()} m
           </div>
@@ -332,7 +370,15 @@ function Timeline() {
   );
 }
 
-function SectionHeader({ kicker, title }: { kicker: string; title: string }) {
+function SectionHeader({
+  kicker,
+  title,
+  subtitle,
+}: {
+  kicker: string;
+  title: string;
+  subtitle?: string;
+}) {
   return (
     <div style={{ marginBottom: 64 }}>
       <div
@@ -355,6 +401,11 @@ function SectionHeader({ kicker, title }: { kicker: string; title: string }) {
       >
         {title}
       </h2>
+      {subtitle && (
+        <p style={{ fontSize: 17, lineHeight: 1.55, color: DIM, maxWidth: 620, margin: "20px 0 0" }}>
+          {subtitle}
+        </p>
+      )}
     </div>
   );
 }
