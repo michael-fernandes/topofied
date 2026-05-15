@@ -283,8 +283,8 @@ export function buildLevels(
       const sat = isIndex ? accentSat : 6;
       stroke = `hsla(${hue},${sat}%,${lit}%,${alpha})`;
     } else {
-      const lit = isIndex ? 62 : 18 + t * 38;
-      const alpha = isIndex ? 0.55 : 0.05 + t * 0.34;
+      const lit = isIndex ? 62 : 22 + t * 34;
+      const alpha = isIndex ? 0.55 : 0.13 + t * 0.26;
       sw = isIndex ? 1.2 : 0.3 + t * 0.4;
       const hue = isIndex ? accentHue : baseHue;
       const sat = isIndex ? accentSat : 0;

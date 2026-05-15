@@ -14,8 +14,8 @@
 //   data-topo-id="my-id"        — stable id for this peak
 //   data-topo-hover-id="my-id"  — id used when this element is hovered
 //
-// Container the scene renders into MUST be `position: relative` and have a
-// fixed width/height (TopoScene sets these).
+// Container the scene renders into MUST be `position: relative`.
+// Pass explicit width/height, or use fill={true} to let the scene measure itself.
 "use client";
 
 import {
@@ -166,8 +166,10 @@ function scanScene(sceneEl: HTMLElement, sceneRect: DOMRect): Peak[] {
 
 // ── Component ────────────────────────────────────────────────
 export type TopoSceneProps = {
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
+  fill?: boolean;
+  fillMaxHeight?: number;
   seed?: string;
   accentHue?: number;
   accentSat?: number;
@@ -181,16 +183,18 @@ export type TopoSceneProps = {
   style?: CSSProperties;
   className?: string;
   children?:
-    | ReactNode
-    | ((ctx: {
-        hover: string | null;
-        setHover: (id: string | null) => void;
-      }) => ReactNode);
+  | ReactNode
+  | ((ctx: {
+    hover: string | null;
+    setHover: (id: string | null) => void;
+  }) => ReactNode);
 };
 
 export default function TopoScene({
-  width,
-  height,
+  width = 0,
+  height = 0,
+  fill = false,
+  fillMaxHeight,
   seed = "topo",
   accentHue = 200,
   accentSat = 60,
@@ -225,6 +229,26 @@ export default function TopoScene({
     if (!rendererRef.current) rendererRef.current = createRenderer(svg);
 
     const sceneRect = scene.getBoundingClientRect();
+    const effW = fill ? Math.round(sceneRect.width) : width;
+    const effH = fill ? Math.round(sceneRect.height) : height;
+    // Cap fill-mode height: iOS Safari fails to render very tall SVG layers,
+    // and the page's fade-to-bg gradient occludes anything past ~150vh anyway.
+    if (fill && typeof window !== "undefined") {
+      // const cap = fillMaxHeight ?? Math.round(window.innerHeight * 3);
+      // if (effH > cap) effH = cap;
+    }
+    if (!effW || !effH) return;
+
+    if (fill) {
+      // In fill mode the SVG is CSS-sized via inset:0; only viewBox needs
+      // to track the measured pixel dimensions so peak coords map 1:1.
+      svg.setAttribute("viewBox", `0 0 ${effW} ${effH}`);
+      svg.setAttribute("width", String(effW));
+      svg.setAttribute("height", String(effH));
+      svg.style.width = `${effW}px`;
+      svg.style.height = `${effH}px`;
+    }
+
     const peaks = scanScene(scene, sceneRect);
     const state = animRef.current.current;
 
@@ -234,8 +258,8 @@ export default function TopoScene({
     });
 
     const fr = buildField({
-      width,
-      height,
+      width: effW,
+      height: effH,
       peaks: fieldPeaks,
       seed: seedNum,
       res,
@@ -254,7 +278,13 @@ export default function TopoScene({
       theme,
     });
     rendererRef.current(levels);
+    // iOS WebKit sometimes fails to repaint after imperative SVG mutations.
+    // A forced layout read (offsetHeight) flushes pending work and triggers paint.
+
+    svg.getBoundingClientRect();
   }, [
+    fill,
+    fillMaxHeight,
     width,
     height,
     seedNum,
@@ -323,10 +353,22 @@ export default function TopoScene({
   // initial + resize + mutations
   useLayoutEffect(() => {
     measureAndRender();
+    // iOS Safari: layout often not settled at useLayoutEffect time,
+    // and ResizeObserver may skip the initial fire. Re-measure on rAF
+    // and again on a short timeout to make sure we catch the real size.
+    const raf = requestAnimationFrame(() => measureAndRender());
+    const to = window.setTimeout(() => measureAndRender(), 120);
     const scene = sceneRef.current;
-    if (!scene) return;
+    if (!scene) {
+      cancelAnimationFrame(raf);
+      clearTimeout(to);
+      return;
+    }
     const ro = new ResizeObserver(() => measureAndRender());
     ro.observe(scene);
+    const onWin = () => measureAndRender();
+    window.addEventListener("resize", onWin);
+    window.addEventListener("orientationchange", onWin);
     const mo = new MutationObserver(() => measureAndRender());
     mo.observe(scene, {
       childList: true,
@@ -344,8 +386,12 @@ export default function TopoScene({
       document.fonts.ready.then(() => measureAndRender());
     }
     return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(to);
       ro.disconnect();
       mo.disconnect();
+      window.removeEventListener("resize", onWin);
+      window.removeEventListener("orientationchange", onWin);
     };
   }, [measureAndRender]);
 
@@ -353,19 +399,38 @@ export default function TopoScene({
     <div
       ref={sceneRef}
       className={className}
-      style={{ position: "relative", width, height, ...style }}
+      style={fill
+        ? { position: "relative", ...style }
+        : { position: "relative", width, height, ...style }}
     >
       <svg
         ref={svgRef}
-        width={width}
-        height={height}
-        viewBox={`0 0 ${width} ${height}`}
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
+        preserveAspectRatio={fill ? "none" : undefined}
+        viewBox={fill ? "0 0 1 1" : `0 0 ${width} ${height}`}
+        style={
+          fill
+            ? {
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: 0,
+              pointerEvents: "none",
+              zIndex: 0,
+              display: "block",
+              transform: "translateZ(0)",
+              willChange: "contents",
+            }
+            : {
+              position: "absolute",
+              inset: 0,
+              pointerEvents: "none",
+              zIndex: 0,
+              transform: "translateZ(0)",
+            }
+        }
+        width={fill ? undefined : width}
+        height={fill ? undefined : height}
       />
       {typeof children === "function"
         ? children({ hover, setHover })
