@@ -37,17 +37,15 @@ const RECOGNITION = [
 
 export default function AboutPage() {
   return (
-    <PageShell current="/about">
-      <TopoHero height={580} seed="about-hero">
+    <PageShell current="/about" seed="about-hero">
+      <TopoHero height={580}>
         <div
+          className="grid grid-cols-1 md:grid-cols-[1fr_320px] gap-8 md:gap-20"
           style={{
             position: "absolute",
-            left: 60,
-            right: 60,
+            left: 20,
+            right: 20,
             top: 180,
-            display: "grid",
-            gridTemplateColumns: "1fr 320px",
-            gap: 80,
             alignItems: "start",
           }}
         >
@@ -85,14 +83,15 @@ export default function AboutPage() {
               in handoff. It mostly worked.
             </p>
           </div>
-          <Placeholder height={320} label="Portrait" ratio="4:5" />
+          <div className="hidden md:block"><Placeholder height={320} label="Portrait" ratio="4:5" /></div>
         </div>
       </TopoHero>
 
       <section
-        style={{ padding: "60px 60px 36px", borderTop: `1px solid ${FAINT}`, marginTop: 60 }}
+        className="px-page"
+        style={{ paddingTop: 60, paddingBottom: 36, borderTop: `1px solid ${FAINT}`, marginTop: 60 }}
       >
-        <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: 60 }}>
+        <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-4 md:gap-[60px]">
           <div
             className="font-mono uppercase flex items-center"
             style={{ fontSize: 10, letterSpacing: "0.32em", color: ACCENT, paddingTop: 8, gap: 10 }}
@@ -120,13 +119,13 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section style={{ padding: "60px 60px" }}>
+      <section className="px-page" style={{ paddingTop: 60, paddingBottom: 60 }}>
         <SectionHeader kicker="Trajectory" title="A short topographic survey." />
         <Timeline />
       </section>
 
-      <section style={{ padding: "40px 60px 60px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60 }}>
+      <section className="px-page" style={{ paddingTop: 40, paddingBottom: 60 }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-[60px]">
           <div>
             <div
               className="font-mono uppercase flex items-center"
@@ -182,9 +181,8 @@ export default function AboutPage() {
       </section>
 
       <section
-        className="flex justify-between items-baseline"
+        className="mx-page flex flex-col md:flex-row md:justify-between md:items-baseline gap-6"
         style={{
-          margin: "0 60px",
           borderTop: `1px solid ${FAINT}`,
           paddingTop: 32,
           paddingBottom: 40,
@@ -235,7 +233,7 @@ function Timeline() {
           key={e.y}
           className="grid items-start"
           style={{
-            gridTemplateColumns: "62px 32px 1fr 100px",
+            gridTemplateColumns: "62px 32px 1fr",
             gap: 24,
             padding: "20px 0",
             borderTop: i === 0 ? "none" : `1px solid ${FAINT}`,
@@ -272,7 +270,7 @@ function Timeline() {
             </div>
           </div>
           <div
-            className="font-mono uppercase text-right"
+            className="hidden md:block font-mono uppercase text-right"
             style={{ fontSize: 10, letterSpacing: "0.22em", color: FAINT, paddingTop: 6 }}
           >
             {e.h.toLocaleString()} m

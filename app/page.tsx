@@ -17,8 +17,8 @@ const FUN_PREVIEW = [
 
 export default function LandingPage() {
   return (
-    <PageShell current="/">
-      <TopoHero height={900} seed="landing-hero">
+    <PageShell current="/" seed="landing-hero">
+      <TopoHero height={900}>
         <div
           data-topo-id="summit"
           data-topo-hover-id="summit"
@@ -87,7 +87,7 @@ export default function LandingPage() {
                 color: INK,
               }}
             >
-              Michael Fernandes
+              Michael fern
             </h1>
             <p
               style={{
@@ -124,7 +124,7 @@ export default function LandingPage() {
       </TopoHero>
 
       {/* ── 01 — Practice ── */}
-      <section style={{ padding: "120px 60px 80px" }}>
+      <section className="px-page" style={{ paddingTop: 120, paddingBottom: 80 }}>
         <SectionHeader
           kicker="01 — Practice"
           title="I sit between design and engineering, mostly so neither side has to translate."
@@ -134,7 +134,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── 02 — Selected work ── */}
-      <section style={{ padding: "80px 60px" }}>
+      <section className="px-page" style={{ paddingTop: 80, paddingBottom: 80 }}>
         <SectionHeader
           kicker="02 — Selected work"
           title="Two projects I keep returning to."
@@ -153,7 +153,7 @@ export default function LandingPage() {
             background: "rgba(235,226,212,0.012)",
           }}
         >
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.1fr", gap: 56 }}>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr] gap-8 md:gap-14">
             <div>
               <div
                 className="font-mono uppercase"
@@ -199,11 +199,12 @@ export default function LandingPage() {
             border: `1px solid ${FAINT}`,
             padding: 32,
             marginLeft: "auto",
-            width: "62%",
+            marginRight: "auto",
+            width: "min(62%, 100%)",
             background: "rgba(235,226,212,0.012)",
           }}
         >
-          <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 32 }}>
+          <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-6 md:gap-8">
             <div>
               <div
                 className="font-mono uppercase"
@@ -234,19 +235,13 @@ export default function LandingPage() {
       </section>
 
       {/* ── 03 — Field notes ── */}
-      <section style={{ padding: "80px 60px" }}>
+      <section className="px-page" style={{ paddingTop: 80, paddingBottom: 80 }}>
         <SectionHeader
           kicker="03 — Field notes & ephemera"
           title="Things made on weekends, mostly."
           subtitle="Toys, sketches, half-finished bets. The full collection lives at /fun."
         />
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: FUN_PREVIEW.map((i) => i.w).join(" "),
-            gap: 18,
-          }}
-        >
+        <div className="grid grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1.2fr] gap-4">
           {FUN_PREVIEW.map((it) => (
             <a
               key={it.id}
@@ -327,16 +322,10 @@ export default function LandingPage() {
 
       {/* ── 04 — Base camp ── */}
       <section
-        style={{ padding: "80px 60px 60px", borderTop: `1px solid ${FAINT}` }}
+        className="px-page"
+        style={{ paddingTop: 80, paddingBottom: 60, borderTop: `1px solid ${FAINT}` }}
       >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1.5fr",
-            gap: 80,
-            alignItems: "start",
-          }}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] items-start gap-6 md:gap-20">
           <div
             className="font-mono uppercase flex items-center"
             style={{ fontSize: 10, letterSpacing: "0.32em", color: ACCENT, gap: 14 }}
