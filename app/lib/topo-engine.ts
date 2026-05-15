@@ -267,6 +267,23 @@ export function buildLevels(
     maxLevel = 1.0,
     theme = "dark",
   } = opts;
+  // ── Visual tuning ──────────────────────────────────────────
+  // t = 0 (valley floor) → t = 1 (peak). Ranges are [low, high].
+  // "index" lines are the bold accent lines every `indexEvery` levels.
+  const DARK = {
+    index:   { lit: 55,  alpha: 0.50, width: 1.2 },
+    lineLit:   [22, 56]  as [number, number],  // lightness range low→high
+    lineAlpha: [0.13, 0.39] as [number, number], // opacity range low→high
+    lineWidth: [0.3, 0.7]   as [number, number],
+  };
+  const PAPER = {
+    index:   { lit: 8,   alpha: 0.75, width: 1.2 },
+    lineLit:   [40, 18]  as [number, number],  // inverted: valleys lighter on paper
+    lineAlpha: [0.18, 0.63] as [number, number],
+    lineWidth: [0.35, 0.80]  as [number, number],
+  };
+  // ───────────────────────────────────────────────────────────
+
   const levels: LevelSpec[] = [];
   for (let l = 1; l < numLevels; l++) {
     const t = l / numLevels;
@@ -276,19 +293,17 @@ export function buildLevels(
     let stroke: string;
     let sw: number;
     if (theme === "paper") {
-      const lit = isIndex ? 8 : 18 + (1 - t) * 22;
-      const alpha = isIndex ? 0.75 : 0.18 + t * 0.45;
-      sw = isIndex ? 1.2 : 0.35 + t * 0.45;
-      const hue = isIndex ? accentHue : baseHue;
-      const sat = isIndex ? accentSat : 6;
-      stroke = `hsla(${hue},${sat}%,${lit}%,${alpha})`;
+      const C = PAPER;
+      const lit   = isIndex ? C.index.lit   : C.lineLit[0]   + t * (C.lineLit[1]   - C.lineLit[0]);
+      const alpha = isIndex ? C.index.alpha : C.lineAlpha[0] + t * (C.lineAlpha[1] - C.lineAlpha[0]);
+      sw           = isIndex ? C.index.width : C.lineWidth[0] + t * (C.lineWidth[1] - C.lineWidth[0]);
+      stroke = `hsla(${isIndex ? accentHue : baseHue},${isIndex ? accentSat : 6}%,${lit}%,${alpha})`;
     } else {
-      const lit = isIndex ? 62 : 22 + t * 34;
-      const alpha = isIndex ? 0.55 : 0.13 + t * 0.26;
-      sw = isIndex ? 1.2 : 0.3 + t * 0.4;
-      const hue = isIndex ? accentHue : baseHue;
-      const sat = isIndex ? accentSat : 0;
-      stroke = `hsla(${hue},${sat}%,${lit}%,${alpha})`;
+      const C = DARK;
+      const lit   = isIndex ? C.index.lit   : C.lineLit[0]   + t * (C.lineLit[1]   - C.lineLit[0]);
+      const alpha = isIndex ? C.index.alpha : C.lineAlpha[0] + t * (C.lineAlpha[1] - C.lineAlpha[0]);
+      sw           = isIndex ? C.index.width : C.lineWidth[0] + t * (C.lineWidth[1] - C.lineWidth[0]);
+      stroke = `hsla(${isIndex ? accentHue : baseHue},${isIndex ? accentSat : 0}%,${lit}%,${alpha})`;
     }
 
     const threshold = t * 100;
