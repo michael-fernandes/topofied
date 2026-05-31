@@ -1,5 +1,6 @@
 import PageShell from "../components/page-shell";
 import TopoHero from "../components/topo-hero";
+import ProjectCard from "../components/project-card";
 import Link from "next/link";
 
 const INK = "#ebe2d4";
@@ -8,11 +9,17 @@ const FAINT = "#5a4f43";
 const ACCENT = "hsl(24 22% 70%)";
 const ACCENT_DIM = "hsl(24 22% 55%)";
 
+// Per-project accents — desaturated, sit alongside the clay base.
+// Tune hue/sat/lum together; pairs are [base, dim] in HSL.
 const PROJECTS = [
-  { id: "radify",   name: "Radify",   year: "2020", note: "A spotify-shaped curiosity engine. You feed it an artist, it walks the graph." },
-  { id: "topofied", name: "Topofied", year: "2026", note: "This site, basically. Contour lines as importance hierarchy." },
-  { id: "inkpot",   name: "Inkpot",   year: "2024", note: "Generative ink painter. Brownian motion in a teacup." },
-  { id: "tides",    name: "Tides",    year: "2023", note: "An excuse to look at NOAA buoy data for six months." },
+  { id: "radify",   name: "Radify",   year: "2020", note: "A spotify-shaped curiosity engine. You feed it an artist, it walks the graph.",
+    hue: 92,  sat: 18 }, // moss
+  { id: "topofied", name: "Topofied", year: "2026", note: "This site, basically. Contour lines as importance hierarchy.",
+    hue: 24,  sat: 22 }, // clay (matches site accent)
+  { id: "inkpot",   name: "Inkpot",   year: "2024", note: "Generative ink painter. Brownian motion in a teacup.",
+    hue: 232, sat: 18 }, // dusky indigo
+  { id: "tides",    name: "Tides",    year: "2023", note: "An excuse to look at NOAA buoy data for six months.",
+    hue: 190, sat: 16 }, // muted teal-slate
 ];
 
 const EXPERIMENTS = [
@@ -350,24 +357,7 @@ export default function WorkPage() {
           <CategoryLabel first>Projects</CategoryLabel>
           <div className="grid grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1.2fr] gap-4" style={{ marginBottom: 18 }}>
             {PROJECTS.map((p) => (
-              <a
-                key={p.id}
-                id={p.id}
-                href={`#${p.id}`}
-                style={{
-                  border: `1px solid ${FAINT}`,
-                  background: "rgba(235,226,212,0.012)",
-                  padding: 18,
-                  display: "flex",
-                  flexDirection: "column",
-                  textDecoration: "none",
-                  color: "inherit",
-                }}
-              >
-                <CardStill label="project" minHeight={140} />
-                <CardMeta name={p.name} year={p.year} />
-                <div style={{ fontSize: 12, color: DIM, lineHeight: 1.45 }}>{p.note}</div>
-              </a>
+              <ProjectCard key={p.id} project={p} />
             ))}
           </div>
 
