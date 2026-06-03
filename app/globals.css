@@ -22,6 +22,18 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Bordered cards / rows — subtle warm hover, on-theme */
+.topo-card {
+  transition: border-color 200ms ease, background-color 200ms ease, transform 200ms ease;
+}
+.topo-card:hover {
+  border-color: hsl(24 22% 52%);
+  background-color: rgba(235, 226, 212, 0.03);
+}
+.topo-card--lift:hover {
+  transform: translateY(-2px);
+}
+
 /* Responsive horizontal page padding */
 .px-page {
   padding-left: 20px;
