@@ -15,16 +15,16 @@ import {
 
 const SKILLS = [
   {
-    title: "Skill one",
-    note: "A short placeholder describing a core capability. One or two lines is plenty here.",
+    title: "Data visualization",
+    note: "Making sense of scientific, computational, and data-heavy apps — turning dense data into something you can actually read.",
   },
   {
-    title: "Skill two",
-    note: "Another core capability. Keep these even in length so the three columns read as a set.",
+    title: "Design engineering",
+    note: "Taking experiences end to end — from the first sketch to shipped code — with usability driving every call.",
   },
   {
-    title: "Skill three",
-    note: "The third capability. Placeholder copy stands in until the real positioning is written.",
+    title: "Research & prototyping",
+    note: "Learning from real people, then prototyping fast — testing ideas in days, not months.",
   },
 ];
 
@@ -104,8 +104,8 @@ export default function LandingPage() {
       <section className="px-page" style={{ paddingTop: 80, paddingBottom: 60 }}>
         <SectionHeader
           kicker="01 — What I do"
-          title="Three things I keep coming back to."
-          subtitle="Placeholder intro for the skills section. A sentence or two framing the disciplines below."
+          title="Three things I do."
+          subtitle="The stuff I'm good at and genuinely like doing."
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: 1, background: FAINT, border: `1px solid ${FAINT}` }}>
