@@ -84,11 +84,11 @@ export function buildField(opts: {
   const field = new Float32Array(cols * rows);
 
   const NS1 = 1 / 540,
-    AMP1 = 14 * noiseAmp;
+    AMP1 = 16 * noiseAmp;
   const NS2 = 1 / 190,
-    AMP2 = 6 * noiseAmp;
+    AMP2 = 4 * noiseAmp;
   const NS3 = 1 / 68,
-    AMP3 = 2 * noiseAmp;
+    AMP3 = 0.6 * noiseAmp;
 
   // 1) noise base
   for (let gy = 0; gy < rows; gy++) {
@@ -103,7 +103,34 @@ export function buildField(opts: {
     }
   }
 
-  // 2) peak contributions
+  // 2) domain-warp field — perturbs (x,y) before peak distance lookup so
+  //    contour rings around peaks read as organic terrain (ridges, spurs,
+  //    gullies, saddles) instead of clean concentric ovals. The same warp
+  //    field is reused across all peaks so terrain stays globally coherent:
+  //    adjacent peaks naturally form saddles where their warped shapes meet.
+  //    Two octaves: a large-scale bend + a smaller-scale crinkle.
+  const WARP_S1 = 1 / 280,
+    WARP_A1 = 24 * noiseAmp;
+  const WARP_S2 = 1 / 110,
+    WARP_A2 = 8 * noiseAmp;
+  const WARP_MAX = WARP_A1 + WARP_A2;
+
+  const warpX = new Float32Array(cols * rows);
+  const warpY = new Float32Array(cols * rows);
+  for (let gy = 0; gy < rows; gy++) {
+    const wy = gy * res;
+    for (let gx = 0; gx < cols; gx++) {
+      const wx = gx * res;
+      warpX[gy * cols + gx] =
+        (valueNoise(wx * WARP_S1, wy * WARP_S1, seed + 7) - 0.5) * 2 * WARP_A1 +
+        (valueNoise(wx * WARP_S2, wy * WARP_S2, seed + 9) - 0.5) * 2 * WARP_A2;
+      warpY[gy * cols + gx] =
+        (valueNoise(wx * WARP_S1, wy * WARP_S1, seed + 8) - 0.5) * 2 * WARP_A1 +
+        (valueNoise(wx * WARP_S2, wy * WARP_S2, seed + 11) - 0.5) * 2 * WARP_A2;
+    }
+  }
+
+  // 3) peak contributions (using warped coordinates)
   for (const peak of peaks) {
     const { x, y, w, h, height: pk, falloff, sharpness } = peak;
     const left = x,
@@ -111,7 +138,9 @@ export function buildField(opts: {
       right = x + w,
       bottom = y + h;
 
-    const reach = falloff * 4.5;
+    // Expand bbox by max warp amplitude so warped lookups near the edge
+    // still get the full peak contribution.
+    const reach = falloff * 4.5 + WARP_MAX;
     const gxMin = Math.max(0, Math.floor((left - reach) / res));
     const gxMax = Math.min(cols - 1, Math.ceil((right + reach) / res));
     const gyMin = Math.max(0, Math.floor((top - reach) / res));
@@ -120,16 +149,19 @@ export function buildField(opts: {
 
     for (let gy = gyMin; gy <= gyMax; gy++) {
       const py = gy * res;
-      const sdY = Math.max(top - py, py - bottom);
       for (let gx = gxMin; gx <= gxMax; gx++) {
         const px = gx * res;
-        const sdX = Math.max(left - px, px - right);
+        const idx = gy * cols + gx;
+        const wpx = px + warpX[idx];
+        const wpy = py + warpY[idx];
+        const sdX = Math.max(left - wpx, wpx - right);
+        const sdY = Math.max(top - wpy, wpy - bottom);
         let dist: number;
         if (sdX <= 0 && sdY <= 0) dist = 0;
         else if (sdX > 0 && sdY > 0) dist = Math.sqrt(sdX * sdX + sdY * sdY);
         else dist = Math.max(sdX, sdY);
         const contrib = pk * Math.exp(-Math.pow(dist * invFalloff, sharpness));
-        field[gy * cols + gx] += contrib;
+        field[idx] += contrib;
       }
     }
   }
@@ -258,7 +290,7 @@ export function buildLevels(
   } = {}
 ): LevelSpec[] {
   const {
-    numLevels = 28,
+    numLevels = 34,
     indexEvery = 4,
     baseHue = 0,
     accentHue = 200,
@@ -272,9 +304,9 @@ export function buildLevels(
   // "index" lines are the bold accent lines every `indexEvery` levels.
   const DARK = {
     index:   { lit: 55,  alpha: 0.50, width: 1.2 },
-    lineLit:   [22, 56]  as [number, number],  // lightness range low→high
-    lineAlpha: [0.13, 0.39] as [number, number], // opacity range low→high
-    lineWidth: [0.3, 0.7]   as [number, number],
+    lineLit:   [44, 56]  as [number, number],  // lightness range low→high
+    lineAlpha: [0.28, 0.39] as [number, number], // opacity range low→high
+    lineWidth: [0.5, 0.7]   as [number, number],
   };
   const PAPER = {
     index:   { lit: 8,   alpha: 0.75, width: 1.2 },
@@ -306,7 +338,9 @@ export function buildLevels(
       stroke = `hsla(${isIndex ? accentHue : baseHue},${isIndex ? accentSat : 0}%,${lit}%,${alpha})`;
     }
 
-    const threshold = t * 100;
+    // Curve threshold distribution toward valleys: exp > 1 packs more
+    // contour lines into low-elevation areas, fewer around tall peaks.
+    const threshold = Math.pow(t, 2.4) * 100;
     const d = contourPathData(fr, threshold);
     if (!d) continue;
     levels.push({ d, stroke, strokeWidth: sw, isIndex, level: l, t });

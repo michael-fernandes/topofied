@@ -35,14 +35,13 @@ export default function LandingPage() {
         <div
           style={{
             position: "absolute",
-            left: "50%",
-            top: "54%",
-            transform: "translate(calc(-50% - 64px), -50%)",
-            textAlign: "center",
+            left: 20,
+            right: 20,
+            top: "50%",
+            transform: "translateY(-50%)",
             zIndex: 2,
-            padding: "0 20px",
-            maxWidth: "100%",
           }}
+          className="md:left-[60px] md:right-[60px]"
         >
           {/* The heading is the summit — its real footprint drives the terrain,
               so the contours read as organic rather than a machined bullseye.
@@ -55,7 +54,7 @@ export default function LandingPage() {
             data-topo-height="110"
             data-topo-falloff="132"
             data-topo-sharpness="1.45"
-            style={{ display: "inline-block", padding: "24px 32px 12px" }}
+            style={{ display: "inline-block", padding: "12px 32px 12px 4px" }}
           >
             <h1
               className="font-medium"
@@ -74,7 +73,7 @@ export default function LandingPage() {
           <p
             style={{
               maxWidth: 440,
-              margin: "8px auto 0",
+              margin: "8px 0 0",
               fontSize: 14,
               lineHeight: 1.55,
               color: DIM,
