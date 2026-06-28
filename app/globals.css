@@ -34,6 +34,48 @@ body {
   transform: translateY(-2px);
 }
 
+/* Per-skill line icons — strokes retrace themselves on card hover, the same
+   "alive contour" feel as the terrain, plus a small brighten + lift. */
+.topo-icon {
+  transition: color 450ms ease, transform 450ms ease;
+}
+.topo-icon [data-draw] {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.topo-card:hover .topo-icon {
+  color: hsl(24 26% 72%);
+  transform: translateY(-1px);
+}
+.topo-card:hover .topo-icon [data-draw] {
+  animation: topo-draw 0.85s cubic-bezier(0.33, 0, 0.2, 1) forwards;
+}
+.topo-card:hover .topo-icon [data-draw]:nth-child(2) {
+  animation-delay: 0.11s;
+}
+.topo-card:hover .topo-icon [data-draw]:nth-child(3) {
+  animation-delay: 0.22s;
+}
+.topo-card:hover .topo-icon [data-draw]:nth-child(4) {
+  animation-delay: 0.33s;
+}
+.topo-card:hover .topo-icon [data-draw]:nth-child(5) {
+  animation-delay: 0.44s;
+}
+@keyframes topo-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .topo-card:hover .topo-icon [data-draw] {
+    animation: none;
+  }
+}
+
 /* Responsive horizontal page padding */
 .px-page {
   padding-left: 20px;

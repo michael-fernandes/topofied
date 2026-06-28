@@ -24,6 +24,63 @@ export function Marker({ size = 8, color = ACCENT, style }: { size?: number; col
   );
 }
 
+/**
+ * Per-skill line icons — engraved at contour weight in the same ink as the
+ * background index lines, so they read as part of the map rather than dropped
+ * on top of it. A small survey diamond recurs across all three as a unifying
+ * node. Every path carries `data-draw` (+ a normalized `pathLength`) so the
+ * stylesheet can retrace it on card hover — the strokes draw themselves in,
+ * echoing the terrain's living contours.
+ */
+const SKILL_ICONS: Record<string, ReactNode> = {
+  // Elevation profile — a plotted ridgeline read off an axis, survey diamond
+  // pinned to its summit. Data, surveyed like terrain.
+  "data-viz": (
+    <>
+      <path d="M5 4 V19 H20" pathLength={1} data-draw />
+      <polyline points="7 15 12 11 16 8" pathLength={1} data-draw />
+      <path d="M16 6.2 L17.4 8 L16 9.8 L14.6 8 Z" pathLength={1} data-draw />
+    </>
+  ),
+  // Two crop-mark corners framing a precise center node — the design canvas
+  // meeting engineering exactness, pared back.
+  "design-eng": (
+    <>
+      <path d="M5 9 V5 H9" pathLength={1} data-draw />
+      <path d="M19 15 V19 H15" pathLength={1} data-draw />
+      <path d="M12 9 L15 12 L12 15 L9 12 Z" pathLength={1} data-draw />
+    </>
+  ),
+  // Magnifier reading a survey node — looking closely, then iterating.
+  research: (
+    <>
+      <circle cx="10.5" cy="10.5" r="6" pathLength={1} data-draw />
+      <path d="M15 15 L20 20" pathLength={1} data-draw />
+      <path d="M10.5 8.4 L12.6 10.5 L10.5 12.6 L8.4 10.5 Z" pathLength={1} data-draw />
+    </>
+  ),
+};
+
+export function SkillIcon({ name, size = 34, style }: { name: string; size?: number; style?: CSSProperties }) {
+  return (
+    <svg
+      aria-hidden
+      className="topo-icon"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.3}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{ color: ACCENT_DIM, ...style }}
+    >
+      {SKILL_ICONS[name]}
+    </svg>
+  );
+}
+
 /** Mono uppercase label with a leading hairline rule. */
 export function Eyebrow({
   children,

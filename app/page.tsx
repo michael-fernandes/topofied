@@ -7,7 +7,7 @@ import {
   FAINT,
   ACCENT,
   CARD_BG,
-  Marker,
+  SkillIcon,
   Eyebrow,
   SectionHeader,
   Placeholder,
@@ -15,14 +15,17 @@ import {
 
 const SKILLS = [
   {
+    icon: "data-viz",
     title: "Data visualization",
     note: "Making sense of scientific, computational, and data-heavy apps — turning dense data into something you can actually read.",
   },
   {
+    icon: "design-eng",
     title: "Design engineering",
     note: "Taking experiences end to end — from the first sketch to shipped code — with usability driving every call.",
   },
   {
+    icon: "research",
     title: "Research & prototyping",
     note: "Learning from real people, then prototyping fast — testing ideas in days, not months.",
   },
@@ -108,10 +111,14 @@ export default function LandingPage() {
           subtitle="The stuff I'm good at and genuinely like doing."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: 1, background: FAINT, border: `1px solid ${FAINT}` }}>
+        <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: 16 }}>
           {SKILLS.map((s) => (
-            <div key={s.title} style={{ background: "#1f1a16", padding: "22px 20px" }}>
-              <Marker size={6} style={{ marginBottom: 16 }} />
+            <div
+              key={s.title}
+              className="topo-card"
+              style={{ border: `1px solid ${FAINT}`, padding: "22px 20px", background: CARD_BG }}
+            >
+              <SkillIcon name={s.icon} size={34} style={{ marginBottom: 16, marginLeft: -2 }} />
               <h3 className="font-medium" style={{ fontSize: 15, letterSpacing: "-0.01em", color: INK, margin: 0 }}>
                 {s.title}
               </h3>
