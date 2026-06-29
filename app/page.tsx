@@ -118,7 +118,7 @@ export default function LandingPage() {
               className="topo-card"
               style={{ border: `1px solid ${FAINT}`, padding: "22px 20px", background: CARD_BG }}
             >
-              <SkillIcon name={s.icon} size={34} style={{ marginBottom: 16, marginLeft: -2 }} />
+              <SkillIcon name={s.icon} size={42} style={{ marginBottom: 16, marginLeft: -3 }} />
               <h3 className="font-medium" style={{ fontSize: 15, letterSpacing: "-0.01em", color: INK, margin: 0 }}>
                 {s.title}
               </h3>

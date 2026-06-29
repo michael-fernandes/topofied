@@ -34,8 +34,12 @@ body {
   transform: translateY(-2px);
 }
 
-/* Per-skill line icons — strokes retrace themselves on card hover, the same
-   "alive contour" feel as the terrain, plus a small brighten + lift. */
+/* Per-skill line icons — at rest the icon is fully drawn; on card hover it
+   re-discloses itself piece by piece, echoing the terrain's living contours,
+   with a small brighten + lift. Open paths stroke themselves on (data-draw);
+   closed shapes bloom in (data-fade) since stroke-drawing a loop reads as an
+   ugly arc. `both` holds each piece hidden through its delay so the sequence
+   reads cleanly instead of flashing in. */
 .topo-icon {
   transition: color 450ms ease, transform 450ms ease;
 }
@@ -43,25 +47,41 @@ body {
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
 }
+.topo-icon [data-fade] {
+  opacity: 1;
+  transform-box: fill-box;
+  transform-origin: center;
+}
 .topo-card:hover .topo-icon {
   color: hsl(24 26% 72%);
   transform: translateY(-1px);
 }
 .topo-card:hover .topo-icon [data-draw] {
-  animation: topo-draw 0.85s cubic-bezier(0.33, 0, 0.2, 1) forwards;
+  animation: topo-draw 0.55s cubic-bezier(0.33, 0, 0.2, 1) both;
 }
-.topo-card:hover .topo-icon [data-draw]:nth-child(2) {
-  animation-delay: 0.11s;
+.topo-card:hover .topo-icon [data-fade] {
+  animation: topo-fade 0.34s ease both;
 }
-.topo-card:hover .topo-icon [data-draw]:nth-child(3) {
-  animation-delay: 0.22s;
-}
-.topo-card:hover .topo-icon [data-draw]:nth-child(4) {
-  animation-delay: 0.33s;
-}
-.topo-card:hover .topo-icon [data-draw]:nth-child(5) {
-  animation-delay: 0.44s;
-}
+
+/* Data viz — bloom the contours circle by circle, outer → in, summit node last. */
+.topo-card:hover .topo-icon--data-viz [data-fade]:nth-child(1) { animation-delay: 0s; }
+.topo-card:hover .topo-icon--data-viz [data-fade]:nth-child(2) { animation-delay: 0.13s; }
+.topo-card:hover .topo-icon--data-viz [data-fade]:nth-child(3) { animation-delay: 0.26s; }
+.topo-card:hover .topo-icon--data-viz [data-fade]:nth-child(4) { animation-delay: 0.39s; }
+
+/* Design engineering — the four lines sweep left → right to the convergence
+   (slight top-to-bottom stagger), then a beat of space before the point lands. */
+.topo-card:hover .topo-icon--design-eng [data-draw]:nth-child(1) { animation-delay: 0s; }
+.topo-card:hover .topo-icon--design-eng [data-draw]:nth-child(2) { animation-delay: 0.07s; }
+.topo-card:hover .topo-icon--design-eng [data-draw]:nth-child(3) { animation-delay: 0.14s; }
+.topo-card:hover .topo-icon--design-eng [data-draw]:nth-child(4) { animation-delay: 0.21s; }
+.topo-card:hover .topo-icon--design-eng [data-fade]:nth-child(5) { animation-delay: 0.85s; }
+
+/* Research — origin, then the path traces through, then the destination. */
+.topo-card:hover .topo-icon--research [data-fade]:nth-child(1) { animation-delay: 0s; }
+.topo-card:hover .topo-icon--research [data-draw]:nth-child(2) { animation-duration: 0.7s; animation-delay: 0.25s; }
+.topo-card:hover .topo-icon--research [data-fade]:nth-child(3) { animation-delay: 0.95s; }
+
 @keyframes topo-draw {
   from {
     stroke-dashoffset: 1;
@@ -70,8 +90,19 @@ body {
     stroke-dashoffset: 0;
   }
 }
+@keyframes topo-fade {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  .topo-card:hover .topo-icon [data-draw] {
+  .topo-card:hover .topo-icon [data-draw],
+  .topo-card:hover .topo-icon [data-fade] {
     animation: none;
   }
 }

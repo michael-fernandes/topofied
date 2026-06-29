@@ -32,46 +32,69 @@ export function Marker({ size = 8, color = ACCENT, style }: { size?: number; col
  * stylesheet can retrace it on card hover — the strokes draw themselves in,
  * echoing the terrain's living contours.
  */
+// Two reveal techniques, picked per shape so the disclosure stays clean:
+//   data-draw  → open paths, stroked on with stroke-dashoffset (a line drawing
+//                itself end to end).
+//   data-fade  → closed shapes (contour loops, survey diamonds), faded + scaled
+//                in. Stroke-drawing a closed loop renders as an ugly growing
+//                arc, so those bloom in instead.
 const SKILL_ICONS: Record<string, ReactNode> = {
-  // Elevation profile — a plotted ridgeline read off an axis, survey diamond
-  // pinned to its summit. Data, surveyed like terrain.
+  // Exaggerated topo map — irregular nested contours around an off-center
+  // summit. The site's own terrain, distilled to a glyph; outer ring reveals
+  // first, working inward to the summit node.
   "data-viz": (
     <>
-      <path d="M5 4 V19 H20" pathLength={1} data-draw />
-      <polyline points="7 15 12 11 16 8" pathLength={1} data-draw />
-      <path d="M16 6.2 L17.4 8 L16 9.8 L14.6 8 Z" pathLength={1} data-draw />
+      <path
+        d="M2.8 13.4 C2.4 9 5.6 5 10.4 4 C14.6 3.1 19.6 4.4 20.6 8.4 C21.3 11.2 19.4 14.2 16 15.8 C12.6 17.4 7.8 17.6 5 15.6 C3.6 14.6 3 14 2.8 13.4 Z"
+        pathLength={1}
+        data-fade
+      />
+      <path
+        d="M6.4 12.8 C6 9.8 8.4 6.8 12 6.4 C15.2 6 18.8 7.6 18.6 10.6 C18.4 13 15.8 14.8 12.6 14.8 C9.8 14.8 7 14 6.4 12.8 Z"
+        pathLength={1}
+        data-fade
+      />
+      <path
+        d="M9.8 11.8 C9.6 9.8 11.4 8.2 13.4 8.6 C15.2 9 16.4 10.6 15.6 12.2 C14.9 13.6 12.8 14 11.2 13.2 C10.2 12.7 9.9 12.6 9.8 11.8 Z"
+        pathLength={1}
+        data-fade
+      />
+      <path d="M13 9.8 L14.3 11 L13.1 12.3 L11.8 11.1 Z" pathLength={1} data-fade />
     </>
   ),
-  // Two crop-mark corners framing a precise center node — the design canvas
-  // meeting engineering exactness, pared back.
+  // Converging to a point — a fan of lines sweeping left → right onto a single
+  // node. After a beat, the convergence point lands.
   "design-eng": (
     <>
-      <path d="M5 9 V5 H9" pathLength={1} data-draw />
-      <path d="M19 15 V19 H15" pathLength={1} data-draw />
-      <path d="M12 9 L15 12 L12 15 L9 12 Z" pathLength={1} data-draw />
+      <path d="M4 4.5 L17 11.5" pathLength={1} data-draw />
+      <path d="M4 9.2 L17 11.5" pathLength={1} data-draw />
+      <path d="M4 13.8 L17 11.5" pathLength={1} data-draw />
+      <path d="M4 18.5 L17 11.5" pathLength={1} data-draw />
+      <path d="M17 10.1 L18.4 11.5 L17 12.9 L15.6 11.5 Z" pathLength={1} data-fade />
     </>
   ),
-  // Magnifier reading a survey node — looking closely, then iterating.
+  // Finding a path through — a winding route from an origin, traced across the
+  // field like a trail over terrain, to the found point.
   research: (
     <>
-      <circle cx="10.5" cy="10.5" r="6" pathLength={1} data-draw />
-      <path d="M15 15 L20 20" pathLength={1} data-draw />
-      <path d="M10.5 8.4 L12.6 10.5 L10.5 12.6 L8.4 10.5 Z" pathLength={1} data-draw />
+      <circle cx="4.6" cy="19" r="1.5" pathLength={1} data-fade />
+      <path d="M5.6 18 C9 16 8 12 12 11.5 C16 11 15.5 7.5 18.6 6.4" pathLength={1} data-draw />
+      <path d="M17.4 6.8 L18.6 5 L20 6.5 L18.7 8.2 Z" pathLength={1} data-fade />
     </>
   ),
 };
 
-export function SkillIcon({ name, size = 34, style }: { name: string; size?: number; style?: CSSProperties }) {
+export function SkillIcon({ name, size = 42, style }: { name: string; size?: number; style?: CSSProperties }) {
   return (
     <svg
       aria-hidden
-      className="topo-icon"
+      className={`topo-icon topo-icon--${name}`}
       width={size}
       height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.3}
+      strokeWidth={0.9}
       strokeLinecap="round"
       strokeLinejoin="round"
       style={{ color: ACCENT_DIM, ...style }}
