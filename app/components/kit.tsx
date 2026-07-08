@@ -5,6 +5,7 @@
 // and a small rotated-square survey marker. No elevations, no coordinates.
 
 import type { CSSProperties, ReactNode } from "react";
+import Image, { type StaticImageData } from "next/image";
 
 export const INK = "#ebe2d4";
 export const DIM = "#a89a86";
@@ -21,86 +22,6 @@ export function Marker({ size = 8, color = ACCENT, style }: { size?: number; col
       aria-hidden
       style={{ width: size, height: size, transform: "rotate(45deg)", background: color, flex: "none", ...style }}
     />
-  );
-}
-
-/**
- * Per-skill line icons — engraved at contour weight in the same ink as the
- * background index lines, so they read as part of the map rather than dropped
- * on top of it. A small survey diamond recurs across all three as a unifying
- * node. Every path carries `data-draw` (+ a normalized `pathLength`) so the
- * stylesheet can retrace it on card hover — the strokes draw themselves in,
- * echoing the terrain's living contours.
- */
-// Two reveal techniques, picked per shape so the disclosure stays clean:
-//   data-draw  → open paths, stroked on with stroke-dashoffset (a line drawing
-//                itself end to end).
-//   data-fade  → closed shapes (contour loops, survey diamonds), faded + scaled
-//                in. Stroke-drawing a closed loop renders as an ugly growing
-//                arc, so those bloom in instead.
-const SKILL_ICONS: Record<string, ReactNode> = {
-  // Exaggerated topo map — irregular nested contours around an off-center
-  // summit. The site's own terrain, distilled to a glyph; outer ring reveals
-  // first, working inward to the summit node.
-  "data-viz": (
-    <>
-      <path
-        d="M2.8 13.4 C2.4 9 5.6 5 10.4 4 C14.6 3.1 19.6 4.4 20.6 8.4 C21.3 11.2 19.4 14.2 16 15.8 C12.6 17.4 7.8 17.6 5 15.6 C3.6 14.6 3 14 2.8 13.4 Z"
-        pathLength={1}
-        data-fade
-      />
-      <path
-        d="M6.4 12.8 C6 9.8 8.4 6.8 12 6.4 C15.2 6 18.8 7.6 18.6 10.6 C18.4 13 15.8 14.8 12.6 14.8 C9.8 14.8 7 14 6.4 12.8 Z"
-        pathLength={1}
-        data-fade
-      />
-      <path
-        d="M9.8 11.8 C9.6 9.8 11.4 8.2 13.4 8.6 C15.2 9 16.4 10.6 15.6 12.2 C14.9 13.6 12.8 14 11.2 13.2 C10.2 12.7 9.9 12.6 9.8 11.8 Z"
-        pathLength={1}
-        data-fade
-      />
-      <path d="M13 9.8 L14.3 11 L13.1 12.3 L11.8 11.1 Z" pathLength={1} data-fade />
-    </>
-  ),
-  // Converging to a point — a fan of lines sweeping left → right onto a single
-  // node. After a beat, the convergence point lands.
-  "design-eng": (
-    <>
-      <path d="M4 4.5 L17 11.5" pathLength={1} data-draw />
-      <path d="M4 9.2 L17 11.5" pathLength={1} data-draw />
-      <path d="M4 13.8 L17 11.5" pathLength={1} data-draw />
-      <path d="M4 18.5 L17 11.5" pathLength={1} data-draw />
-      <path d="M17 10.1 L18.4 11.5 L17 12.9 L15.6 11.5 Z" pathLength={1} data-fade />
-    </>
-  ),
-  // Finding a path through — a winding route from an origin, traced across the
-  // field like a trail over terrain, to the found point.
-  research: (
-    <>
-      <circle cx="4.6" cy="19" r="1.5" pathLength={1} data-fade />
-      <path d="M5.6 18 C9 16 8 12 12 11.5 C16 11 15.5 7.5 18.6 6.4" pathLength={1} data-draw />
-      <path d="M17.4 6.8 L18.6 5 L20 6.5 L18.7 8.2 Z" pathLength={1} data-fade />
-    </>
-  ),
-};
-
-export function SkillIcon({ name, size = 42, style }: { name: string; size?: number; style?: CSSProperties }) {
-  return (
-    <svg
-      aria-hidden
-      className={`topo-icon topo-icon--${name}`}
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={0.9}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      style={{ color: ACCENT_DIM, ...style }}
-    >
-      {SKILL_ICONS[name]}
-    </svg>
   );
 }
 
@@ -201,6 +122,55 @@ export function Placeholder({
         {ratio && <div style={{ color: FAINT, marginTop: 4, fontSize: 9 }}>{ratio}</div>}
       </div>
     </div>
+  );
+}
+
+/**
+ * Framed image plate. Wraps a statically-imported image with the kit's hairline
+ * border and the same 135° hatch as Placeholder, so real imagery sits in the
+ * same visual language as everything else. Feed it duotoned art (see
+ * media/uncertainty): inverted "ink on dark" encodings or light screenshots.
+ */
+export function Plate({
+  src,
+  alt,
+  caption,
+  sizes = "100vw",
+}: {
+  src: StaticImageData;
+  alt: string;
+  caption?: ReactNode;
+  sizes?: string;
+}) {
+  return (
+    <figure style={{ margin: 0 }}>
+      <div className="relative" style={{ border: `1px solid ${FAINT}`, background: "#1f1a16", overflow: "hidden" }}>
+        <Image
+          src={src}
+          alt={alt}
+          sizes={sizes}
+          placeholder="blur"
+          style={{ width: "100%", height: "auto", display: "block" }}
+        />
+        {/* Same hatch as Placeholder — quietly ties real imagery to the kit. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(135deg, transparent 0 8px, rgba(235,226,212,0.025) 8px 9px)",
+          }}
+        />
+      </div>
+      {caption && (
+        <figcaption
+          className="font-mono uppercase"
+          style={{ marginTop: 10, fontSize: 9, letterSpacing: "0.22em", color: FAINT, lineHeight: 1.5 }}
+        >
+          {caption}
+        </figcaption>
+      )}
+    </figure>
   );
 }
 

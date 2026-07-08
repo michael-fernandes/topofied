@@ -10,10 +10,19 @@ import {
   Eyebrow,
   SectionHeader,
   Placeholder,
+  Plate,
 } from "../components/kit";
+import type { StaticImageData } from "next/image";
+import cardImg from "@/media/uncertainty/card.png";
 
-const FEATURED = [
-  { id: "project-1", name: "Project 01", note: "Short placeholder description of the first major project." },
+const FEATURED: { id: string; name: string; note: string; image?: StaticImageData; alt?: string }[] = [
+  {
+    id: "uncertainty-displays-for-transit",
+    name: "Uncertainty you can act on",
+    note: "How a transit app should show what it doesn't know — and a 408-person study showing the right display makes better decisions.",
+    image: cardImg,
+    alt: "The OneBusAway interface showing a bus's arrival uncertainty as a quantile dotplot.",
+  },
   { id: "project-2", name: "Project 02", note: "Short placeholder description of the second major project." },
 ];
 
@@ -89,7 +98,11 @@ export default function WorkPage() {
                   Read the case study →
                 </div>
               </div>
-              <Placeholder height={220} label="Project hero image" ratio="≈ 16:11" />
+              {p.image ? (
+                <Plate src={p.image} alt={p.alt ?? p.name} sizes="(min-width: 768px) 45vw, 100vw" />
+              ) : (
+                <Placeholder height={220} label="Project hero image" ratio="≈ 16:11" />
+              )}
             </div>
           </Link>
         ))}

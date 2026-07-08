@@ -5,27 +5,30 @@ import {
   INK,
   DIM,
   FAINT,
-  ACCENT,
   CARD_BG,
-  SkillIcon,
   Eyebrow,
   SectionHeader,
   Placeholder,
+  Plate,
 } from "./components/kit";
+import SkillGlyph, { type GlyphKind } from "./components/skill-glyph";
+import type { StaticImageData } from "next/image";
+import cardImg from "@/media/uncertainty/card.png";
+import covidCardImg from "@/media/covid-forecasting/card.png";
 
-const SKILLS = [
+const SKILLS: { kind: GlyphKind; title: string; note: string }[] = [
   {
-    icon: "data-viz",
+    kind: "viz",
     title: "Data visualization",
     note: "Making sense of scientific, computational, and data-heavy apps — turning dense data into something you can actually read.",
   },
   {
-    icon: "design-eng",
+    kind: "tools",
     title: "Design engineering",
     note: "Taking experiences end to end — from the first sketch to shipped code — with usability driving every call.",
   },
   {
-    icon: "research",
+    kind: "hcd",
     title: "Research & prototyping",
     note: "Learning from real people, then prototyping fast — testing ideas in days, not months.",
   },
@@ -118,7 +121,9 @@ export default function LandingPage() {
               className="topo-card"
               style={{ border: `1px solid ${FAINT}`, padding: "22px 20px", background: CARD_BG }}
             >
-              <SkillIcon name={s.icon} size={42} style={{ marginBottom: 16, marginLeft: -3 }} />
+              <div style={{ marginBottom: 14, marginLeft: -1 }}>
+                <SkillGlyph kind={s.kind} size={48} />
+              </div>
               <h3 className="font-medium" style={{ fontSize: 15, letterSpacing: "-0.01em", color: INK, margin: 0 }}>
                 {s.title}
               </h3>
@@ -128,67 +133,32 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── 02 — History ── */}
-      <section
-        className="px-page"
-        style={{ paddingTop: 60, paddingBottom: 60, borderTop: `1px solid ${FAINT}` }}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-8 md:gap-[60px] items-start">
-          <Eyebrow style={{ paddingTop: 6 }}>02 — History</Eyebrow>
-          <div>
-            <p
-              style={{
-                fontSize: 16,
-                lineHeight: 1.55,
-                color: INK,
-                margin: 0,
-                letterSpacing: "-0.008em",
-                maxWidth: 640,
-                textWrap: "pretty",
-              }}
-            >
-              Placeholder for a short history. A paragraph that explains where I&apos;ve worked and
-              what kind of problems I tend to gravitate toward — written plainly, no résumé bullet points.
-            </p>
-            <p style={{ fontSize: 14, lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 600, textWrap: "pretty" }}>
-              A second placeholder paragraph for a little more texture — the throughline across the work,
-              and why it matters. The real copy goes here later.
-            </p>
-            <Link
-              href="/about"
-              className="font-mono uppercase"
-              style={{
-                display: "inline-block",
-                marginTop: 30,
-                fontSize: 11,
-                letterSpacing: "0.22em",
-                color: INK,
-                textDecoration: "none",
-                borderBottom: `1px solid ${ACCENT}`,
-                paddingBottom: 4,
-              }}
-            >
-              Read the long version →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 03 — Bigger projects ── */}
+      {/* ── 02 — Bigger projects ── */}
       <section
         className="px-page"
         style={{ paddingTop: 60, paddingBottom: 60, borderTop: `1px solid ${FAINT}` }}
       >
         <SectionHeader
-          kicker="03 — Selected work"
-          title="A couple of the bigger projects."
-          subtitle="Placeholder cards. Each links through to a full case study."
+          kicker="02 — Selected work"
+          title="A couple of public-facing data projects I'm proud of."
         />
 
-        {[
-          { id: "project-1", name: "Project 01", note: "Short placeholder description of the first major project — what it was and why it mattered." },
-          { id: "project-2", name: "Project 02", note: "Short placeholder description of the second major project. Real details land later." },
-        ].map((p, i) => (
+        {([
+          {
+            id: "uncertainty-displays-for-transit",
+            name: "Uncertainty you can act on",
+            note: "How a transit app should show what it doesn't know — and a 408-person study showing the right display makes better decisions.",
+            image: cardImg,
+            alt: "The OneBusAway interface showing a bus's arrival uncertainty as a quantile dotplot.",
+          },
+          {
+            id: "covid-forecasting",
+            name: "A forecast you could plan around",
+            note: "One of the first public forecasts of when COVID-19 would peak — and whether hospitals would have the room to meet it.",
+            image: covidCardImg,
+            alt: "A region's COVID-19 daily-deaths forecast — observed so far, projected ahead, with the model's uncertainty fanning into the future.",
+          },
+        ] as { id: string; name: string; note: string; image?: StaticImageData; alt?: string }[]).map((p, i) => (
           <Link
             key={p.id}
             href={`/work/${p.id}`}
@@ -220,7 +190,11 @@ export default function LandingPage() {
                   Read the case study →
                 </div>
               </div>
-              <Placeholder height={220} label="Project hero image" ratio="≈ 16:11" />
+              {p.image ? (
+                <Plate src={p.image} alt={p.alt ?? p.name} sizes="(min-width: 768px) 45vw, 100vw" />
+              ) : (
+                <Placeholder height={220} label="Project hero image" ratio="≈ 16:11" />
+              )}
             </div>
           </Link>
         ))}
