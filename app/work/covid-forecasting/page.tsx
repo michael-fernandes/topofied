@@ -10,19 +10,7 @@ const META = [
   { k: "Role", v: "Data viz · design eng" },
   { k: "Year", v: "2020" },
   { k: "Org", v: "IHME · UW" },
-  { k: "Reach", v: "National & global news" },
 ];
-
-// Section heading shared by the two content folds.
-const headingStyle = {
-  fontSize: "clamp(16px, 1.5vw, 20px)",
-  letterSpacing: "-0.015em",
-  lineHeight: 1.15,
-  margin: 0,
-  color: INK,
-  maxWidth: 560,
-  textWrap: "balance" as const,
-};
 
 export default function CovidForecastingPage() {
   return (
@@ -37,7 +25,7 @@ export default function CovidForecastingPage() {
           style={{ position: "absolute", left: 20, right: 20, top: 140, padding: 4 }}
           className="md:left-[60px] md:right-[60px]"
         >
-          <Eyebrow style={{ marginBottom: 16 }}>Case study</Eyebrow>
+          <Eyebrow style={{ marginBottom: 16 }}>A thing I made</Eyebrow>
           <h1
             className="font-medium m-0"
             style={{
@@ -49,11 +37,11 @@ export default function CovidForecastingPage() {
               textWrap: "balance",
             }}
           >
-            When the peak would come — weeks before it did.
+            A forecast you could plan around.
           </h1>
-          <p style={{ fontSize: 14, lineHeight: 1.55, color: DIM, marginTop: 14, maxWidth: 500, textWrap: "pretty" }}>
-            When COVID-19 hit, hospitals needed more than “cases will rise.” They needed to know
-            when, and how high — early enough to prepare.
+          <p style={{ fontSize: 14, lineHeight: 1.55, color: DIM, marginTop: 14, maxWidth: 520, textWrap: "pretty" }}>
+            One of the first public forecasts of when COVID-19 would peak — and whether hospitals
+            would have the room to meet it.
           </p>
         </div>
       </TopoHero>
@@ -63,54 +51,31 @@ export default function CovidForecastingPage() {
         <MetaRow items={META} />
       </section>
 
-      {/* ── Fold 2 — process → the forecast ── */}
+      {/* ── The gist + the forecast ── */}
       <section className="px-page" style={{ paddingTop: 40, paddingBottom: 48, borderTop: `1px solid ${FAINT}` }}>
-        <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 md:gap-[60px] items-start">
-          <Eyebrow style={{ paddingTop: 6 }}>How it was made</Eyebrow>
-          <div>
-            <h2 className="font-medium" style={headingStyle}>
-              Built in a pinch — then rebuilt every day.
-            </h2>
-            <p style={{ fontSize: 15, lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 600, textWrap: "pretty" }}>
-              In the first weeks of 2020, a forecasting model at{" "}
-              <span style={{ color: INK }}>IHME</span> — the Institute for Health Metrics and Evaluation —
-              was producing some of the first projections of where the pandemic was actually headed. My job was
-              to turn each day’s model run into something a governor, a hospital planner, or anyone at home could
-              read in seconds: projected deaths and hospital demand for every U.S. state, then every country —
-              each shown as <span style={{ color: INK }}>a range, not a single confident line</span>. We shipped
-              the first public version in a matter of weeks, then kept rebuilding it daily as the data, and the
-              world, shifted under us.
-            </p>
-          </div>
-        </div>
+        <p style={{ fontSize: 15, lineHeight: 1.6, color: DIM, marginTop: 0, maxWidth: 600, textWrap: "pretty" }}>
+          In 2020 I was at <span style={{ color: INK }}>IHME</span>, turning a daily forecasting model
+          into something anyone could read in seconds: projected deaths and hospital demand for every
+          U.S. state, then every country, each shown as a range rather than one confident number. The
+          first public version shipped in weeks. We rebuilt it every day after that.
+        </p>
         <div style={{ maxWidth: 680, margin: "28px auto 0" }}>
           <Plate
             src={forecastImg}
             alt="A region's daily-deaths forecast: the observed climb so far, a projected curve continuing past today, and a shaded uncertainty band that widens into the future toward a marked projected peak."
             sizes="(min-width: 768px) 680px, 100vw"
-            caption="Each region’s daily forecast — what we’d observed, the projection ahead, and the model’s uncertainty fanning out into the future."
+            caption="One region: what we’d seen, what we projected, and the uncertainty widening ahead."
           />
         </div>
       </section>
 
-      {/* ── Fold 3 — the finding → why it mattered ── */}
+      {/* ── Why it stuck ── */}
       <section className="px-page" style={{ paddingTop: 40, paddingBottom: 48, borderTop: `1px solid ${FAINT}` }}>
-        <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 md:gap-[60px] items-start">
-          <Eyebrow style={{ paddingTop: 6 }}>Why it mattered</Eyebrow>
-          <div>
-            <h2 className="font-medium" style={headingStyle}>
-              It put a date on the peak.
-            </h2>
-            <p style={{ fontSize: 15, lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 600, textWrap: "pretty" }}>
-              Most early dashboards counted what had already happened. This was one of the first to model the{" "}
-              <span style={{ color: INK }}>timing</span> of the curve — not just that a surge was coming, but
-              when each place would crest, and whether its hospitals would have the beds, ICU rooms, and
-              ventilators to meet it. That turned a vague dread into a planning horizon, and the projections
-              became a daily reference in <span style={{ color: INK }}>national and global news</span> — and for
-              the people making the calls.
-            </p>
-          </div>
-        </div>
+        <p style={{ fontSize: 15, lineHeight: 1.6, color: DIM, marginTop: 0, maxWidth: 600, textWrap: "pretty" }}>
+          Most dashboards counted what had already happened. This was one of the first to put a date
+          on the <span style={{ color: INK }}>peak</span>: when each place would crest, and whether
+          its hospitals would have room. It ran daily in national and global news.
+        </p>
 
         {/* The two reads people came for: the "when", and the "will we have room". */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 28 }}>
@@ -120,7 +85,7 @@ export default function CovidForecastingPage() {
             sizes="(min-width: 640px) 47vw, 100vw"
             caption={
               <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: DIM }}>
-                <Marker size={6} /> Peaks landed weeks apart by region
+                <Marker size={6} /> Peaks weeks apart by region
               </span>
             }
           />
@@ -130,16 +95,16 @@ export default function CovidForecastingPage() {
             sizes="(min-width: 640px) 47vw, 100vw"
             caption={
               <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: DIM }}>
-                <Marker size={6} /> Projected demand vs. real capacity
+                <Marker size={6} /> Projected demand vs. capacity
               </span>
             }
           />
         </div>
 
         <p style={{ fontSize: 15, lineHeight: 1.6, color: DIM, marginTop: 28, maxWidth: 600, textWrap: "pretty" }}>
-          The thread from the transit work held: a forecast people can act on isn’t the most{" "}
-          <span style={{ color: INK }}>confident</span> one — it’s the one that’s honest about when, and by how
-          much, it could be wrong.
+          Same idea as my transit work: the forecast people can act on isn’t the most{" "}
+          <span style={{ color: INK }}>confident</span> one, it’s the one that’s honest about how
+          wrong it might be.
         </p>
       </section>
 

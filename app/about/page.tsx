@@ -1,5 +1,6 @@
 import PageShell from "../components/page-shell";
 import TopoHero from "../components/topo-hero";
+import JoyDivision from "../components/joy-division";
 
 const INK = "#ebe2d4";
 const DIM = "#a89a86";
@@ -38,6 +39,9 @@ const RECOGNITION = [
 export default function AboutPage() {
   return (
     <PageShell current="/about" seed="about-hero">
+      {/* Joy Division ↔ topo field as the page backdrop (masks the shell's
+          persistent terrain); toggle button lives bottom-right. */}
+      <JoyDivision />
       <TopoHero height={580}>
         <div
           className="grid grid-cols-1 md:grid-cols-[1fr_320px] gap-8 md:gap-20"

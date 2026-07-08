@@ -1,7 +1,6 @@
 import Link from "next/link";
 import PageShell from "../components/page-shell";
 import TopoHero from "../components/topo-hero";
-import ProjectCard, { type Project } from "../components/project-card";
 import {
   INK,
   DIM,
@@ -9,13 +8,13 @@ import {
   CARD_BG,
   Eyebrow,
   SectionHeader,
-  Placeholder,
   Plate,
 } from "../components/kit";
 import type { StaticImageData } from "next/image";
 import cardImg from "@/media/uncertainty/card.png";
+import covidCardImg from "@/media/covid-forecasting/card.png";
 
-const FEATURED: { id: string; name: string; note: string; image?: StaticImageData; alt?: string }[] = [
+const FEATURED: { id: string; name: string; note: string; image: StaticImageData; alt: string }[] = [
   {
     id: "uncertainty-displays-for-transit",
     name: "Uncertainty you can act on",
@@ -23,16 +22,13 @@ const FEATURED: { id: string; name: string; note: string; image?: StaticImageDat
     image: cardImg,
     alt: "The OneBusAway interface showing a bus's arrival uncertainty as a quantile dotplot.",
   },
-  { id: "project-2", name: "Project 02", note: "Short placeholder description of the second major project." },
-];
-
-const ONE_OFFS: Project[] = [
-  { id: "project-3", name: "Project 03", year: "—", note: "Placeholder one-off.", hue: 92, sat: 18 },
-  { id: "project-4", name: "Project 04", year: "—", note: "Placeholder one-off.", hue: 24, sat: 22 },
-  { id: "project-5", name: "Project 05", year: "—", note: "Placeholder one-off.", hue: 232, sat: 18 },
-  { id: "project-6", name: "Project 06", year: "—", note: "Placeholder one-off.", hue: 190, sat: 16 },
-  { id: "project-7", name: "Project 07", year: "—", note: "Placeholder one-off.", hue: 48, sat: 18 },
-  { id: "project-8", name: "Project 08", year: "—", note: "Placeholder one-off.", hue: 320, sat: 14 },
+  {
+    id: "covid-forecasting",
+    name: "A forecast you could plan around",
+    note: "One of the first public forecasts of when COVID-19 would peak — and whether hospitals would have the room to meet it.",
+    image: covidCardImg,
+    alt: "A region's COVID-19 daily-deaths forecast — observed so far, projected ahead, with the model's uncertainty fanning into the future.",
+  },
 ];
 
 export default function WorkPage() {
@@ -62,10 +58,6 @@ export default function WorkPage() {
           >
             A field survey of the work.
           </h1>
-          <p style={{ fontSize: 14, lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 460, textWrap: "pretty" }}>
-            Placeholder description. A line or two about how the work is organized — bigger
-            case studies up top, smaller experiments below.
-          </p>
         </div>
       </TopoHero>
 
@@ -98,31 +90,10 @@ export default function WorkPage() {
                   Read the case study →
                 </div>
               </div>
-              {p.image ? (
-                <Plate src={p.image} alt={p.alt ?? p.name} sizes="(min-width: 768px) 45vw, 100vw" />
-              ) : (
-                <Placeholder height={220} label="Project hero image" ratio="≈ 16:11" />
-              )}
+              <Plate src={p.image} alt={p.alt} sizes="(min-width: 768px) 45vw, 100vw" />
             </div>
           </Link>
         ))}
-      </section>
-
-      {/* ── One-off projects ── */}
-      <section
-        className="px-page"
-        style={{ paddingTop: 40, paddingBottom: 60, borderTop: `1px solid ${FAINT}` }}
-      >
-        <SectionHeader
-          kicker="Experiments"
-          title="Smaller one-off projects."
-          subtitle="Placeholder grid of experiments, sketches, and things made on a weekend."
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {ONE_OFFS.map((p) => (
-            <ProjectCard key={p.id} project={p} />
-          ))}
-        </div>
       </section>
     </PageShell>
   );
