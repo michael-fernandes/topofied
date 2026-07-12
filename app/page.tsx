@@ -62,6 +62,9 @@ export default function LandingPage() {
             data-topo-sharpness="1.45"
             style={{ display: "inline-block", padding: "12px 32px 12px 4px" }}
           >
+            <Eyebrow rule={false} style={{ marginBottom: 10 }}>
+              ▲ Design engineer
+            </Eyebrow>
             <h1
               className="font-medium"
               style={{

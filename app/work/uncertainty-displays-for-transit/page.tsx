@@ -1,14 +1,14 @@
 import Link from "next/link";
 import PageShell from "../../components/page-shell";
 import TopoHero from "../../components/topo-hero";
-import { INK, DIM, FAINT, ACCENT, Eyebrow, MetaRow, Plate, Marker } from "../../components/kit";
+import { INK, DIM, FAINT, ACCENT, Eyebrow, MetaRow, Plate, Marker, CtaButton } from "../../components/kit";
 import interfaceImg from "@/media/uncertainty/interface.png";
 import dotImg from "@/media/uncertainty/dot.png";
 import cdfImg from "@/media/uncertainty/cdf.png";
 import controlImg from "@/media/uncertainty/control.png";
 
 const META = [
-  { k: "Role", v: "Design · prototyping · study" },
+  { k: "Role", v: "Development + Mixed-methods researcher" },
   { k: "Year", v: "2018" },
   { k: "Venue", v: "ACM CHI 2018" },
   { k: "Recognition", v: "Honourable Mention" },
@@ -28,39 +28,49 @@ const headingStyle = {
 export default function UncertaintyDisplaysPage() {
   return (
     <PageShell current="/work" seed="uncertainty-displays-for-transit">
-      <TopoHero height={360}>
+      <TopoHero height={430}>
         <div
-          data-topo-id="project"
-          data-topo-hover-id="project"
-          data-topo-important=""
-          data-topo-height="90"
-          data-topo-falloff="120"
-          style={{ position: "absolute", left: 20, right: 20, top: 140, padding: 4 }}
-          className="md:left-[60px] md:right-[60px]"
+          style={{ position: "absolute", left: 20, right: 20, top: 116, padding: 4 }}
+          className="md:left-[60px] md:right-[60px] pb-64  width-fit-content"
         >
-          <Eyebrow style={{ marginBottom: 16 }}>Case study</Eyebrow>
-          <h1
-            className="font-medium m-0"
-            style={{
-              fontSize: "clamp(18px, 1.8vw, 24px)",
-              letterSpacing: "-0.02em",
-              lineHeight: 1.05,
-              color: INK,
-              maxWidth: 640,
-              textWrap: "balance",
-            }}
+          {/* Heading block — a broad, low ridge; the CTA below is the true summit. */}
+          <div
+            data-topo-id="project"
+            data-topo-important=""
+            data-topo-height="48"
+            data-topo-falloff="110"
           >
-            Decisions when the answer is only “probably.”
-          </h1>
-          <p style={{ fontSize: 14, lineHeight: 1.55, color: DIM, marginTop: 14, maxWidth: 480, textWrap: "pretty" }}>
-            Everyday apps give you one confident number — but most real choices, like when to leave for the bus,
-            are decisions made under uncertainty.
-          </p>
+            <Eyebrow style={{ marginBottom: 16 }}>Case study</Eyebrow>
+            <h1
+              className="font-medium m-0"
+              style={{
+                fontSize: "clamp(18px, 1.8vw, 24px)",
+                letterSpacing: "-0.02em",
+                lineHeight: 1.05,
+                color: INK,
+                maxWidth: 640,
+                textWrap: "balance",
+              }}
+            >
+              Decisions when the answer is only “probably.”
+            </h1>
+            <p style={{ fontSize: 14, lineHeight: 1.55, color: DIM, marginTop: 14, maxWidth: 480, textWrap: "pretty" }}>
+              Everyday apps give you one confident number — but most real choices, like when to leave for the bus,
+              are decisions made under uncertainty.
+            </p>
+          </div>
+          <CtaButton
+            href="https://github.com/michael-fernandes/uncertainty-displays-for-transit"
+            topoId="cta-github"
+            style={{ marginTop: 26 }}
+          >
+            View Project
+          </CtaButton>
         </div>
       </TopoHero>
 
       {/* ── Heads-up data ── */}
-      <section className="px-page" style={{ paddingTop: 16, paddingBottom: 40 }}>
+      <section className="px-page" style={{ paddingTop: 24, paddingBottom: 48 }}>
         <MetaRow items={META} />
       </section>
 

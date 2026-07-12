@@ -34,6 +34,22 @@ body {
   transform: translateY(-2px);
 }
 
+/* Prominent outbound CTA — doubles as the hero terrain summit */
+.cta-btn {
+  transition: border-color 200ms ease, background-color 200ms ease, transform 200ms ease;
+}
+.cta-btn:hover {
+  border-color: hsl(24 22% 72%);
+  background-color: rgba(235, 226, 212, 0.06);
+  transform: translateY(-1px);
+}
+.cta-btn__arrow {
+  transition: transform 200ms ease;
+}
+.cta-btn:hover .cta-btn__arrow {
+  transform: translateX(3px);
+}
+
 /* Responsive horizontal page padding */
 .px-page {
   padding-left: 20px;
@@ -54,5 +70,15 @@ body {
   .mx-page {
     margin-left: 60px;
     margin-right: 60px;
+  }
+}
+
+/* MetaRow — stacks to 2-up on mobile, full row at desktop width */
+.meta-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 640px) {
+  .meta-row {
+    grid-template-columns: repeat(var(--meta-row-cols), minmax(0, 1fr));
   }
 }

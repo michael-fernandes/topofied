@@ -62,7 +62,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       </TopoHero>
 
       {/* ── Heads-up data ── */}
-      <section className="px-page" style={{ paddingTop: 16, paddingBottom: 40 }}>
+      <section className="px-page" style={{ paddingTop: 24, paddingBottom: 48 }}>
         <MetaRow items={META} />
       </section>
 

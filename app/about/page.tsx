@@ -53,16 +53,8 @@ export default function AboutPage() {
             alignItems: "start",
           }}
         >
-          <div
-            data-topo-id="bio"
-            data-topo-hover-id="bio"
-            data-topo-important=""
-            data-topo-height="80"
-            data-topo-falloff="200"
-            style={{ padding: 4 }}
-          >
+          <div data-topo-hidden="" style={{ padding: 4 }}>
             <div
-              data-topo-hidden=""
               className="font-mono uppercase flex items-center"
               style={{ fontSize: 10, letterSpacing: "0.32em", color: ACCENT, marginBottom: 24, gap: 14 }}
             >

@@ -12,12 +12,21 @@
 //     central active region. Peaks from lower lines paint over the strokes
 //     of lines above them, producing the iconic Unknown Pleasures occlusion.
 //
-// A fixed-position button toggles between modes. flubber interpolates each
-// ridge path from one form to the other for a smooth morph. Both modes share
-// the same point count per ridge, so the morph is true 1:1.
+// A fixed-position button toggles between modes. Rather than morphing one
+// ridge path into the other, the two modes are two separate, always-present
+// SVG groups (topo strokes vs. joy fill+stroke stacks); switching crossfades
+// them sequentially — topo fades out, then the joy stack fades/rises in with
+// a top-to-bottom stagger (and the reverse coming back) — since a direct
+// path morph between a marching-squares-style contour and the spiky joy
+// ridge line never read as clean.
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { interpolate } from "flubber";
+import { createPortal } from "react-dom";
+import {
+  buildField,
+  buildLevels,
+  type Peak as EnginePeak,
+} from "../lib/topo-engine";
 
 const NUM_LINES = 80;
 const SAMPLE_STEP = 5;
@@ -26,18 +35,38 @@ const PEAK_EXPONENT = 1.85;
 const JOY_DETAIL = 0.55;
 const JOY_QUIET = 0.45;
 const ACTIVE_BAND = 0.42;
-const TRANSITION_MS = 900;
 const SEED = 1337;
 
+// ── Transition timing ───────────────────────────────────────────────
+// The mode switch is sequential, not a crossfade: the outgoing mode fully
+// fades out first, then the incoming mode fades/rises in with a per-ridge
+// stagger (top ridge first, working down) so the joy stack visibly "builds".
+const FADE_OUT_MS = 420;
+const FADE_IN_MS = 620;
+const JOY_STAGGER_MS = 5;
+const JOY_ENTRANCE_OFFSET = 16;
+
+// ── Topo-mode styling — matches TerrainShell's own TopoScene call exactly
+// (numLevels/indexEvery left at TopoScene's defaults; accentHue/accentSat
+// copied from terrain-shell.tsx) so the resting state IS the site's real
+// contour engine output, not an approximation of it.
+const ACCENT_HUE = 24;
+const ACCENT_SAT = 22;
+const TOPO_NUM_LEVELS = 28;
+const TOPO_INDEX_EVERY = 4;
+
+// Joy-mode stroke: uniform ink, full opacity (the Unknown Pleasures look).
+const JOY_STROKE = "#ebe2d4";
+const JOY_WIDTH = 0.9;
+// Scroll thresholds (hysteresis): morph to joy once the page is scrolled past
+// ENTER, morph back to topo only when returning above EXIT. The gap prevents
+// flip-flopping when the user hovers around a single boundary.
+const SCROLL_ENTER_JOY = 140;
+const SCROLL_EXIT_JOY = 60;
+
 type Ridge = {
-  topD_topo: string;
   topD_joy: string;
-  fillD_topo: string;
   fillD_joy: string;
-  // Per-ridge stroke opacity for topo mode: central (active-band) ridges stay
-  // crisp; peripheral flat ridges are dimmed so the busy edges recede behind
-  // page content. Joy mode always paints strokes at full opacity.
-  strokeOpacityTopo: number;
 };
 
 // ── Noise ────────────────────────────────────────────────────────────
@@ -92,13 +121,22 @@ function buildPeaks(W: number, H: number): Peak[] {
   const cy = H * 0.5;
   const R = Math.min(W, H);
   return [
-    { x: cx - W * 0.06, y: cy - H * 0.04, h: 1.0, r: R * 0.16 },
-    { x: cx + W * 0.09, y: cy + H * 0.05, h: 0.78, r: R * 0.13 },
-    { x: cx + W * 0.01, y: cy + H * 0.10, h: 0.62, r: R * 0.11 },
-    { x: cx - W * 0.11, y: cy + H * 0.08, h: 0.55, r: R * 0.1 },
-    { x: cx + W * 0.04, y: cy - H * 0.10, h: 0.46, r: R * 0.09 },
+    { x: cx - W * 0.06, y: cy - H * 0.04, h: 0.62, r: R * 0.18 },
+    { x: cx + W * 0.09, y: cy + H * 0.05, h: 0.58, r: R * 0.15 },
+    { x: cx + W * 0.01, y: cy + H * 0.10, h: 0.5, r: R * 0.13 },
+    { x: cx - W * 0.11, y: cy + H * 0.08, h: 0.46, r: R * 0.12 },
+    { x: cx + W * 0.04, y: cy - H * 0.10, h: 0.4, r: R * 0.11 },
   ];
 }
+
+// Domain warp (same recipe as the site's topo engine): perturb (x,y) before
+// the peak-distance lookup so contour rings read as organic terrain — ridges,
+// spurs, saddles — instead of clean concentric ovals. Two octaves: a
+// large-scale bend plus a smaller-scale crinkle.
+const WARP_S1 = 1 / 280;
+const WARP_A1 = 24;
+const WARP_S2 = 1 / 110;
+const WARP_A2 = 8;
 
 function elevation(
   x: number,
@@ -106,10 +144,18 @@ function elevation(
   peaks: Peak[],
   seed: number,
 ): number {
+  const wx =
+    x +
+    (vnoise(x * WARP_S1, y * WARP_S1, seed + 7) - 0.5) * 2 * WARP_A1 +
+    (vnoise(x * WARP_S2, y * WARP_S2, seed + 9) - 0.5) * 2 * WARP_A2;
+  const wy =
+    y +
+    (vnoise(x * WARP_S1, y * WARP_S1, seed + 8) - 0.5) * 2 * WARP_A1 +
+    (vnoise(x * WARP_S2, y * WARP_S2, seed + 11) - 0.5) * 2 * WARP_A2;
   let v = 0;
   for (const p of peaks) {
-    const dx = (x - p.x) / p.r;
-    const dy = (y - p.y) / p.r;
+    const dx = (wx - p.x) / p.r;
+    const dy = (wy - p.y) / p.r;
     v += p.h * Math.exp(-(dx * dx + dy * dy) * 1.6);
   }
   // Gentle ambient relief so even quiet regions have terrain.
@@ -122,72 +168,41 @@ function activeness(y: number, H: number): number {
   return Math.exp(-t * t);
 }
 
-// Continuity-constrained iso-curve trace. For column x, find the y whose field
-// elevation is closest to `level`, but search only a *small* window around the
-// previous column's traced y (`anchor`) — clamped so the line never strays more
-// than ±maxDev from the ridge's flat baseline y0. Following the contour from the
-// prior column, rather than re-searching a wide window each column, is what makes
-// adjacent rings trace smooth concentric loops near peaks and stay as gentle
-// horizontals in low-relief areas — instead of teleporting between equally-close
-// y's and jittering into blocky vertical noise wherever the field is nearly flat.
-function traceIso(
-  x: number,
-  anchor: number,
-  y0: number,
-  level: number,
-  peaks: Peak[],
-  seed: number,
-  localWin: number,
-  maxDev: number,
-): number {
-  const lo = Math.max(anchor - localWin, y0 - maxDev);
-  const hi = Math.min(anchor + localWin, y0 + maxDev);
-  let bestY = anchor;
-  let bestDiff = Math.abs(elevation(x, anchor, peaks, seed) - level);
-  for (let y = lo; y <= hi; y += 1) {
-    const diff = Math.abs(elevation(x, y, peaks, seed) - level);
-    if (diff < bestDiff) {
-      bestDiff = diff;
-      bestY = y;
-    }
-  }
-  return bestY;
+// Translates the joy field's hand-placed gaussian peaks into the real topo
+// engine's rectangular-footprint Peak format (bbox + falloff + sharpness),
+// so topo mode can run through the site's actual buildField/buildLevels
+// marching-squares pipeline instead of approximating it — a hand-rolled
+// per-scanline "nearest matching elevation" trace can't guarantee lines stay
+// smooth or non-crossing the way a real isocontour does, which is why that
+// approach read as chaotic instead of like the home page's contours.
+function buildEnginePeaks(peaks: Peak[]): EnginePeak[] {
+  return peaks.map((p) => ({
+    x: p.x - p.r,
+    y: p.y - p.r,
+    w: p.r * 2,
+    h: p.r * 2,
+    height: p.h * 100,
+    falloff: p.r * 0.55,
+    sharpness: 1.6,
+  }));
 }
 
-// ── Ridge geometry ───────────────────────────────────────────────────
+// ── Ridge geometry (joy mode only — topo mode goes through the real engine) ─
 function buildRidges(W: number, H: number, seed: number): Ridge[] {
   const peaks = buildPeaks(W, H);
   const samples = Math.max(2, Math.ceil(W / SAMPLE_STEP) + 1);
   const spacing = H / NUM_LINES;
-  const isoWindow = Math.max(spacing * 5, 36);
-  // Per-column follow window: how far the traced contour may move between
-  // adjacent 5px columns. Wide enough to climb steep loops near summits, tight
-  // enough to keep flat regions smooth rather than snapping across the field.
-  const localWin = Math.max(spacing, 10);
   const ridges: Ridge[] = [];
 
   for (let i = 0; i < NUM_LINES; i++) {
     const y0 = spacing * (i + 0.5);
     const act = activeness(y0, H);
-    // Each ridge's own iso-elevation level — sampled at the canvas mid-x
-    // so peak-region ridges get high levels (small loops near summits) and
-    // peripheral ridges get near-zero levels (gentle wandering horizontals).
-    const ridgeLevel = elevation(W * 0.5, y0, peaks, seed);
 
-    const topoPts: [number, number][] = new Array(samples);
     const joyPts: [number, number][] = new Array(samples);
-
-    // Seed the contour trace at the flat baseline, then follow it column to
-    // column so the line stays continuous instead of re-searching each column.
-    let prevTopoY = y0;
 
     for (let s = 0; s < samples; s++) {
       const x = Math.min(W, s * SAMPLE_STEP);
       const e = elevation(x, y0, peaks, seed);
-
-      const topoY = traceIso(x, prevTopoY, y0, ridgeLevel, peaks, seed, localWin, isoWindow);
-      prevTopoY = topoY;
-      topoPts[s] = [x, topoY];
 
       // Joy: big peak amplitude with jagged high-freq detail in active band.
       const peakAmp = Math.pow(Math.max(0, e), PEAK_EXPONENT) * PEAK_HEIGHT;
@@ -206,12 +221,8 @@ function buildRidges(W: number, H: number, seed: number): Ridge[] {
     }
 
     ridges.push({
-      topD_topo: pointsToOpenPath(topoPts),
       topD_joy: pointsToOpenPath(joyPts),
-      fillD_topo: pointsToFillPath(topoPts, y0 + spacing * 0.55),
       fillD_joy: pointsToFillPath(joyPts, y0 + spacing * 0.55),
-      // Bright in the central active band, fading out toward the flat edges.
-      strokeOpacityTopo: 0.32 + 0.68 * act,
     });
   }
   return ridges;
@@ -247,17 +258,31 @@ type Mode = "topo" | "joy";
 
 export default function JoyDivision() {
   const svgRef = useRef<SVGSVGElement>(null);
-  const fillsRef = useRef<SVGPathElement[]>([]);
-  const topsRef = useRef<SVGPathElement[]>([]);
+  const topoGroupRef = useRef<SVGGElement | null>(null);
+  const joyGroupRef = useRef<SVGGElement | null>(null);
+  const joyRidgeGroupsRef = useRef<SVGGElement[]>([]);
   const ridgesRef = useRef<Ridge[]>([]);
   const modeRef = useRef<Mode>("topo");
-  const rafRef = useRef(0);
+  const fadeTimeoutRef = useRef<number | undefined>(undefined);
 
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [mode, setMode] = useState<Mode>("topo");
+  // This component is portaled to document.body (see the return below) so its
+  // negative z-index actually escapes below the site's persistent background
+  // instead of being confined to TerrainShell's own `relative z-10` stacking
+  // context, which is where it's mounted in the tree. Portalling only after
+  // mount avoids touching `document` during SSR.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   // Resize observer keeps the field fitted to the viewport.
   useLayoutEffect(() => {
+    // If the page loads already scrolled (reload mid-page, back-nav), start
+    // in joy so the first paint matches the scroll-driven mode.
+    if (window.scrollY > SCROLL_ENTER_JOY) {
+      modeRef.current = "joy";
+      setMode("joy");
+    }
     const measure = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
@@ -268,158 +293,220 @@ export default function JoyDivision() {
     return () => window.removeEventListener("resize", measure);
   }, []);
 
-  // Build/refresh ridges and SVG path nodes whenever size changes.
+  // Build/refresh ridges and SVG nodes whenever size changes. Topo and joy
+  // are two separate always-present groups (not one path morphing into the
+  // other) so the mode switch can crossfade/stagger them independently.
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg || size.w === 0 || size.h === 0) return;
+    const svgNS = "http://www.w3.org/2000/svg";
 
     const ridges = buildRidges(size.w, size.h, SEED);
     ridgesRef.current = ridges;
 
-    // Reset the SVG to a known state.
     while (svg.firstChild) svg.removeChild(svg.firstChild);
-    const fills: SVGPathElement[] = [];
-    const tops: SVGPathElement[] = [];
-    for (let i = 0; i < ridges.length; i++) {
-      // Painter's order: append fill then stroke per ridge, top-to-bottom.
-      // Lower (later) ridges' fills overpaint upper ridges' strokes wherever
-      // peaks rise — this is the Unknown Pleasures occlusion effect.
-      const fill = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "path",
-      );
+
+    // Topo mode: the real engine, same params TerrainShell uses for the
+    // site's persistent background, so this reads as the same contour map.
+    const enginePeaks = buildEnginePeaks(buildPeaks(size.w, size.h));
+    const fr = buildField({
+      width: size.w,
+      height: size.h,
+      peaks: enginePeaks,
+      seed: SEED,
+      res: 5,
+    });
+    const levels = fr
+      ? buildLevels(fr, {
+          numLevels: TOPO_NUM_LEVELS,
+          indexEvery: TOPO_INDEX_EVERY,
+          accentHue: ACCENT_HUE,
+          accentSat: ACCENT_SAT,
+          theme: "dark",
+        })
+      : [];
+
+    const topoGroup = document.createElementNS(svgNS, "g");
+    svg.appendChild(topoGroup);
+    for (const lvl of levels) {
+      const p = document.createElementNS(svgNS, "path");
+      p.setAttribute("fill", "none");
+      p.setAttribute("d", lvl.d);
+      p.setAttribute("stroke", lvl.stroke);
+      p.setAttribute("stroke-width", String(lvl.strokeWidth));
+      topoGroup.appendChild(p);
+    }
+
+    const joyGroup = document.createElementNS(svgNS, "g");
+    svg.appendChild(joyGroup);
+    const joyRidgeGroups: SVGGElement[] = [];
+    for (const r of ridges) {
+      // Each ridge's fill+stroke share one <g> so the entrance stagger moves
+      // them as a unit. Painter's order (fill then stroke, top-to-bottom)
+      // keeps the Unknown Pleasures occlusion: lower ridges' fills overpaint
+      // the strokes of ridges above them.
+      const ridgeG = document.createElementNS(svgNS, "g");
+      const fill = document.createElementNS(svgNS, "path");
       fill.setAttribute("fill", "#1f1a16");
       fill.setAttribute("stroke", "none");
-      svg.appendChild(fill);
-      fills.push(fill);
+      fill.setAttribute("d", r.fillD_joy);
+      ridgeG.appendChild(fill);
 
-      const top = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "path",
-      );
+      const top = document.createElementNS(svgNS, "path");
       top.setAttribute("fill", "none");
-      top.setAttribute("stroke", "#ebe2d4");
-      top.setAttribute("stroke-width", "0.9");
       top.setAttribute("stroke-linejoin", "round");
       top.setAttribute("stroke-linecap", "round");
       top.setAttribute("vector-effect", "non-scaling-stroke");
-      svg.appendChild(top);
-      tops.push(top);
+      top.setAttribute("d", r.topD_joy);
+      top.setAttribute("stroke", JOY_STROKE);
+      top.setAttribute("stroke-width", String(JOY_WIDTH));
+      ridgeG.appendChild(top);
+
+      joyGroup.appendChild(ridgeG);
+      joyRidgeGroups.push(ridgeG);
     }
-    fillsRef.current = fills;
-    topsRef.current = tops;
+
+    topoGroupRef.current = topoGroup;
+    joyGroupRef.current = joyGroup;
+    joyRidgeGroupsRef.current = joyRidgeGroups;
 
     // Snap to current resting mode without animation.
     paintResting(modeRef.current);
   }, [size.w, size.h]);
 
   const paintResting = (m: Mode) => {
-    const ridges = ridgesRef.current;
-    const fills = fillsRef.current;
-    const tops = topsRef.current;
-    const fillOpacity = m === "joy" ? "1" : "0";
-    for (let i = 0; i < ridges.length; i++) {
-      fills[i].setAttribute(
-        "d",
-        m === "joy" ? ridges[i].fillD_joy : ridges[i].fillD_topo,
-      );
-      fills[i].setAttribute("fill-opacity", fillOpacity);
-      tops[i].setAttribute(
-        "d",
-        m === "joy" ? ridges[i].topD_joy : ridges[i].topD_topo,
-      );
-      tops[i].setAttribute(
-        "stroke-opacity",
-        m === "joy" ? "1" : ridges[i].strokeOpacityTopo.toFixed(3),
-      );
+    const topoGroup = topoGroupRef.current;
+    const joyGroup = joyGroupRef.current;
+    const joyRidgeGroups = joyRidgeGroupsRef.current;
+    if (!topoGroup || !joyGroup) return;
+    topoGroup.style.transition = "none";
+    joyGroup.style.transition = "none";
+    topoGroup.style.opacity = m === "topo" ? "1" : "0";
+    joyGroup.style.opacity = m === "joy" ? "1" : "0";
+    for (const g of joyRidgeGroups) {
+      g.style.transition = "none";
+      g.style.opacity = "1";
+      g.style.transform = "translateY(0px)";
+    }
+  };
+
+  // Sequential fade: the outgoing mode fades out fully, then the incoming
+  // mode fades/rises in with a per-ridge stagger (a top-to-bottom sweep for
+  // joy's entrance; the reverse, bottom-to-top, when it recedes back to topo).
+  const morphTo = (next: Mode) => {
+    if (!topoGroupRef.current || !joyGroupRef.current) return;
+    if (modeRef.current === next) return;
+    modeRef.current = next;
+    setMode(next);
+
+    if (fadeTimeoutRef.current !== undefined) {
+      window.clearTimeout(fadeTimeoutRef.current);
+      fadeTimeoutRef.current = undefined;
+    }
+
+    const topoGroup = topoGroupRef.current;
+    const joyGroup = joyGroupRef.current;
+    const joyRidgeGroups = joyRidgeGroupsRef.current;
+
+    if (next === "joy") {
+      topoGroup.style.transition = `opacity ${FADE_OUT_MS}ms ease`;
+      topoGroup.style.opacity = "0";
+      fadeTimeoutRef.current = window.setTimeout(() => {
+        for (const g of joyRidgeGroups) {
+          g.style.transition = "none";
+          g.style.opacity = "0";
+          g.style.transform = `translateY(${JOY_ENTRANCE_OFFSET}px)`;
+        }
+        joyGroup.style.transition = "none";
+        joyGroup.style.opacity = "1";
+        // Force a reflow so the pre-entrance styles commit before the
+        // staggered transition below is applied.
+        void joyGroup.getBoundingClientRect();
+        requestAnimationFrame(() => {
+          joyRidgeGroups.forEach((g, i) => {
+            const delay = i * JOY_STAGGER_MS;
+            g.style.transition = `opacity ${FADE_IN_MS}ms ease ${delay}ms, transform ${FADE_IN_MS}ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`;
+            g.style.opacity = "1";
+            g.style.transform = "translateY(0px)";
+          });
+        });
+      }, FADE_OUT_MS);
+    } else {
+      joyRidgeGroups.forEach((g, i) => {
+        const delay = (joyRidgeGroups.length - 1 - i) * JOY_STAGGER_MS;
+        g.style.transition = `opacity ${FADE_OUT_MS}ms ease ${delay}ms, transform ${FADE_OUT_MS}ms ease ${delay}ms`;
+        g.style.opacity = "0";
+        g.style.transform = `translateY(${-JOY_ENTRANCE_OFFSET}px)`;
+      });
+      const joyExitMs = FADE_OUT_MS + joyRidgeGroups.length * JOY_STAGGER_MS;
+      fadeTimeoutRef.current = window.setTimeout(() => {
+        joyGroup.style.transition = "none";
+        joyGroup.style.opacity = "0";
+        topoGroup.style.transition = `opacity ${FADE_IN_MS}ms ease`;
+        topoGroup.style.opacity = "1";
+      }, joyExitMs);
     }
   };
 
   const toggle = () => {
-    const ridges = ridgesRef.current;
-    const fills = fillsRef.current;
-    const tops = topsRef.current;
-    if (!ridges.length) return;
+    morphTo(modeRef.current === "topo" ? "joy" : "topo");
+  };
 
-    const next: Mode = modeRef.current === "topo" ? "joy" : "topo";
-    modeRef.current = next;
-    setMode(next);
-
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-
-    const interps = ridges.map((r, i) => {
-      const fromFill = fills[i].getAttribute("d") || r.fillD_topo;
-      const toFill = next === "joy" ? r.fillD_joy : r.fillD_topo;
-      const fromTop = tops[i].getAttribute("d") || r.topD_topo;
-      const toTop = next === "joy" ? r.topD_joy : r.topD_topo;
-      // Open ridge path stroked → flubber treats as ring; that's fine since
-      // both endpoints sit on the same baseline x-extents in either mode.
-      let fillI: (t: number) => string;
-      let topI: (t: number) => string;
-      try {
-        fillI = interpolate(fromFill, toFill, { maxSegmentLength: 18 });
-      } catch {
-        fillI = (t) => (t < 0.5 ? fromFill : toFill);
-      }
-      try {
-        topI = interpolate(fromTop, toTop, { maxSegmentLength: 18 });
-      } catch {
-        topI = (t) => (t < 0.5 ? fromTop : toTop);
-      }
-      // Stroke opacity eases alongside the morph: dimmed peripheral topo lines
-      // brighten to full as they rise into the Unknown Pleasures ridge stack.
-      const fromSO = parseFloat(tops[i].getAttribute("stroke-opacity") || "1");
-      const toSO = next === "joy" ? 1 : r.strokeOpacityTopo;
-      return { fillI, topI, fromSO, toSO };
-    });
-
-    const start = performance.now();
-    const tick = () => {
-      const raw = Math.min(1, (performance.now() - start) / TRANSITION_MS);
-      // easeInOutCubic
-      const t =
-        raw < 0.5 ? 4 * raw * raw * raw : 1 - Math.pow(-2 * raw + 2, 3) / 2;
-      // Fade fills 0↔1 alongside the path morph: at rest in topo, fills are
-      // invisible so contour iso-curves read clearly; in joy, fills are solid
-      // so peaks occlude the strokes of upper ridges.
-      const targetOpacity = next === "joy" ? t : 1 - t;
-      const opStr = targetOpacity.toFixed(3);
-      for (let i = 0; i < interps.length; i++) {
-        fills[i].setAttribute("d", interps[i].fillI(t));
-        fills[i].setAttribute("fill-opacity", opStr);
-        tops[i].setAttribute("d", interps[i].topI(t));
-        const so = interps[i].fromSO + (interps[i].toSO - interps[i].fromSO) * t;
-        tops[i].setAttribute("stroke-opacity", so.toFixed(3));
-      }
-      if (raw < 1) {
-        rafRef.current = requestAnimationFrame(tick);
-      } else {
-        rafRef.current = 0;
-        paintResting(modeRef.current);
+  // Scroll drives the mode: topo at the top of the page, joy once scrolled.
+  // Zone changes (with hysteresis) trigger the morph, so a manual button
+  // toggle isn't fought until the user actually crosses a boundary again.
+  useEffect(() => {
+    let zone: "top" | "scrolled" =
+      window.scrollY > SCROLL_ENTER_JOY ? "scrolled" : "top";
+    const onScroll = () => {
+      const y = window.scrollY;
+      const nextZone: "top" | "scrolled" =
+        zone === "scrolled"
+          ? y < SCROLL_EXIT_JOY
+            ? "top"
+            : "scrolled"
+          : y > SCROLL_ENTER_JOY
+            ? "scrolled"
+            : "top";
+      if (nextZone !== zone) {
+        zone = nextZone;
+        morphTo(zone === "scrolled" ? "joy" : "topo");
       }
     };
-    rafRef.current = requestAnimationFrame(tick);
-  };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+    // morphTo only touches refs, so the mount-time closure stays valid.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (fadeTimeoutRef.current !== undefined) {
+        window.clearTimeout(fadeTimeoutRef.current);
+      }
     };
   }, []);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <>
-      {/* Opaque base backdrop — masks whatever background sits behind (e.g. the
-          app's persistent terrain contours) so this reads as a clean full-bleed
-          field rather than overlapping two line systems. Sits at the very back
-          of the local stacking context. */}
+      {/* Opaque base backdrop — masks the app's persistent terrain background
+          (TopoScene's own SVG, which has an explicit z-index:0). A negative
+          z-index does NOT paint behind that: per CSS stacking rules,
+          z-index:0 content always paints after (in front of) negative
+          z-index siblings, regardless of DOM nesting. So this needs
+          z-index:1 — just above TopoScene's 0 — to actually mask it, while
+          staying safely below TerrainShell's own `relative z-10` box (which
+          this is portaled OUT of, to document.body, so it no longer competes
+          with the page's own text/content inside that box). */}
       <div
         style={{
           position: "fixed",
           inset: 0,
           background: "#1f1a16",
           pointerEvents: "none",
-          zIndex: -1,
+          zIndex: 1,
         }}
       />
       <svg
@@ -433,7 +520,7 @@ export default function JoyDivision() {
           width: "100vw",
           height: "100vh",
           pointerEvents: "none",
-          zIndex: -1,
+          zIndex: 1,
         }}
       />
       <button
@@ -443,6 +530,7 @@ export default function JoyDivision() {
       >
         {mode === "topo" ? "Unknown Pleasures" : "Topo Map"}
       </button>
-    </>
+    </>,
+    document.body,
   );
 }

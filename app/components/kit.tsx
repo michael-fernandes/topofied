@@ -152,13 +152,14 @@ export function Plate({
           placeholder="blur"
           style={{ width: "100%", height: "auto", display: "block" }}
         />
-        {/* Same hatch as Placeholder — quietly ties real imagery to the kit. */}
+        {/* Same hatch as Placeholder — quietly ties real imagery to the kit.
+            Kept very faint so it reads as texture, not visible stripes. */}
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(135deg, transparent 0 8px, rgba(235,226,212,0.025) 8px 9px)",
+              "repeating-linear-gradient(135deg, transparent 0 8px, rgba(235,226,212,0.01) 8px 9px)",
           }}
         />
       </div>
@@ -174,25 +175,77 @@ export function Plate({
   );
 }
 
+/**
+ * Prominent outbound call-to-action — and the hero's terrain summit.
+ *
+ * It carries data-topo-important with a tall, broad elevation, so the contour
+ * rings "max" (crown) around the button rather than the heading; hovering it
+ * swells that summit via data-topo-hover-id. Place it as a sibling of the
+ * heading block (NOT inside it) so the important heading wrapper doesn't
+ * absorb it — otherwise it won't register as its own peak.
+ */
+export function CtaButton({
+  href,
+  children,
+  topoId = "cta",
+  style,
+}: {
+  href: string;
+  children: ReactNode;
+  topoId?: string;
+  style?: CSSProperties;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-topo-important=""
+      data-topo-id={topoId}
+      data-topo-hover-id={topoId}
+      data-topo-height="120"
+      data-topo-falloff="140"
+      data-topo-sharpness="1.3"
+      className="cta-btn font-mono uppercase inline-flex items-center pt-24"
+      style={{
+        gap: 12,
+        fontSize: 11,
+        letterSpacing: "0.22em",
+        color: INK,
+        textDecoration: "none",
+        border: `1px solid ${ACCENT}`,
+        background: "rgba(235,226,212,0.03)",
+        padding: "13px 22px",
+        ...style,
+      }}
+    >
+      {children}
+      <span aria-hidden className="cta-btn__arrow" style={{ color: ACCENT }}>
+        →
+      </span>
+    </a>
+  );
+}
+
 /** Quiet key/value strip used for project "heads-up" metadata. */
 export function MetaRow({ items }: { items: { k: string; v: string }[] }) {
   return (
     <dl
-      className="grid"
+      className="grid meta-row"
       style={{
-        gridTemplateColumns: `repeat(${items.length}, minmax(0,1fr))`,
         gap: 1,
         background: FAINT,
         border: `1px solid ${FAINT}`,
         margin: 0,
+        ["--meta-row-cols" as string]: items.length,
       }}
     >
       {items.map((it) => (
-        <div key={it.k} style={{ background: "#1f1a16", padding: "16px 18px" }}>
-          <dt className="font-mono uppercase" style={{ fontSize: 9, letterSpacing: "0.22em", color: FAINT, marginBottom: 8 }}>
+        <div key={it.k} style={{ background: "#1f1a16", padding: "20px 22px" }}>
+          <dt className="font-mono uppercase" style={{ fontSize: 10, letterSpacing: "0.22em", color: FAINT, marginBottom: 10 }}>
             {it.k}
           </dt>
-          <dd className="m-0" style={{ fontSize: 14, color: INK, letterSpacing: "-0.005em" }}>
+          <dd className="m-0" style={{ fontSize: 16, color: INK, letterSpacing: "-0.005em" }}>
             {it.v}
           </dd>
         </div>
