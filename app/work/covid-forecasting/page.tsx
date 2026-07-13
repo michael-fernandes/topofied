@@ -1,7 +1,7 @@
 import Link from "next/link";
 import PageShell from "../../components/page-shell";
 import TopoHero from "../../components/topo-hero";
-import { INK, DIM, FAINT, ACCENT, Eyebrow, MetaRow, Plate, Marker, CtaButton } from "../../components/kit";
+import { INK, DIM, FAINT, ACCENT, Eyebrow, MetaRow, Plate, Marker } from "../../components/kit";
 import forecastImg from "@/media/covid-forecasting/forecast.png";
 import timingImg from "@/media/covid-forecasting/timing.png";
 import capacityImg from "@/media/covid-forecasting/capacity.png";
@@ -15,44 +15,34 @@ const META = [
 export default function CovidForecastingPage() {
   return (
     <PageShell current="/work" seed="covid-forecasting">
-      <TopoHero height={430}>
+      <TopoHero height={360}>
         <div
-          style={{ position: "absolute", left: 20, right: 20, top: 116, padding: 4 }}
+          data-topo-id="project"
+          data-topo-hover-id="project"
+          data-topo-important=""
+          data-topo-height="90"
+          data-topo-falloff="120"
+          style={{ position: "absolute", left: 20, right: 20, top: 140, padding: 4 }}
           className="md:left-[60px] md:right-[60px]"
         >
-          {/* Heading block — a broad, low ridge; the CTA below is the true summit. */}
-          <div
-            data-topo-id="project"
-            data-topo-important=""
-            data-topo-height="48"
-            data-topo-falloff="110"
+          <Eyebrow style={{ marginBottom: 16 }}>A thing I made</Eyebrow>
+          <h1
+            className="font-medium m-0"
+            style={{
+              fontSize: "clamp(18px, 1.8vw, 24px)",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.05,
+              color: INK,
+              maxWidth: 640,
+              textWrap: "balance",
+            }}
           >
-            <Eyebrow style={{ marginBottom: 16 }}>A thing I made</Eyebrow>
-            <h1
-              className="font-medium m-0"
-              style={{
-                fontSize: "clamp(18px, 1.8vw, 24px)",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.05,
-                color: INK,
-                maxWidth: 640,
-                textWrap: "balance",
-              }}
-            >
-              A forecast you could plan around.
-            </h1>
-            <p style={{ fontSize: 14, lineHeight: 1.55, color: DIM, marginTop: 14, maxWidth: 520, textWrap: "pretty" }}>
-              One of the first public forecasts of when COVID-19 would peak — and whether hospitals
-              would have the room to meet it.
-            </p>
-          </div>
-          <CtaButton
-            href="https://covid19.healthdata.org/"
-            topoId="cta-ihme"
-            style={{ marginTop: 26 }}
-          >
-            Explore on IHME
-          </CtaButton>
+            A forecast you could plan around.
+          </h1>
+          <p style={{ fontSize: 14, lineHeight: 1.55, color: DIM, marginTop: 14, maxWidth: 520, textWrap: "pretty" }}>
+            One of the first public forecasts of when COVID-19 would peak — and whether hospitals
+            would have the room to meet it.
+          </p>
         </div>
       </TopoHero>
 
