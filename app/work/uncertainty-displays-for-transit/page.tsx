@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import PageShell from "../../components/page-shell";
 import TopoHero from "../../components/topo-hero";
@@ -6,6 +7,20 @@ import interfaceImg from "@/media/uncertainty/interface.png";
 import dotImg from "@/media/uncertainty/dot.png";
 import cdfImg from "@/media/uncertainty/cdf.png";
 import controlImg from "@/media/uncertainty/control.png";
+
+export const metadata: Metadata = {
+  title: "Uncertainty You Can Act On",
+  description:
+    "A CHI 2018 study (Honourable Mention) on how a transit app should show what it doesn't know — a 408-person study showing the right uncertainty display makes better decisions.",
+  alternates: { canonical: "/work/uncertainty-displays-for-transit" },
+  openGraph: {
+    title: "Uncertainty you can act on — Michael Fernandes",
+    description:
+      "How a transit app should show what it doesn't know — and a 408-person study showing the right display makes better decisions.",
+    url: "/work/uncertainty-displays-for-transit",
+    type: "article",
+  },
+};
 
 const META = [
   { k: "Role", v: "Development + Mixed-methods researcher" },

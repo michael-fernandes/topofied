@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import PageShell from "../components/page-shell";
 import TopoHero from "../components/topo-hero";
@@ -14,6 +15,19 @@ import {
 import type { StaticImageData } from "next/image";
 import cardImg from "@/media/uncertainty/card.png";
 import covidCardImg from "@/media/covid-forecasting/card.png";
+
+export const metadata: Metadata = {
+  title: "Work",
+  description:
+    "Case studies and small projects by Michael Fernandes — an IHME COVID-19 forecast dashboard, a CHI-published uncertainty display for transit, and experiments in data visualization.",
+  alternates: { canonical: "/work" },
+  openGraph: {
+    title: "Work — Michael Fernandes",
+    description:
+      "A field survey of the work: the IHME COVID-19 forecast dashboard, a CHI-published uncertainty display for transit, and smaller dataviz experiments.",
+    url: "/work",
+  },
+};
 
 const SMALL_PROJECTS: { title: string; description: string; link: string; external?: boolean; video?: string }[] = [
   {

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import PageShell from "../../components/page-shell";
 import TopoHero from "../../components/topo-hero";
@@ -5,6 +6,20 @@ import { INK, DIM, FAINT, ACCENT, Eyebrow, MetaRow, Plate, Marker } from "../../
 import forecastImg from "@/media/covid-forecasting/forecast.png";
 import timingImg from "@/media/covid-forecasting/timing.png";
 import capacityImg from "@/media/covid-forecasting/capacity.png";
+
+export const metadata: Metadata = {
+  title: "A Forecast You Could Plan Around",
+  description:
+    "How Michael Fernandes helped build one of the first public forecasts of when COVID-19 would peak, and whether hospitals would have the room to meet it — used by millions, briefed by the White House.",
+  alternates: { canonical: "/work/covid-forecasting" },
+  openGraph: {
+    title: "A forecast you could plan around — Michael Fernandes",
+    description:
+      "One of the first public forecasts of when COVID-19 would peak — and whether hospitals would have the room to meet it.",
+    url: "/work/covid-forecasting",
+    type: "article",
+  },
+};
 
 const META = [
   { k: "Role", v: "Data viz · design eng" },

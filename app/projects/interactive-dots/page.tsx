@@ -1,8 +1,21 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import PageShell from "../../components/page-shell";
 import TopoHero from "../../components/topo-hero";
 import { INK, DIM, FAINT, ACCENT, Eyebrow } from "../../components/kit";
 import InteractiveDots from "../../components/interactive-dots";
+
+export const metadata: Metadata = {
+  title: "Simulation",
+  description:
+    "A force-simulated cluster of dots that scatters away from the pointer, built with d3 and ported from an Observable collision-detection example.",
+  alternates: { canonical: "/projects/interactive-dots" },
+  openGraph: {
+    title: "Simulation — Michael Fernandes",
+    description: "A force-simulated cluster of dots that scatters away from the pointer.",
+    url: "/projects/interactive-dots",
+  },
+};
 
 export default function InteractiveDotsPage() {
   return (

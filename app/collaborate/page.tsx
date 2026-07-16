@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import PageShell from "../components/page-shell";
 import TopoHero from "../components/topo-hero";
 import {
@@ -9,6 +10,19 @@ import {
   Marker,
   Eyebrow,
 } from "../components/kit";
+
+export const metadata: Metadata = {
+  title: "Collaborate",
+  description:
+    "Work with Michael Fernandes, a Seattle-based UX engineer and data visualization designer, on internal tooling, design systems, and dataviz prototyping.",
+  alternates: { canonical: "/collaborate" },
+  openGraph: {
+    title: "Collaborate — Michael Fernandes",
+    description:
+      "Open to a small number of select projects — internal tooling, design systems, and dataviz prototyping. Seattle-based, comfortable remote.",
+    url: "/collaborate",
+  },
+};
 
 const SERVICES = [
   "Service 01",

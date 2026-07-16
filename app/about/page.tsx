@@ -1,6 +1,20 @@
+import type { Metadata } from "next";
 import PageShell from "../components/page-shell";
 import TopoHero from "../components/topo-hero";
 import JoyDivision from "../components/joy-division";
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Michael Fernandes is a Seattle-based UX engineer and designer — from the UW Interactive Data Lab, to IHME's COVID-19 forecast dashboard, to independent design-systems and dataviz consulting.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About — Michael Fernandes",
+    description:
+      "A designer who became an engineer in order to come up with better designs. UW Interactive Data Lab, IHME's COVID-19 dashboard, CHI 2018, and independent consulting since.",
+    url: "/about",
+  },
+};
 
 const INK = "#ebe2d4";
 const DIM = "#a89a86";

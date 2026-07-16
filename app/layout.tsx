@@ -13,9 +13,48 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = "https://mferns.com";
+const SITE_TITLE = "Michael Fernandes — UX Engineer & Data Visualization";
+const SITE_DESCRIPTION =
+  "Portfolio of Michael Fernandes, a Seattle-based UX engineer and data visualization designer. Case studies include the IHME COVID-19 forecast dashboard and a CHI-published uncertainty display for transit.";
+
 export const metadata: Metadata = {
-  title: "Topofied",
-  description: "Topographic contour maps generated from page element importance",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    template: "%s — Michael Fernandes",
+  },
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "Michael Fernandes",
+    "UX engineer",
+    "data visualization",
+    "dataviz portfolio",
+    "uncertainty visualization",
+    "design systems",
+    "front-end developer Seattle",
+  ],
+  authors: [{ name: "Michael Fernandes", url: SITE_URL }],
+  creator: "Michael Fernandes",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "Michael Fernandes",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
