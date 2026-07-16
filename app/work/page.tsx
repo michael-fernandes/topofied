@@ -15,7 +15,7 @@ import type { StaticImageData } from "next/image";
 import cardImg from "@/media/uncertainty/card.png";
 import covidCardImg from "@/media/covid-forecasting/card.png";
 
-const SMALL_PROJECTS: { title: string; description: string; link: string; external?: boolean }[] = [
+const SMALL_PROJECTS: { title: string; description: string; link: string; external?: boolean; video?: string }[] = [
   {
     title: "Concentric Radar Chart",
     description: "A radial take on the radar chart — categories ring outward instead of sharing one center.",
@@ -32,6 +32,7 @@ const SMALL_PROJECTS: { title: string; description: string; link: string; extern
     description: "IHME's Local Burden of Disease atlas of under-5 mortality, mapped down to the district level.",
     link: "https://web.archive.org/web/20210421060225if_/https://vizhub.healthdata.org/child-mortality",
     external: true,
+    video: "/small-projects/child-mortality.mov",
   },
 ];
 
@@ -139,7 +140,20 @@ export default function WorkPage() {
                 background: CARD_BG,
               }}
             >
-              <Placeholder height={160} label={p.title} />
+              {p.video ? (
+                <div style={{ height: 160, border: `1px solid ${FAINT}`, background: "#1f1a16", overflow: "hidden" }}>
+                  <video
+                    src={p.video}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                </div>
+              ) : (
+                <Placeholder height={160} label={p.title} />
+              )}
               <h3 className="font-medium" style={{ fontSize: 15, letterSpacing: "-0.01em", color: INK, margin: "16px 0 0" }}>
                 {p.title}
               </h3>
