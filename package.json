@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@next/third-parties": "^16.2.10",
     "@types/d3": "^7.4.3",
     "d3": "^7.9.0",
     "flubber": "^0.4.2",

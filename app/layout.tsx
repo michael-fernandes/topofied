@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import TerrainShell from "./components/terrain-shell";
+
+const GA_MEASUREMENT_ID = "G-1NW3VMXTZB";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -72,6 +75,9 @@ export default function RootLayout({
           <TerrainShell>{children}</TerrainShell>
         </div>
       </body>
+      {process.env.NODE_ENV === "production" && (
+        <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
+      )}
     </html>
   );
 }
