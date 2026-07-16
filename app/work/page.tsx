@@ -9,10 +9,31 @@ import {
   Eyebrow,
   SectionHeader,
   Plate,
+  Placeholder,
 } from "../components/kit";
 import type { StaticImageData } from "next/image";
 import cardImg from "@/media/uncertainty/card.png";
 import covidCardImg from "@/media/covid-forecasting/card.png";
+
+const SMALL_PROJECTS: { title: string; description: string; link: string; external?: boolean }[] = [
+  {
+    title: "Concentric Radar Chart",
+    description: "A radial take on the radar chart — categories ring outward instead of sharing one center.",
+    link: "https://observablehq.com/@michael-fernandes/concentric-radar-chart/2",
+    external: true,
+  },
+  {
+    title: "Simulation",
+    description: "A force-simulated cluster of dots that scatters away from the pointer.",
+    link: "/projects/interactive-dots",
+  },
+  {
+    title: "Child Mortality",
+    description: "IHME's Local Burden of Disease atlas of under-5 mortality, mapped down to the district level.",
+    link: "https://web.archive.org/web/20210421060225if_/https://vizhub.healthdata.org/child-mortality",
+    external: true,
+  },
+];
 
 const FEATURED: { id: string; name: string; note: string; image: StaticImageData; alt: string }[] = [
   {
@@ -94,6 +115,38 @@ export default function WorkPage() {
             </div>
           </Link>
         ))}
+      </section>
+
+      {/* ── Small projects ── */}
+      <section className="px-page" style={{ paddingTop: 0, paddingBottom: 60, borderTop: `1px solid ${FAINT}` }}>
+        <div style={{ paddingTop: 60 }}>
+          <SectionHeader kicker="Small projects" title="The smaller ones." />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 16 }}>
+          {SMALL_PROJECTS.map((p) => (
+            <Link
+              key={p.title}
+              href={p.link}
+              target={p.external ? "_blank" : undefined}
+              rel={p.external ? "noopener noreferrer" : undefined}
+              className="topo-card"
+              style={{
+                display: "block",
+                textDecoration: "none",
+                color: "inherit",
+                border: `1px solid ${FAINT}`,
+                padding: 20,
+                background: CARD_BG,
+              }}
+            >
+              <Placeholder height={160} label={p.title} />
+              <h3 className="font-medium" style={{ fontSize: 15, letterSpacing: "-0.01em", color: INK, margin: "16px 0 0" }}>
+                {p.title}
+              </h3>
+              <p style={{ fontSize: 13, lineHeight: 1.55, color: DIM, marginTop: 8 }}>{p.description}</p>
+            </Link>
+          ))}
+        </div>
       </section>
     </PageShell>
   );
