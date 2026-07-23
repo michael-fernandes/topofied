@@ -349,8 +349,37 @@ export function buildLevels(
 }
 
 // ── Pooled SVG renderer ─────────────────────────────────────
-export function createRenderer(svg: SVGSVGElement) {
+// Entrance: on the first non-empty render, each path materializes out of the
+// dark, staggered top-to-bottom by its geometry's Y position — a wave sweeping
+// down the page. Rather than a mechanical fade, each line RISES IN LUMINANCE
+// out of near-black (brightness 0 → 1) as it settles upward and inward, so the
+// color appears to bleed up out of the darkness. Accent (index) lines start
+// from a deeper black and take longer, so the color blooms in last. The sweep
+// front is ease-in-out paced (slow start, faster middle, easing to a stop), and
+// per-line delay/duration jitter breaks the lockstep cadence so it reads as an
+// organic emergence, not a scan line.
+// Runs once per renderer; later re-renders (hover, resize) skip it.
+const ENTRANCE_SWEEP_MS = 1700; // total delay spread across the page height
+const ENTRANCE_DURATION_MS = 1100; // base per-line rise, before jitter
+const ENTRANCE_JITTER_MS = 320; // ± spread that softens the sweep front
+
+// Inverse of cubic ease-in-out: given a sweep-front position 0..1, returns
+// the normalized time the front arrives there. Delaying each line by this
+// makes the front's position-over-time an ease-in-out curve.
+function easeInOutCubicInverse(y: number): number {
+  if (y <= 0) return 0;
+  if (y >= 1) return 1;
+  return y < 0.5
+    ? Math.cbrt(y / 4)
+    : 1 - Math.cbrt(2 * (1 - y)) / 2;
+}
+
+export function createRenderer(
+  svg: SVGSVGElement,
+  opts: { entrance?: boolean } = {}
+) {
   const paths: SVGPathElement[] = [];
+  let entered = !(opts.entrance ?? true);
   return function render(levels: LevelSpec[]) {
     while (paths.length < levels.length) {
       const p = document.createElementNS(
@@ -373,6 +402,87 @@ export function createRenderer(svg: SVGSVGElement) {
     }
     for (let i = levels.length; i < paths.length; i++) {
       paths[i].style.display = "none";
+    }
+
+    if (!entered && levels.length > 0) {
+      entered = true;
+      const reduceMotion =
+        typeof matchMedia !== "undefined" &&
+        matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!reduceMotion && typeof paths[0]?.animate === "function") {
+        const sceneH =
+          svg.viewBox.baseVal.height || svg.clientHeight || 1;
+        // Page-spanning valley contours all share a bbox top near y=0, which
+        // would clump their delays together. Blend each path's vertical
+        // center with its rank in the top-to-bottom ordering so the stagger
+        // stays spread out even when geometry overlaps.
+        const entries: {
+          p: SVGPathElement;
+          yNorm: number;
+          isIndex: boolean;
+        }[] = [];
+        for (let i = 0; i < levels.length; i++) {
+          const p = paths[i];
+          let waveY = 0;
+          try {
+            const b = p.getBBox();
+            waveY = b.y + b.height / 2;
+          } catch {
+            // getBBox throws for detached/unrendered geometry; enter at 0.
+          }
+          entries.push({
+            p,
+            yNorm: Math.max(0, Math.min(1, waveY / sceneH)),
+            isIndex: levels[i].isIndex,
+          });
+        }
+        const byY = [...entries].sort((a, b) => a.yNorm - b.yNorm);
+        const rank = new Map<SVGPathElement, number>();
+        byY.forEach((e, i) =>
+          rank.set(e.p, byY.length > 1 ? i / (byY.length - 1) : 0)
+        );
+        for (const { p, yNorm, isIndex } of entries) {
+          // Blend vertical position with top-to-bottom rank so overlapping
+          // page-spanning contours still spread out instead of clumping.
+          const u = 0.5 * yNorm + 0.5 * (rank.get(p) ?? 0);
+          // Jitter the arrival + duration so the wave front dissolves into an
+          // organic emergence rather than a crisp mechanical sweep.
+          const jitter = (Math.random() - 0.5) * ENTRANCE_JITTER_MS;
+          const delay = Math.max(
+            0,
+            easeInOutCubicInverse(u) * ENTRANCE_SWEEP_MS + jitter
+          );
+          // Color rising out of the dark: accent (index) lines start deeper in
+          // black and take longer, so their color blooms in last.
+          const fromDark = isIndex ? 0.16 : 0.4;
+          const duration =
+            ENTRANCE_DURATION_MS *
+            (isIndex ? 1.3 : 1) *
+            (0.85 + Math.random() * 0.3);
+          p.style.transformBox = "fill-box";
+          p.style.transformOrigin = "center";
+          p.animate(
+            [
+              {
+                opacity: 0,
+                filter: `brightness(${fromDark})`,
+                transform: "translateY(22px) scale(1.04)",
+              },
+              {
+                opacity: 1,
+                filter: "brightness(1)",
+                transform: "translateY(0px) scale(1)",
+              },
+            ],
+            {
+              duration,
+              delay,
+              easing: "cubic-bezier(0.65, 0, 0.35, 1)",
+              fill: "backwards",
+            }
+          );
+        }
+      }
     }
   };
 }
