@@ -77,8 +77,23 @@ export function buildField(opts: {
   seed?: number;
   res?: number;
   noiseAmp?: number;
+  /**
+   * Damp ambient noise near the top of the field: amplitude × min at
+   * y <= from, full at y >= to (smoothstep between). Keeps the header band's
+   * incidental hills below real peaks (e.g. the nav links) without leaving
+   * it bare — min = 0 flattens it entirely.
+   */
+  noiseTopFade?: { from: number; to: number; min?: number };
 }): FieldResult | null {
-  const { width, height, peaks, seed = 42, res = 4, noiseAmp = 1 } = opts;
+  const {
+    width,
+    height,
+    peaks,
+    seed = 42,
+    res = 4,
+    noiseAmp = 1,
+    noiseTopFade,
+  } = opts;
   const cols = Math.ceil(width / res) + 1;
   const rows = Math.ceil(height / res) + 1;
   const field = new Float32Array(cols * rows);
@@ -93,13 +108,22 @@ export function buildField(opts: {
   // 1) noise base
   for (let gy = 0; gy < rows; gy++) {
     const wy = gy * res;
+    let fade = 1;
+    if (noiseTopFade) {
+      const t = Math.max(
+        0,
+        Math.min(1, (wy - noiseTopFade.from) / (noiseTopFade.to - noiseTopFade.from))
+      );
+      const min = noiseTopFade.min ?? 0;
+      fade = min + (1 - min) * t * t * (3 - 2 * t);
+    }
     for (let gx = 0; gx < cols; gx++) {
       const wx = gx * res;
       const n =
         (valueNoise(wx * NS1, wy * NS1, seed) - 0.5) * 2 * AMP1 +
         (valueNoise(wx * NS2, wy * NS2, seed + 1) - 0.5) * 2 * AMP2 +
         (valueNoise(wx * NS3, wy * NS3, seed + 2) - 0.5) * 2 * AMP3;
-      field[gy * cols + gx] = n;
+      field[gy * cols + gx] = n * fade;
     }
   }
 
@@ -352,7 +376,7 @@ export function buildLevels(
 // Entrance: on the first non-empty render, each path materializes out of the
 // dark, staggered top-to-bottom by its geometry's Y position — a wave sweeping
 // down the page. Rather than a mechanical fade, each line RISES IN LUMINANCE
-// out of near-black (brightness 0 → 1) as it settles upward and inward, so the
+// out of near-black (brightness 0 → 1) while drifting gently upward, so the
 // color appears to bleed up out of the darkness. Accent (index) lines start
 // from a deeper black and take longer, so the color blooms in last. The sweep
 // front is ease-in-out paced (slow start, faster middle, easing to a stop), and
@@ -459,19 +483,21 @@ export function createRenderer(
             ENTRANCE_DURATION_MS *
             (isIndex ? 1.3 : 1) *
             (0.85 + Math.random() * 0.3);
-          p.style.transformBox = "fill-box";
-          p.style.transformOrigin = "center";
+          // Pure vertical translate only — no scale. A per-path scale would
+          // pivot around each line's own center (they all differ), which reads
+          // as lines sliding sideways in random directions. translateY has no
+          // transform-origin dependence, so the rise stays uniformly vertical.
           p.animate(
             [
               {
                 opacity: 0,
                 filter: `brightness(${fromDark})`,
-                transform: "translateY(22px) scale(1.04)",
+                transform: "translateY(20px)",
               },
               {
                 opacity: 1,
                 filter: "brightness(1)",
-                transform: "translateY(0px) scale(1)",
+                transform: "translateY(0px)",
               },
             ],
             {

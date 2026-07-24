@@ -38,6 +38,14 @@ const NAV_SHARPNESS = 1.45;
 // Per-frame easing toward the target height. Higher = snappier glide.
 const GLIDE_EASE = 0.22;
 
+// Damp ambient noise in the header band so incidental hills stay below the
+// nav links — nothing beside the nav should read as a peak that isn't
+// hoverable — while keeping enough texture that the header doesn't go bare.
+// At 0.55 the noise tops out around 11, under the inactive tabs' 12. Full
+// amplitude returns past the active summit's ring reach (falloff × 4.5).
+const NAV_RING_REACH = NAV_FALLOFF * 4.5;
+const HEADER_NOISE_MIN = 0.55;
+
 export default function TerrainShell({
   children,
 }: {
@@ -97,6 +105,11 @@ export default function TerrainShell({
       hoverBoost={22}
       theme="dark"
       res={5}
+      noiseTopFade={{
+        from: NAV_RING_REACH,
+        to: NAV_RING_REACH * 2,
+        min: HEADER_NOISE_MIN,
+      }}
     >
       {/* Gradient: full-bleed; transparent through hero, fades to bg below fold */}
       <div

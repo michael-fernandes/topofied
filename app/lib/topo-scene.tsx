@@ -178,6 +178,7 @@ export type TopoSceneProps = {
   inverted?: boolean;
   res?: number;
   noiseAmp?: number;
+  noiseTopFade?: { from: number; to: number; min?: number };
   hoverBoost?: number;
   theme?: "dark" | "paper";
   style?: CSSProperties;
@@ -203,6 +204,7 @@ export default function TopoScene({
   inverted = false,
   res = 4,
   noiseAmp = 1,
+  noiseTopFade,
   hoverBoost = 42,
   theme = "dark",
   style,
@@ -264,6 +266,7 @@ export default function TopoScene({
       seed: seedNum,
       res,
       noiseAmp,
+      noiseTopFade,
     });
     if (!fr) return;
     if (inverted) {
@@ -290,6 +293,11 @@ export default function TopoScene({
     seedNum,
     res,
     noiseAmp,
+    // Depend on the primitives, not the object — callers pass inline literals
+    // whose identity changes every render, which would re-create the observers.
+    noiseTopFade?.from,
+    noiseTopFade?.to,
+    noiseTopFade?.min,
     inverted,
     numLevels,
     indexEvery,
