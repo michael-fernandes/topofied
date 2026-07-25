@@ -56,7 +56,11 @@ export default function AboutPage() {
       </TopoHero>
 
       <section className="px-page" style={{ paddingBottom: 48 }}>
-        <Scrim style={{ maxWidth: 620 }}>
+        {/* Desktop: writeup sits narrower and to the right, so the terrain's
+            (now right-biased) contours read as the ground under the content
+            rather than a centered decorative field. Full width on mobile. */}
+        <div className="md:ml-auto md:max-w-[500px]">
+        <Scrim>
           <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: 0 }}>
             I started my career in software development — prototyping,
             developing, and user-testing data visualizations used for
@@ -82,12 +86,16 @@ export default function AboutPage() {
             structured experiences around AI.
           </p>
         </Scrim>
+        </div>
       </section>
 
       <section
         className="mx-page"
         style={{ borderTop: `1px solid ${FAINT}`, paddingTop: 28, paddingBottom: 40 }}
       >
+        {/* Match the writeup's right-aligned column so the contact row reads as
+            part of the same content track (full-width divider above stays). */}
+        <div className="md:ml-auto md:max-w-[500px]">
         <Scrim className="flex flex-col md:flex-row md:justify-between md:items-baseline gap-4">
         <a
           href="mailto:m.fern93@gmail.com"
@@ -110,6 +118,7 @@ export default function AboutPage() {
             github.com/michael-fernandes →
           </a>
         </Scrim>
+        </div>
       </section>
     </PageShell>
   );

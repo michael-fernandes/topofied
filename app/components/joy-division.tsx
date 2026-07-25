@@ -129,6 +129,23 @@ function buildPeaks(W: number, H: number): Peak[] {
   ];
 }
 
+// The About page's writeup column sits narrower and to the right on desktop.
+// For TOPO mode we bias the peaks toward that column and quiet their heights,
+// so the contours read as the ground under the content instead of massing a
+// tall bullseye in the dead center ("quiet the center, follow the content").
+// Joy mode is left untouched — its spike stack keeps the centered, full-
+// amplitude Unknown Pleasures look, so only the resting contour map shifts.
+const TOPO_X_BIAS = 0.15; // shift peaks right by this fraction of width
+const TOPO_HEIGHT_SCALE = 0.78; // lower the central massif's prominence
+
+function biasPeaksForTopo(peaks: Peak[], W: number): Peak[] {
+  return peaks.map((p) => ({
+    ...p,
+    x: p.x + W * TOPO_X_BIAS,
+    h: p.h * TOPO_HEIGHT_SCALE,
+  }));
+}
+
 // Domain warp (same recipe as the site's topo engine): perturb (x,y) before
 // the peak-distance lookup so contour rings read as organic terrain — ridges,
 // spurs, saddles — instead of clean concentric ovals. Two octaves: a
@@ -308,7 +325,9 @@ export default function JoyDivision() {
 
     // Topo mode: the real engine, same params TerrainShell uses for the
     // site's persistent background, so this reads as the same contour map.
-    const enginePeaks = buildEnginePeaks(buildPeaks(size.w, size.h));
+    const enginePeaks = buildEnginePeaks(
+      biasPeaksForTopo(buildPeaks(size.w, size.h), size.w)
+    );
     const fr = buildField({
       width: size.w,
       height: size.h,
