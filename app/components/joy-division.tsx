@@ -136,7 +136,7 @@ function buildPeaks(W: number, H: number): Peak[] {
 // Joy mode is left untouched — its spike stack keeps the centered, full-
 // amplitude Unknown Pleasures look, so only the resting contour map shifts.
 const TOPO_X_BIAS = 0.15; // shift peaks right by this fraction of width
-const TOPO_HEIGHT_SCALE = 0.78; // lower the central massif's prominence
+const TOPO_HEIGHT_SCALE = 0.66; // lower the central massif's prominence
 
 function biasPeaksForTopo(peaks: Peak[], W: number): Peak[] {
   return peaks.map((p) => ({
@@ -144,6 +144,60 @@ function biasPeaksForTopo(peaks: Peak[], W: number): Peak[] {
     x: p.x + W * TOPO_X_BIAS,
     h: p.h * TOPO_HEIGHT_SCALE,
   }));
+}
+
+// The About headline sits in the upper-left of the hero. With the resting
+// peaks biased right (toward the content column) the ground under the title
+// went flat, so it lost the contour "height" that should gather around it —
+// above the fold the headline is meant to read *integrated* with the lines,
+// parsed almost at once (see app/lib/Agents.md). This adds a small summit
+// cluster centered on the title, appended AFTER the right-bias so it's
+// independent of it: height returns around the headline without skewing the
+// content-column terrain on the right.
+//
+// It's a CLUSTER of three offset summits rather than one peak on purpose — a
+// lone peak reads as a tidy square (the engine's footprint is rectangular),
+// whereas overlapping summits of different size/height merge into lopsided,
+// organic iso-lines that hug the words. Tune with the four constants; the
+// two satellite summits are placed relative to the primary's radius.
+const TITLE_PEAK_X = 0.2; // primary center x, as a fraction of viewport width
+const TITLE_PEAK_Y = 0.37; // primary center y, as a fraction of viewport height
+const TITLE_PEAK_H = 0.5; // primary prominence, same 0–~0.6 scale as buildPeaks
+const TITLE_PEAK_R = 0.1; // primary radius, as a fraction of min(W, H)
+
+function titlePeaksForTopo(W: number, H: number): Peak[] {
+  const R = Math.min(W, H);
+  const cx = W * TITLE_PEAK_X;
+  const cy = H * TITLE_PEAK_Y;
+  const r = R * TITLE_PEAK_R;
+  return [
+    { x: cx, y: cy, h: TITLE_PEAK_H, r },
+    // upper-right satellite — smaller, pulls the rings out of square
+    { x: cx + r * 0.72, y: cy - r * 0.5, h: TITLE_PEAK_H * 0.72, r: r * 0.66 },
+    // lower-left satellite — smaller still, lopsides the low side
+    { x: cx - r * 0.55, y: cy + r * 0.62, h: TITLE_PEAK_H * 0.58, r: r * 0.52 },
+  ];
+}
+
+// On every other route the active nav tab reads as the header summit, drawn by
+// TerrainShell's own TopoScene. On About that scene is masked by this
+// component's opaque backdrop, so the header lost its summit. Re-add it here:
+// a peak at the active ("About") tab — top-right, since the nav is
+// right-aligned — sized to ~TerrainShell's ACTIVE_H (46) so the About header
+// carries about the same terrain weight as the other pages'.
+const NAV_PEAK_X = 0.86; // active-tab center x (nav is right-aligned)
+const NAV_PEAK_Y = 0.04; // near the very top of the viewport
+const NAV_PEAK_H = 0.46; // ≈ ACTIVE_H (46) after buildEnginePeaks' ×100 scale
+const NAV_PEAK_R = 0.14; // spread, as a fraction of min(W, H)
+
+function navPeakForTopo(W: number, H: number): Peak {
+  const R = Math.min(W, H);
+  return {
+    x: W * NAV_PEAK_X,
+    y: H * NAV_PEAK_Y,
+    h: NAV_PEAK_H,
+    r: R * NAV_PEAK_R,
+  };
 }
 
 // Domain warp (same recipe as the site's topo engine): perturb (x,y) before
@@ -325,9 +379,11 @@ export default function JoyDivision() {
 
     // Topo mode: the real engine, same params TerrainShell uses for the
     // site's persistent background, so this reads as the same contour map.
-    const enginePeaks = buildEnginePeaks(
-      biasPeaksForTopo(buildPeaks(size.w, size.h), size.w)
-    );
+    const enginePeaks = buildEnginePeaks([
+      ...biasPeaksForTopo(buildPeaks(size.w, size.h), size.w),
+      ...titlePeaksForTopo(size.w, size.h),
+      navPeakForTopo(size.w, size.h),
+    ]);
     const fr = buildField({
       width: size.w,
       height: size.h,
@@ -474,9 +530,22 @@ export default function JoyDivision() {
   // Scroll drives the mode: topo at the top of the page, joy once scrolled.
   // Zone changes (with hysteresis) trigger the morph, so a manual button
   // toggle isn't fought until the user actually crosses a boundary again.
+  //
+  // While in the topo zone the contour group is *not* viewport-pinned: it's
+  // translated by -scrollY so the terrain scrolls up with the page content,
+  // reading as ground attached to the page. Once joy takes over the group has
+  // faded out, and the Unknown Pleasures stack (joyGroup) stays fixed. The
+  // transform is left off the topoGroup's transition list (only opacity is
+  // animated) so the scroll-follow is instant, not laggy. On the way back to
+  // topo the small residual offset resolves as y returns toward 0.
   useEffect(() => {
+    const followTopo = (y: number) => {
+      const g = topoGroupRef.current;
+      if (g) g.style.transform = `translateY(${-y}px)`;
+    };
     let zone: "top" | "scrolled" =
       window.scrollY > SCROLL_ENTER_JOY ? "scrolled" : "top";
+    if (zone === "top") followTopo(window.scrollY);
     const onScroll = () => {
       const y = window.scrollY;
       const nextZone: "top" | "scrolled" =
@@ -491,6 +560,7 @@ export default function JoyDivision() {
         zone = nextZone;
         morphTo(zone === "scrolled" ? "joy" : "topo");
       }
+      if (zone === "top") followTopo(y);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);

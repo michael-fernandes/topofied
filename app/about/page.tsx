@@ -96,14 +96,7 @@ export default function AboutPage() {
         {/* Match the writeup's right-aligned column so the contact row reads as
             part of the same content track (full-width divider above stays). */}
         <div className="md:ml-auto md:max-w-[500px]">
-        <Scrim className="flex flex-col md:flex-row md:justify-between md:items-baseline gap-4">
-        <a
-          href="mailto:m.fern93@gmail.com"
-          className="no-underline"
-          style={{ fontSize: 16, color: INK }}
-        >
-          m.fern93@gmail.com
-        </a>
+        <Scrim className="flex flex-col md:flex-row md:justify-end md:items-baseline gap-4">
         <a
           href="https://github.com/michael-fernandes"
           className="font-mono uppercase no-underline"
