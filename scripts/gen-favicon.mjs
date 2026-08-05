@@ -1,15 +1,20 @@
 // Authoring aid for the app icons — app/icon.svg and app/favicon.ico are
 // generated output, not hand-edited. Run this, not the SVG.
 //
-//   node scripts/gen-favicon.mjs app/icon.svg B     ← what ships as icon.svg
-//   node scripts/gen-favicon.mjs /tmp/small.svg S   ← the 16px .ico entry
-//   node scripts/gen-favicon.mjs /tmp/alt.svg A     ← unused alternate
+//   node scripts/gen-favicon.mjs app/icon.svg M     ← what ships as icon.svg
+//   node scripts/gen-favicon.mjs /tmp/small.svg MS  ← the 16px .ico entry
+//   node scripts/gen-favicon.mjs /tmp/alt.svg B     ← superseded alternates
 //
 // Variants:
-//   B — joy ridge stack: the site's "Unknown Pleasures" mode, occluded stack
-//   S — the same motif redrawn coarse; the full art averages to gray once it
-//       hits 16 device px, so the .ico's smallest frame gets its own drawing
-//   A — topo summit: nested closed contours, center drifting to the peak
+//   M  — monogram summit: MF ringed by contours that break at the letters
+//   MS — the same, redrawn for 16px: two rings instead of five
+//   B  — joy ridge stack: the site's "Unknown Pleasures" mode, occluded stack
+//   S  — B redrawn coarse for 16px
+//   A  — topo summit: nested closed contours, center drifting to the peak
+//
+// Every variant pairs a full drawing with a 16px cut. Whatever ships, the
+// smallest .ico frame needs its own version — at 16 device px a five-ring
+// field averages to gray, so the small cut drops detail rather than scaling it.
 //
 // The .ico is assembled from headless-Chrome rasters (ImageMagick's built-in
 // SVG renderer mangles the clip-path, so don't feed it the SVG directly):
@@ -148,7 +153,85 @@ function variantS() {
   return head(rows.join("\n"));
 }
 
+// ── M: monogram summit ──────────────────────────────────────────────
+// The initials ARE the peak: contours ring them, and the letters interrupt the
+// lines the way an elevation label breaks a contour on a real survey sheet.
+// The break is a mask — the same letter paths stroked fat and black — so the
+// clearance follows the letterforms exactly instead of being a blunt box.
+
+// MF as stroked polylines, not a font: a favicon can't count on a webfont, and
+// tracing outlines would be far more path data than two letters are worth.
+// The M's middle vertex runs most of the way to the baseline. Stopping it at
+// the midline — the tidier-looking choice — makes the letter read as an H once
+// it's downsampled to 16px, because the notch fills in.
+const CAP_TOP = 10.6;
+const CAP_BOT = 21.6;
+const MONOGRAM = [
+  `M7.3 ${CAP_BOT} L7.3 ${CAP_TOP} L11.4 19.4 L15.5 ${CAP_TOP} L15.5 ${CAP_BOT}`, // M
+  `M18.9 ${CAP_BOT} L18.9 ${CAP_TOP} L24.5 ${CAP_TOP}`, // F stem + arm
+  `M18.9 15.8 L23.4 15.8`, // F crossbar
+];
+
+function monogram({ letterWidth, halo, levels }) {
+  const cut = MONOGRAM.map(
+    (d) =>
+      `      <path d="${d}" stroke="#000" stroke-width="${halo}" fill="none" ` +
+      `stroke-linejoin="round" stroke-linecap="round"/>`
+  ).join("\n");
+  const rings = levels
+    .map(
+      (l) =>
+        `      <path d="${contour(l.R, l.c[0], l.c[1])}" fill="none" stroke="${l.s}" stroke-width="${l.w}"/>`
+    )
+    .join("\n");
+  const letters = MONOGRAM.map(
+    (d) =>
+      // Butt caps and mitered joins so the monogram reads as drafted rather
+      // than rounded off — but miterlimit 1.8 bevels the M's acute vertices,
+      // which at a full miter shoot spikes well past the cap height.
+      `    <path d="${d}" stroke="${INK}" stroke-width="${letterWidth}" fill="none" ` +
+      `stroke-linejoin="miter" stroke-miterlimit="1.8" stroke-linecap="butt"/>`
+  ).join("\n");
+  return head(
+    `    <mask id="label">
+      <rect width="32" height="32" fill="#fff"/>
+${cut}
+    </mask>
+    <g mask="url(#label)">
+${rings}
+    </g>
+${letters}`
+  );
+}
+
+function variantM() {
+  return monogram({
+    letterWidth: 2.3,
+    halo: 5.6,
+    levels: [
+      { R: 23.5, c: [15.2, 17], s: FAINT, w: 1 },
+      { R: 19.6, c: [15.5, 16.7], s: FAINT, w: 1 },
+      { R: 16, c: [15.8, 16.3], s: DIM, w: 1.05 },
+      { R: 12.6, c: [16.1, 16], s: DIM, w: 1.05 },
+      { R: 9.6, c: [16.4, 15.7], s: ACCENT, w: 1.05 },
+    ],
+  });
+}
+
+// The 16px cut of the monogram: fatter letters, two rings instead of four, so
+// the initials stay the only thing competing for those pixels.
+function variantMS() {
+  return monogram({
+    letterWidth: 2.6,
+    halo: 6.4,
+    levels: [
+      { R: 21.5, c: [15.5, 16.8], s: DIM, w: 1.7 },
+      { R: 16, c: [16, 16], s: DIM, w: 1.7 },
+    ],
+  });
+}
+
 const which = process.argv[3] || "A";
-const build = { A: variantA, B: variantB, S: variantS }[which];
+const build = { A: variantA, B: variantB, S: variantS, M: variantM, MS: variantMS }[which];
 writeFileSync(process.argv[2], build());
 console.log(which, "written");
