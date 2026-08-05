@@ -12,9 +12,10 @@ import {
   Plate,
   Placeholder,
 } from "../components/kit";
-import type { StaticImageData } from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import cardImg from "@/media/uncertainty/card.png";
 import covidCardImg from "@/media/covid-forecasting/card.png";
+import goalGridImg from "@/media/small-projects/goal-grid.png";
 
 export const metadata: Metadata = {
   title: "Work",
@@ -29,7 +30,15 @@ export const metadata: Metadata = {
   },
 };
 
-const SMALL_PROJECTS: { title: string; description: string; link: string; external?: boolean; video?: string }[] = [
+const SMALL_PROJECTS: {
+  title: string;
+  description: string;
+  link: string;
+  external?: boolean;
+  video?: string;
+  image?: StaticImageData;
+  alt?: string;
+}[] = [
   {
     title: "Concentric Radar Chart",
     description: "A radial take on the radar chart — categories ring outward instead of sharing one center.",
@@ -47,6 +56,15 @@ const SMALL_PROJECTS: { title: string; description: string; link: string; extern
     link: "https://web.archive.org/web/20210421060225if_/https://vizhub.healthdata.org/child-mortality",
     external: true,
     video: "/small-projects/child-mortality.mov",
+  },
+  {
+    title: "Goal Grid",
+    description:
+      "A year of goals as a five-by-five board — one pillar per column, five intentions each, struck through as they land.",
+    link: "https://vision-board-builder.vercel.app",
+    external: true,
+    image: goalGridImg,
+    alt: "The Goal Grid board — a 2025 goals header over a five-column bingo grid, one pillar per column.",
   },
 ];
 
@@ -163,6 +181,23 @@ export default function WorkPage() {
                     muted
                     playsInline
                     style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                </div>
+              ) : p.image ? (
+                // Same 160px window as the video card. Screenshots are taller
+                // than the window, so they cover from the top — the part worth
+                // seeing (headers, first row) is always at the top of the frame.
+                <div
+                  className="relative"
+                  style={{ height: 160, border: `1px solid ${FAINT}`, background: "#1f1a16", overflow: "hidden" }}
+                >
+                  <Image
+                    src={p.image}
+                    alt={p.alt ?? p.title}
+                    fill
+                    sizes="(min-width: 640px) 45vw, 100vw"
+                    placeholder="blur"
+                    style={{ objectFit: "cover", objectPosition: "center top" }}
                   />
                 </div>
               ) : (
