@@ -64,7 +64,7 @@ const SMALL_PROJECTS: {
     link: "https://vision-board-builder.vercel.app",
     external: true,
     image: goalGridImg,
-    alt: "The Goal Grid board — a 2025 goals header over a five-column bingo grid, one pillar per column.",
+    alt: "The Goal Grid board — five pillar columns of goal cards, the finished ones struck through and checked off.",
   },
 ];
 
