@@ -28,7 +28,7 @@ export default function AboutPage() {
       {/* Joy Division ↔ topo field as the page backdrop (masks the shell's
           persistent terrain); toggle button lives bottom-right. */}
       <JoyDivision />
-      <TopoHero height={300}>
+      <TopoHero height={220}>
         <div
           data-topo-hidden=""
           style={{ position: "absolute", left: 20, right: 20, top: 110 }}
@@ -56,10 +56,9 @@ export default function AboutPage() {
       </TopoHero>
 
       <section className="px-page" style={{ paddingBottom: 48 }}>
-        {/* Desktop: writeup sits narrower and to the right, so the terrain's
-            (now right-biased) contours read as the ground under the content
-            rather than a centered decorative field. Full width on mobile. */}
-        <div className="md:ml-auto md:max-w-[500px]">
+        {/* Desktop: writeup sits narrower and centered, tucked close under the
+            hero title. Full width on mobile. */}
+        <div className="md:mx-auto md:max-w-[500px]">
         <Scrim>
           <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: 0 }}>
             I started my career in software development — prototyping,
@@ -93,10 +92,10 @@ export default function AboutPage() {
         className="mx-page"
         style={{ borderTop: `1px solid ${FAINT}`, paddingTop: 28, paddingBottom: 40 }}
       >
-        {/* Match the writeup's right-aligned column so the contact row reads as
+        {/* Match the writeup's centered column so the contact row reads as
             part of the same content track (full-width divider above stays). */}
-        <div className="md:ml-auto md:max-w-[500px]">
-        <Scrim className="flex flex-col md:flex-row md:justify-end md:items-baseline gap-4">
+        <div className="md:mx-auto md:max-w-[500px]">
+        <Scrim className="flex flex-col md:flex-row md:justify-center md:items-baseline gap-4">
         <a
           href="https://github.com/michael-fernandes"
           className="font-mono uppercase no-underline"

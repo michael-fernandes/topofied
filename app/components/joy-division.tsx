@@ -44,7 +44,7 @@ const SEED = 1337;
 const FADE_OUT_MS = 420;
 const FADE_IN_MS = 620;
 const JOY_STAGGER_MS = 5;
-const JOY_ENTRANCE_OFFSET = 16;
+const JOY_ENTRANCE_OFFSET = 8;
 
 // ── Topo-mode styling — matches TerrainShell's own TopoScene call exactly
 // (numLevels/indexEvery left at TopoScene's defaults; accentHue/accentSat
@@ -55,9 +55,22 @@ const ACCENT_SAT = 22;
 const TOPO_NUM_LEVELS = 28;
 const TOPO_INDEX_EVERY = 4;
 
-// Joy-mode stroke: uniform ink, full opacity (the Unknown Pleasures look).
-const JOY_STROKE = "#ebe2d4";
+// Joy-mode stroke: like the original print, the trace is near-invisible ink
+// through its quiet stretches and only brightens where the line is actually
+// erupting. Brightness is baked into a per-ridge horizontal gradient keyed to
+// the smooth spike envelope: DIM where flat, ramping to BRIGHT (deliberately
+// dimmer than the old uniform #ebe2d4) at full amplitude.
+const JOY_DIM_RGB = [0x42, 0x39, 0x31] as const;
+const JOY_BRIGHT_RGB = [0xc7, 0xbb, 0xa7] as const;
+const JOY_BRIGHT_AMP = 55; // spike amplitude (px) that reaches full brightness
 const JOY_WIDTH = 0.9;
+
+function joyStrokeAt(t: number): string {
+  const r = Math.round(JOY_DIM_RGB[0] + (JOY_BRIGHT_RGB[0] - JOY_DIM_RGB[0]) * t);
+  const g = Math.round(JOY_DIM_RGB[1] + (JOY_BRIGHT_RGB[1] - JOY_DIM_RGB[1]) * t);
+  const b = Math.round(JOY_DIM_RGB[2] + (JOY_BRIGHT_RGB[2] - JOY_DIM_RGB[2]) * t);
+  return `rgb(${r},${g},${b})`;
+}
 // Scroll thresholds (hysteresis): morph to joy once the page is scrolled past
 // ENTER, morph back to topo only when returning above EXIT. The gap prevents
 // flip-flopping when the user hovers around a single boundary.
@@ -67,6 +80,9 @@ const SCROLL_EXIT_JOY = 60;
 type Ridge = {
   topD_joy: string;
   fillD_joy: string;
+  // Per-sample 0–1 spike brightness driving the stroke gradient. Keyed to the
+  // smooth peak envelope (not the jagged detail) so the ramp is clean.
+  bright: number[];
 };
 
 // ── Noise ────────────────────────────────────────────────────────────
@@ -129,13 +145,13 @@ function buildPeaks(W: number, H: number): Peak[] {
   ];
 }
 
-// The About page's writeup column sits narrower and to the right on desktop.
-// For TOPO mode we bias the peaks toward that column and quiet their heights,
-// so the contours read as the ground under the content instead of massing a
-// tall bullseye in the dead center ("quiet the center, follow the content").
-// Joy mode is left untouched — its spike stack keeps the centered, full-
-// amplitude Unknown Pleasures look, so only the resting contour map shifts.
-const TOPO_X_BIAS = 0.15; // shift peaks right by this fraction of width
+// The About page's writeup column sits narrower and centered on desktop. For
+// TOPO mode the peaks stay put under it (no horizontal bias) but their
+// heights are quieted, so the contours read as the ground under the content
+// instead of massing a tall bullseye behind the text ("quiet the center,
+// follow the content"). Joy mode is left untouched — its spike stack keeps
+// the full-amplitude Unknown Pleasures look, so only the resting map shifts.
+const TOPO_X_BIAS = 0; // shift peaks right by this fraction of width
 const TOPO_HEIGHT_SCALE = 0.66; // lower the central massif's prominence
 
 function biasPeaksForTopo(peaks: Peak[], W: number): Peak[] {
@@ -270,6 +286,7 @@ function buildRidges(W: number, H: number, seed: number): Ridge[] {
     const act = activeness(y0, H);
 
     const joyPts: [number, number][] = new Array(samples);
+    const bright: number[] = new Array(samples);
 
     for (let s = 0; s < samples; s++) {
       const x = Math.min(W, s * SAMPLE_STEP);
@@ -289,11 +306,15 @@ function buildRidges(W: number, H: number, seed: number): Ridge[] {
         (1 - act * 0.7);
       const joyY = y0 - (peakAmp + detail) - quiet;
       joyPts[s] = [x, joyY];
+
+      const t = Math.min(1, peakAmp / JOY_BRIGHT_AMP);
+      bright[s] = t * t * (3 - 2 * t);
     }
 
     ridges.push({
       topD_joy: pointsToOpenPath(joyPts),
       fillD_joy: pointsToFillPath(joyPts, y0 + spacing * 0.55),
+      bright,
     });
   }
   return ridges;
@@ -412,10 +433,47 @@ export default function JoyDivision() {
       topoGroup.appendChild(p);
     }
 
+    // Per-ridge horizontal gradients for the joy strokes: dim through quiet
+    // stretches, brightening only where that ridge spikes. Stops are emitted
+    // adaptively — only where brightness actually moves — so a flat run costs
+    // two stops instead of one per sample.
+    const defs = document.createElementNS(svgNS, "defs");
+    svg.appendChild(defs);
+    ridges.forEach((r, i) => {
+      const grad = document.createElementNS(svgNS, "linearGradient");
+      grad.setAttribute("id", `jd-ridge-${i}`);
+      grad.setAttribute("gradientUnits", "userSpaceOnUse");
+      grad.setAttribute("x1", "0");
+      grad.setAttribute("y1", "0");
+      grad.setAttribute("x2", String(size.w));
+      grad.setAttribute("y2", "0");
+      const n = r.bright.length;
+      let lastEmitted = 0;
+      const emit = (s: number) => {
+        const stop = document.createElementNS(svgNS, "stop");
+        const pct = Math.min(100, ((s * SAMPLE_STEP) / size.w) * 100);
+        stop.setAttribute("offset", `${pct.toFixed(2)}%`);
+        stop.setAttribute("stop-color", joyStrokeAt(r.bright[s]));
+        grad.appendChild(stop);
+        lastEmitted = s;
+      };
+      emit(0);
+      for (let s = 1; s < n - 1; s++) {
+        if (Math.abs(r.bright[s] - r.bright[lastEmitted]) < 0.04) continue;
+        // Anchor the sample before the change so a long flat stretch isn't
+        // smeared into the ramp by the gradient's linear interpolation.
+        if (lastEmitted < s - 1) emit(s - 1);
+        emit(s);
+      }
+      emit(n - 1);
+      defs.appendChild(grad);
+    });
+
     const joyGroup = document.createElementNS(svgNS, "g");
     svg.appendChild(joyGroup);
     const joyRidgeGroups: SVGGElement[] = [];
-    for (const r of ridges) {
+    for (let ri = 0; ri < ridges.length; ri++) {
+      const r = ridges[ri];
       // Each ridge's fill+stroke share one <g> so the entrance stagger moves
       // them as a unit. Painter's order (fill then stroke, top-to-bottom)
       // keeps the Unknown Pleasures occlusion: lower ridges' fills overpaint
@@ -433,7 +491,7 @@ export default function JoyDivision() {
       top.setAttribute("stroke-linecap", "round");
       top.setAttribute("vector-effect", "non-scaling-stroke");
       top.setAttribute("d", r.topD_joy);
-      top.setAttribute("stroke", JOY_STROKE);
+      top.setAttribute("stroke", `url(#jd-ridge-${ri})`);
       top.setAttribute("stroke-width", String(JOY_WIDTH));
       ridgeG.appendChild(top);
 
@@ -444,6 +502,11 @@ export default function JoyDivision() {
     topoGroupRef.current = topoGroup;
     joyGroupRef.current = joyGroup;
     joyRidgeGroupsRef.current = joyRidgeGroups;
+
+    // Freshly built nodes have no transform — re-apply the scroll-follow
+    // offset so a rebuild (resize) mid-page doesn't snap the artwork to 0.
+    topoGroup.style.transform = `translateY(${-window.scrollY}px)`;
+    joyGroup.style.transform = `translateY(${-window.scrollY}px)`;
 
     // Snap to current resting mode without animation.
     paintResting(modeRef.current);
@@ -507,11 +570,12 @@ export default function JoyDivision() {
         });
       }, FADE_OUT_MS);
     } else {
+      // Exit is a plain staggered fade — no translate. Lines drifting upward
+      // on the way out read as distracting motion, so they dissolve in place.
       joyRidgeGroups.forEach((g, i) => {
         const delay = (joyRidgeGroups.length - 1 - i) * JOY_STAGGER_MS;
-        g.style.transition = `opacity ${FADE_OUT_MS}ms ease ${delay}ms, transform ${FADE_OUT_MS}ms ease ${delay}ms`;
+        g.style.transition = `opacity ${FADE_OUT_MS}ms ease ${delay}ms`;
         g.style.opacity = "0";
-        g.style.transform = `translateY(${-JOY_ENTRANCE_OFFSET}px)`;
       });
       const joyExitMs = FADE_OUT_MS + joyRidgeGroups.length * JOY_STAGGER_MS;
       fadeTimeoutRef.current = window.setTimeout(() => {
@@ -531,21 +595,28 @@ export default function JoyDivision() {
   // Zone changes (with hysteresis) trigger the morph, so a manual button
   // toggle isn't fought until the user actually crosses a boundary again.
   //
-  // While in the topo zone the contour group is *not* viewport-pinned: it's
-  // translated by -scrollY so the terrain scrolls up with the page content,
-  // reading as ground attached to the page. Once joy takes over the group has
-  // faded out, and the Unknown Pleasures stack (joyGroup) stays fixed. The
-  // transform is left off the topoGroup's transition list (only opacity is
-  // animated) so the scroll-follow is instant, not laggy. On the way back to
-  // topo the small residual offset resolves as y returns toward 0.
+  // Neither SVG group is viewport-pinned: both the topo contours and the joy
+  // stack are translated by -scrollY, so the artwork is attached to the page
+  // and scrolls with the content it represents — background and page read as
+  // one surface, same as the hero contours on every other route. (The joy
+  // stack used to stay viewport-fixed as an ambient backdrop, but content
+  // sliding over a static background read as disconnected.) The follow runs
+  // unconditionally (even for whichever group is currently faded out) so a
+  // group is always at the correct offset the moment it fades back in —
+  // gating it by zone left a stale transform that snapped on re-entry.
+  // Transforms are never on these groups' transition lists (only opacity is
+  // animated) so the scroll-follow is instant, not laggy.
   useEffect(() => {
-    const followTopo = (y: number) => {
-      const g = topoGroupRef.current;
-      if (g) g.style.transform = `translateY(${-y}px)`;
+    const follow = (y: number) => {
+      const ty = `translateY(${-y}px)`;
+      const t = topoGroupRef.current;
+      if (t) t.style.transform = ty;
+      const j = joyGroupRef.current;
+      if (j) j.style.transform = ty;
     };
     let zone: "top" | "scrolled" =
       window.scrollY > SCROLL_ENTER_JOY ? "scrolled" : "top";
-    if (zone === "top") followTopo(window.scrollY);
+    follow(window.scrollY);
     const onScroll = () => {
       const y = window.scrollY;
       const nextZone: "top" | "scrolled" =
@@ -560,7 +631,7 @@ export default function JoyDivision() {
         zone = nextZone;
         morphTo(zone === "scrolled" ? "joy" : "topo");
       }
-      if (zone === "top") followTopo(y);
+      follow(y);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
