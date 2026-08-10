@@ -39,34 +39,34 @@ const SMALL_PROJECTS: {
   image?: StaticImageData;
   alt?: string;
 }[] = [
-  {
-    title: "Concentric Radar Chart",
-    description: "A radial take on the radar chart — categories ring outward instead of sharing one center.",
-    link: "https://observablehq.com/@michael-fernandes/concentric-radar-chart/2",
-    external: true,
-  },
-  {
-    title: "Simulation",
-    description: "A force-simulated cluster of dots that scatters away from the pointer.",
-    link: "/projects/interactive-dots",
-  },
-  {
-    title: "Child Mortality",
-    description: "IHME's Local Burden of Disease atlas of under-5 mortality, mapped down to the district level.",
-    link: "https://web.archive.org/web/20210421060225if_/https://vizhub.healthdata.org/child-mortality",
-    external: true,
-    video: "/small-projects/child-mortality.mov",
-  },
-  {
-    title: "Goal Grid",
-    description:
-      "A year of goals as a five-by-five board — one pillar per column, five intentions each, struck through as they land.",
-    link: "https://vision-board-builder.vercel.app",
-    external: true,
-    image: goalGridImg,
-    alt: "The Goal Grid board — five pillar columns of goal cards, the finished ones struck through and checked off.",
-  },
-];
+    {
+      title: "Concentric Radar Chart",
+      description: "A radial take on the radar chart — categories ring outward instead of sharing one center.",
+      link: "https://observablehq.com/@michael-fernandes/concentric-radar-chart/2",
+      external: true,
+    },
+    {
+      title: "Simulation",
+      description: "A force-simulated cluster of dots that scatters away from the pointer.",
+      link: "/projects/interactive-dots",
+    },
+    {
+      title: "Child Mortality",
+      description: "IHME's Local Burden of Disease atlas of under-5 mortality, mapped down to the district level.",
+      link: "https://web.archive.org/web/20210421060225if_/https://vizhub.healthdata.org/child-mortality",
+      external: true,
+      video: "/small-projects/child-mortality.mov",
+    },
+    {
+      title: "Bingo Vision Card",
+      description:
+        "creates a online app for a social media trend for tracking your goals in the new year.",
+      link: "https://www.bingovisioncard.com",
+      external: true,
+      image: goalGridImg,
+      alt: "The Goal Grid board — five pillar columns of goal cards, the finished ones struck through and checked off.",
+    },
+  ];
 
 const FEATURED: { id: string; name: string; note: string; image: StaticImageData; alt: string }[] = [
   {
