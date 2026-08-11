@@ -30,6 +30,10 @@ export const metadata: Metadata = {
   },
 };
 
+// Media window on a small-project card. One value for video, image, and
+// placeholder so every card in the scroll strip lines up.
+const MEDIA_H = "clamp(104px, 30vw, 132px)";
+
 const SMALL_PROJECTS: {
   title: string;
   description: string;
@@ -116,46 +120,78 @@ export default function WorkPage() {
       </TopoHero>
 
       {/* ── Main projects ── */}
-      <section className="px-page" style={{ paddingTop: 32, paddingBottom: 60 }}>
-        <SectionHeader kicker="Main projects" title="The bigger ones." />
+      <section className="px-page band band-lead">
+        <SectionHeader
+          kicker="Formative projects"
+          title="A couple data-heavy apps I'm proud of."
+          gap="clamp(40px, 9vw, 62px)"
+        />
         {FEATURED.map((p, i) => (
           <Link
             key={p.id}
             href={`/work/${p.id}`}
-            className="topo-card"
+            className="topo-card field-card"
+            // The card itself is low, broad ground — the summit lives on the
+            // art below, so the contours read as rising to the image rather
+            // than outlining the whole panel. (An <a> would otherwise sit at
+            // the default elevation of 22 and flatten the difference.)
+            data-topo-height="12"
+            data-topo-falloff="120"
+            data-topo-sharpness="2.4"
             style={{
               display: "block",
               textDecoration: "none",
               color: "inherit",
               border: `1px solid ${FAINT}`,
-              padding: 24,
-              marginBottom: 16,
+              padding: "clamp(13px, 3.4vw, 16px)",
               background: CARD_BG,
             }}
           >
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr] gap-6 md:gap-10 items-center">
-              <div>
-                <Eyebrow style={{ marginBottom: 12 }}>{`Project · 0${i + 1}`}</Eyebrow>
-                <h3 className="font-medium" style={{ fontSize: 20, letterSpacing: "-0.015em", lineHeight: 1.1, margin: 0, color: INK }}>
+            <div
+              className={`grid grid-cols-1 gap-4 md:gap-7 items-center ${
+                i % 2 === 1 ? "md:grid-cols-[0.85fr_1fr]" : "md:grid-cols-[1fr_0.85fr]"
+              }`}
+            >
+              <div
+                className={i % 2 === 1 ? "md:order-2" : undefined}
+                data-topo-important=""
+                data-topo-height="16"
+                data-topo-falloff="105"
+                data-topo-sharpness="2.2"
+              >
+                <Eyebrow style={{ marginBottom: "clamp(8px, 2.4vw, 10px)" }}>{`Project · 0${i + 1}`}</Eyebrow>
+                <h3 className="font-medium" style={{ fontSize: "clamp(14px, 3.8vw, 16px)", letterSpacing: "-0.015em", lineHeight: 1.1, margin: 0, color: INK }}>
                   {p.name}
                 </h3>
-                <p style={{ fontSize: 13, lineHeight: 1.55, color: DIM, marginTop: 10, maxWidth: 400 }}>{p.note}</p>
-                <div className="font-mono uppercase" style={{ marginTop: 18, fontSize: 10, letterSpacing: "0.22em", color: INK }}>
+                <p style={{ fontSize: "clamp(11px, 3vw, 12px)", lineHeight: 1.5, color: DIM, marginTop: 8, maxWidth: 300 }}>{p.note}</p>
+                <div className="font-mono uppercase" style={{ marginTop: "clamp(10px, 2.8vw, 13px)", fontSize: 9.5, letterSpacing: "0.2em", color: INK }}>
                   Read the case study →
                 </div>
               </div>
-              <Plate src={p.image} alt={p.alt} sizes="(min-width: 768px) 45vw, 100vw" />
+              <div
+                className={`field-art ${i % 2 === 1 ? "md:order-1" : "field-art--right"}`}
+                data-topo-important=""
+                data-topo-id={`featured-art-${p.id}`}
+                data-topo-hover-id={`featured-art-${p.id}`}
+                data-topo-height="96"
+                data-topo-falloff="150"
+                data-topo-sharpness="1.25"
+              >
+                <Plate src={p.image} alt={p.alt} sizes="(min-width: 768px) 30vw, 60vw" />
+              </div>
             </div>
           </Link>
         ))}
       </section>
 
       {/* ── Small projects ── */}
-      <section className="px-page" style={{ paddingTop: 0, paddingBottom: 60, borderTop: `1px solid ${FAINT}` }}>
-        <div style={{ paddingTop: 60 }}>
-          <SectionHeader kicker="Small projects" title="The smaller ones." />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 16 }}>
+      <section className="px-page band" style={{ borderTop: `1px solid ${FAINT}` }}>
+        <SectionHeader kicker="Small projects" title="The smaller ones." />
+        {/* A horizontal strip rather than a grid — cards sitting side by side
+            in rows fight the contour field; a single scrolling line reads as a
+            transect across it. Runs off both page margins (see .scroll-strip),
+            so the card clipped at the right edge is its own scroll cue. */}
+        <div className="scroll-strip">
           {SMALL_PROJECTS.map((p) => (
             <Link
               key={p.title}
@@ -168,12 +204,12 @@ export default function WorkPage() {
                 textDecoration: "none",
                 color: "inherit",
                 border: `1px solid ${FAINT}`,
-                padding: 20,
+                padding: "clamp(11px, 3.2vw, 14px)",
                 background: CARD_BG,
               }}
             >
               {p.video ? (
-                <div style={{ height: 160, border: `1px solid ${FAINT}`, background: "#1f1a16", overflow: "hidden" }}>
+                <div style={{ height: MEDIA_H, border: `1px solid ${FAINT}`, background: "#1f1a16", overflow: "hidden" }}>
                   <video
                     src={p.video}
                     autoPlay
@@ -184,29 +220,39 @@ export default function WorkPage() {
                   />
                 </div>
               ) : p.image ? (
-                // Same 160px window as the video card. Screenshots are taller
-                // than the window, so they cover from the top — the part worth
+                // Same window as the video card. Screenshots are taller than
+                // the window, so they cover from the top — the part worth
                 // seeing (headers, first row) is always at the top of the frame.
                 <div
                   className="relative"
-                  style={{ height: 160, border: `1px solid ${FAINT}`, background: "#1f1a16", overflow: "hidden" }}
+                  style={{ height: MEDIA_H, border: `1px solid ${FAINT}`, background: "#1f1a16", overflow: "hidden" }}
                 >
                   <Image
                     src={p.image}
                     alt={p.alt ?? p.title}
                     fill
-                    sizes="(min-width: 640px) 45vw, 100vw"
+                    sizes="248px"
                     placeholder="blur"
                     style={{ objectFit: "cover", objectPosition: "center top" }}
                   />
                 </div>
               ) : (
-                <Placeholder height={160} label={p.title} />
+                <Placeholder height={MEDIA_H} label={p.title} />
               )}
-              <h3 className="font-medium" style={{ fontSize: 15, letterSpacing: "-0.01em", color: INK, margin: "16px 0 0" }}>
+              <h3
+                className="font-medium"
+                style={{
+                  fontSize: "clamp(12px, 3.4vw, 14px)",
+                  letterSpacing: "-0.01em",
+                  color: INK,
+                  margin: "clamp(9px, 2.8vw, 12px) 0 0",
+                }}
+              >
                 {p.title}
               </h3>
-              <p style={{ fontSize: 13, lineHeight: 1.55, color: DIM, marginTop: 8 }}>{p.description}</p>
+              <p style={{ fontSize: "clamp(10.5px, 2.9vw, 12px)", lineHeight: 1.5, color: DIM, marginTop: 6 }}>
+                {p.description}
+              </p>
             </Link>
           ))}
         </div>

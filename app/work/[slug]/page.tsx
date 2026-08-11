@@ -62,25 +62,22 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       </TopoHero>
 
       {/* ── Heads-up data ── */}
-      <section className="px-page" style={{ paddingTop: 24, paddingBottom: 48 }}>
+      <section className="px-page band band-lead">
         <MetaRow items={META} />
       </section>
 
       {/* ── Short description ── */}
-      <section
-        className="px-page"
-        style={{ paddingTop: 40, paddingBottom: 40, borderTop: `1px solid ${FAINT}` }}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 md:gap-[60px] items-start">
+      <section className="px-page band" style={{ borderTop: `1px solid ${FAINT}` }}>
+        <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-5 md:gap-[60px] items-start">
           <Eyebrow style={{ paddingTop: 6 }}>Overview</Eyebrow>
           <div>
             <p
-              style={{ fontSize: 16, lineHeight: 1.55, color: INK, margin: 0, letterSpacing: "-0.008em", maxWidth: 640, textWrap: "pretty" }}
+              style={{ fontSize: "clamp(14px, 3.9vw, 16px)", lineHeight: 1.55, color: INK, margin: 0, letterSpacing: "-0.008em", maxWidth: 640, textWrap: "pretty" }}
             >
               Placeholder for a short description of the project. What the problem was, what was
               built, and what changed as a result — a paragraph or two, no more.
             </p>
-            <p style={{ fontSize: 13, lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 580, textWrap: "pretty" }}>
+            <p style={{ fontSize: "clamp(11.5px, 3.2vw, 13px)", lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 580, textWrap: "pretty" }}>
               A second placeholder paragraph for context — constraints, collaborators, the part that
               was harder than it looked. Real copy lands later.
             </p>
@@ -89,18 +86,18 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       </section>
 
       {/* ── Placeholder media ── */}
-      <section className="px-page" style={{ paddingTop: 16, paddingBottom: 60 }}>
-        <Placeholder height={380} label="Project hero image" ratio="≈ 16:9" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-          <Placeholder height={220} label="Detail" ratio="4:3" />
-          <Placeholder height={220} label="Detail" ratio="4:3" />
+      <section className="px-page band band-lead">
+        <Placeholder height="clamp(200px, 54vw, 380px)" label="Project hero image" ratio="≈ 16:9" />
+        <div className="grid grid-cols-2 gap-2 sm:gap-4" style={{ marginTop: "clamp(8px, 2.6vw, 16px)" }}>
+          <Placeholder height="clamp(120px, 32vw, 220px)" label="Detail" ratio="4:3" />
+          <Placeholder height="clamp(120px, 32vw, 220px)" label="Detail" ratio="4:3" />
         </div>
       </section>
 
       {/* ── Footer nav ── */}
       <section
-        className="px-page flex items-center justify-between"
-        style={{ paddingTop: 24, paddingBottom: 36, borderTop: `1px solid ${FAINT}` }}
+        className="px-page band band-lead band-tail flex items-center justify-between"
+        style={{ borderTop: `1px solid ${FAINT}` }}
       >
         <Link
           href="/work"

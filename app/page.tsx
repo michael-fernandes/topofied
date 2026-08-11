@@ -34,6 +34,23 @@ const SKILLS: { kind: GlyphKind; title: string; note: string }[] = [
   },
 ];
 
+const FEATURED: { id: string; name: string; note: string; image?: StaticImageData; alt?: string }[] = [
+  {
+    id: "uncertainty-displays-for-transit",
+    name: "Uncertainty you can act on",
+    note: "How a transit app should show what it doesn't know — and a 408-person study showing the right display makes better decisions.",
+    image: cardImg,
+    alt: "The OneBusAway interface showing a bus's arrival uncertainty as a quantile dotplot.",
+  },
+  {
+    id: "covid-forecasting",
+    name: "A forecast you could plan around",
+    note: "One of the first public forecasts of when COVID-19 would peak — and whether hospitals would have the room to meet it.",
+    image: covidCardImg,
+    alt: "A region's COVID-19 daily-deaths forecast — observed so far, projected ahead, with the model's uncertainty fanning into the future.",
+  },
+];
+
 export default function LandingPage() {
   return (
     <PageShell current="/" seed="landing-hero">
@@ -110,94 +127,114 @@ export default function LandingPage() {
       </TopoHero>
 
       {/* ── 01 — Core skills ── */}
-      <section className="px-page" style={{ paddingTop: 80, paddingBottom: 60 }}>
+      <section className="px-page band band-lead">
         <SectionHeader
           kicker="01 — What I do"
           title="Three things I do."
           subtitle="The stuff I'm good at and genuinely like doing."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: 16 }}>
-          {SKILLS.map((s) => (
+        {/* Half-width tiles on mobile. Three cards don't halve evenly, so the
+            last one takes the full row rather than leaving an orphan — two
+            square tiles over one wide one reads as a deliberate 2+1 block,
+            and the irregular silhouette suits the terrain better than a
+            uniform stack would. */}
+        <div className="grid grid-cols-2 md:grid-cols-3" style={{ gap: "var(--card-gap)" }}>
+          {SKILLS.map((s, i) => (
             <div
               key={s.title}
-              className="topo-card"
-              style={{ border: `1px solid ${FAINT}`, padding: "22px 20px", background: CARD_BG }}
+              className={`topo-card${i === SKILLS.length - 1 ? " col-span-2 md:col-span-1" : ""}`}
+              style={{
+                border: `1px solid ${FAINT}`,
+                padding: "clamp(12px, 3.2vw, 16px) clamp(11px, 3vw, 15px)",
+                background: CARD_BG,
+              }}
             >
-              <div style={{ marginBottom: 14, marginLeft: -1 }}>
-                <SkillGlyph kind={s.kind} size={48} />
+              <div style={{ marginBottom: "clamp(8px, 2.4vw, 10px)", marginLeft: -1 }}>
+                <SkillGlyph kind={s.kind} size={34} />
               </div>
-              <h3 className="font-medium" style={{ fontSize: 15, letterSpacing: "-0.01em", color: INK, margin: 0 }}>
+              <h3
+                className="font-medium"
+                style={{ fontSize: "clamp(12px, 3.4vw, 14px)", letterSpacing: "-0.01em", color: INK, margin: 0 }}
+              >
                 {s.title}
               </h3>
-              <p style={{ fontSize: 13, lineHeight: 1.55, color: DIM, marginTop: 8 }}>{s.note}</p>
+              <p style={{ fontSize: "clamp(10.5px, 2.9vw, 12px)", lineHeight: 1.5, color: DIM, marginTop: 6 }}>{s.note}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── 02 — Bigger projects ── */}
-      <section
-        className="px-page"
-        style={{ paddingTop: 60, paddingBottom: 60, borderTop: `1px solid ${FAINT}` }}
-      >
+      <section className="px-page band" style={{ borderTop: `1px solid ${FAINT}` }}>
         <SectionHeader
           kicker="02 — Selected work"
           title="A couple of public-facing data projects I'm proud of."
         />
 
-        {([
-          {
-            id: "uncertainty-displays-for-transit",
-            name: "Uncertainty you can act on",
-            note: "How a transit app should show what it doesn't know — and a 408-person study showing the right display makes better decisions.",
-            image: cardImg,
-            alt: "The OneBusAway interface showing a bus's arrival uncertainty as a quantile dotplot.",
-          },
-          {
-            id: "covid-forecasting",
-            name: "A forecast you could plan around",
-            note: "One of the first public forecasts of when COVID-19 would peak — and whether hospitals would have the room to meet it.",
-            image: covidCardImg,
-            alt: "A region's COVID-19 daily-deaths forecast — observed so far, projected ahead, with the model's uncertainty fanning into the future.",
-          },
-        ] as { id: string; name: string; note: string; image?: StaticImageData; alt?: string }[]).map((p, i) => (
+        {FEATURED.map((p, i) => (
           <Link
             key={p.id}
             href={`/work/${p.id}`}
-            className="topo-card"
+            className="topo-card field-card"
+            // The card itself is low, broad ground — the summit lives on the
+            // art below, so the contours read as rising to the image rather
+            // than outlining the whole panel. (An <a> would otherwise sit at
+            // the default elevation of 22 and flatten the difference.)
+            data-topo-height="12"
+            data-topo-falloff="120"
+            data-topo-sharpness="2.4"
             style={{
               display: "block",
               textDecoration: "none",
               color: "inherit",
               border: `1px solid ${FAINT}`,
-              padding: 24,
-              marginBottom: 16,
+              padding: "clamp(13px, 3.4vw, 16px)",
               background: CARD_BG,
             }}
           >
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr] gap-6 md:gap-10 items-center">
-              <div>
-                <Eyebrow style={{ marginBottom: 12 }}>{`Project · 0${i + 1}`}</Eyebrow>
+            <div
+              className={`grid grid-cols-1 gap-4 md:gap-7 items-center ${
+                i % 2 === 1 ? "md:grid-cols-[0.85fr_1fr]" : "md:grid-cols-[1fr_0.85fr]"
+              }`}
+            >
+              <div
+                className={i % 2 === 1 ? "md:order-2" : undefined}
+                data-topo-important=""
+                data-topo-height="16"
+                data-topo-falloff="105"
+                data-topo-sharpness="2.2"
+              >
+                <Eyebrow style={{ marginBottom: "clamp(8px, 2.4vw, 10px)" }}>{`Project · 0${i + 1}`}</Eyebrow>
                 <h3
                   className="font-medium"
-                  style={{ fontSize: 20, letterSpacing: "-0.015em", lineHeight: 1.1, margin: 0, color: INK }}
+                  style={{ fontSize: "clamp(14px, 3.8vw, 16px)", letterSpacing: "-0.015em", lineHeight: 1.1, margin: 0, color: INK }}
                 >
                   {p.name}
                 </h3>
-                <p style={{ fontSize: 13, lineHeight: 1.55, color: DIM, marginTop: 10, maxWidth: 420 }}>{p.note}</p>
+                <p style={{ fontSize: "clamp(11px, 3vw, 12px)", lineHeight: 1.5, color: DIM, marginTop: 8, maxWidth: 320 }}>{p.note}</p>
                 <div
                   className="font-mono uppercase"
-                  style={{ marginTop: 18, fontSize: 10, letterSpacing: "0.22em", color: INK }}
+                  style={{ marginTop: "clamp(10px, 2.8vw, 13px)", fontSize: 9.5, letterSpacing: "0.2em", color: INK }}
                 >
                   Read the case study →
                 </div>
               </div>
-              {p.image ? (
-                <Plate src={p.image} alt={p.alt ?? p.name} sizes="(min-width: 768px) 45vw, 100vw" />
-              ) : (
-                <Placeholder height={220} label="Project hero image" ratio="≈ 16:11" />
-              )}
+              <div
+                className={`field-art ${i % 2 === 1 ? "md:order-1" : "field-art--right"}`}
+                data-topo-important=""
+                data-topo-id={`featured-art-${p.id}`}
+                data-topo-hover-id={`featured-art-${p.id}`}
+                data-topo-height="96"
+                data-topo-falloff="150"
+                data-topo-sharpness="1.25"
+              >
+                {p.image ? (
+                  <Plate src={p.image} alt={p.alt ?? p.name} sizes="(min-width: 768px) 30vw, 60vw" />
+                ) : (
+                  <Placeholder height="clamp(96px, 28vw, 200px)" label="Project hero image" ratio="≈ 16:11" />
+                )}
+              </div>
             </div>
           </Link>
         ))}

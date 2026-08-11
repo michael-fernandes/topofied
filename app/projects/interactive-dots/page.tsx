@@ -59,7 +59,7 @@ export default function InteractiveDotsPage() {
         </div>
       </TopoHero>
 
-      <section className="px-page" style={{ paddingTop: 24, paddingBottom: 60 }}>
+      <section className="px-page band band-lead">
         <div style={{ border: `1px solid ${FAINT}`, background: "#1f1a16", overflow: "hidden" }}>
           <InteractiveDots />
         </div>
@@ -67,8 +67,8 @@ export default function InteractiveDotsPage() {
 
       {/* ── Footer nav ── */}
       <section
-        className="px-page flex items-center justify-between"
-        style={{ paddingTop: 24, paddingBottom: 36, borderTop: `1px solid ${FAINT}` }}
+        className="px-page band band-lead band-tail flex items-center justify-between"
+        style={{ borderTop: `1px solid ${FAINT}` }}
       >
         <Link
           href="/work"

@@ -74,27 +74,33 @@ export default function CollaboratePage() {
       </TopoHero>
 
       {/* ── Things I can do — 6-up legend ── */}
-      <section className="px-page" style={{ paddingTop: 40, paddingBottom: 60 }}>
+      <section className="px-page band band-lead">
         <Eyebrow style={{ marginBottom: 24 }}>What I can help with</Eyebrow>
+        {/* Third-width on mobile — six short cells make two tidy rows, so the
+            legend stays a single compact feature instead of a long ladder. */}
         <div
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
+          className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6"
           style={{ gap: 1, background: FAINT, border: `1px solid ${FAINT}` }}
         >
           {SERVICES.map((s, i) => (
             <div
               key={s}
-              style={{ background: "#1f1a16", padding: "18px 16px", minHeight: 120 }}
+              style={{
+                background: "#1f1a16",
+                padding: "clamp(9px, 2.6vw, 14px) clamp(8px, 2.4vw, 13px)",
+                minHeight: "clamp(74px, 21vw, 98px)",
+              }}
               className="flex flex-col justify-between"
             >
               <div className="font-mono" style={{ fontSize: 10, letterSpacing: "0.18em", color: ACCENT }}>
                 {`0${i + 1}`}
               </div>
               <div>
-                <Marker size={6} style={{ marginBottom: 10 }} />
-                <div className="font-medium" style={{ fontSize: 14, color: INK, letterSpacing: "-0.01em" }}>
+                <Marker size={6} style={{ marginBottom: "clamp(6px, 2.4vw, 10px)" }} />
+                <div className="font-medium" style={{ fontSize: "clamp(10.5px, 2.9vw, 12.5px)", color: INK, letterSpacing: "-0.01em" }}>
                   {s}
                 </div>
-                <div style={{ fontSize: 12, color: DIM, lineHeight: 1.45, marginTop: 4 }}>
+                <div style={{ fontSize: "clamp(9.5px, 2.5vw, 11px)", color: DIM, lineHeight: 1.45, marginTop: 4 }}>
                   Short placeholder.
                 </div>
               </div>
@@ -104,11 +110,8 @@ export default function CollaboratePage() {
       </section>
 
       {/* ── Availability / contact ── */}
-      <section
-        className="px-page"
-        style={{ paddingTop: 40, paddingBottom: 60, borderTop: `1px solid ${FAINT}` }}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr] gap-8 md:gap-14 items-start">
+      <section className="px-page band" style={{ borderTop: `1px solid ${FAINT}` }}>
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr] gap-6 md:gap-14 items-start">
           <div>
             <Eyebrow style={{ marginBottom: 16 }}>How it works</Eyebrow>
             <p style={{ fontSize: 15, lineHeight: 1.55, color: INK, margin: 0, maxWidth: 420, textWrap: "pretty" }}>
@@ -119,7 +122,12 @@ export default function CollaboratePage() {
 
           <div
             className="topo-card flex flex-col justify-between"
-            style={{ border: `1px solid ${FAINT}`, padding: 24, minHeight: 220, background: CARD_BG }}
+            style={{
+              border: `1px solid ${FAINT}`,
+              padding: "clamp(14px, 3.8vw, 19px)",
+              minHeight: "clamp(160px, 44vw, 190px)",
+              background: CARD_BG,
+            }}
           >
             <div>
               <div

@@ -62,19 +62,19 @@ export default function CovidForecastingPage() {
       </TopoHero>
 
       {/* ── Heads-up data ── */}
-      <section className="px-page" style={{ paddingTop: 24, paddingBottom: 48 }}>
+      <section className="px-page band band-lead">
         <MetaRow items={META} />
       </section>
 
       {/* ── The gist + the forecast ── */}
-      <section className="px-page" style={{ paddingTop: 40, paddingBottom: 48, borderTop: `1px solid ${FAINT}` }}>
-        <p style={{ fontSize: 15, lineHeight: 1.6, color: DIM, marginTop: 0, maxWidth: 600, textWrap: "pretty" }}>
+      <section className="px-page band" style={{ borderTop: `1px solid ${FAINT}` }}>
+        <p style={{ fontSize: "clamp(13px, 3.7vw, 15px)", lineHeight: 1.6, color: DIM, marginTop: 0, maxWidth: 600, textWrap: "pretty" }}>
           In 2020 I was at <span style={{ color: INK }}>IHME</span>, turning a daily forecasting model
           into something anyone could read in seconds: projected deaths and hospital demand for every
           U.S. state, then every country, each shown as a range rather than one confident number. The
           first public version shipped in weeks. We rebuilt it every day after that.
         </p>
-        <div style={{ maxWidth: 680, margin: "28px auto 0" }}>
+        <div style={{ maxWidth: 680, margin: "clamp(18px, 5vw, 28px) auto 0" }}>
           <Plate
             src={forecastImg}
             alt="A region's daily-deaths forecast: the observed climb so far, a projected curve continuing past today, and a shaded uncertainty band that widens into the future toward a marked projected peak."
@@ -85,19 +85,20 @@ export default function CovidForecastingPage() {
       </section>
 
       {/* ── Why it stuck ── */}
-      <section className="px-page" style={{ paddingTop: 40, paddingBottom: 48, borderTop: `1px solid ${FAINT}` }}>
-        <p style={{ fontSize: 15, lineHeight: 1.6, color: DIM, marginTop: 0, maxWidth: 600, textWrap: "pretty" }}>
+      <section className="px-page band" style={{ borderTop: `1px solid ${FAINT}` }}>
+        <p style={{ fontSize: "clamp(13px, 3.7vw, 15px)", lineHeight: 1.6, color: DIM, marginTop: 0, maxWidth: 600, textWrap: "pretty" }}>
           Most dashboards counted what had already happened. This was one of the first to put a date
           on the <span style={{ color: INK }}>peak</span>: when each place would crest, and whether
           its hospitals would have room. It ran daily in national and global news.
         </p>
 
-        {/* The two reads people came for: the "when", and the "will we have room". */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 28 }}>
+        {/* The two reads people came for: the "when", and the "will we have
+            room". Side by side at every width — they're a pair. */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-4" style={{ marginTop: "clamp(18px, 5vw, 28px)" }}>
           <Plate
             src={timingImg}
             alt="Several regional curves on one timeline, each peaking on a different date, with the peaks connected to show the wave arriving later from place to place."
-            sizes="(min-width: 640px) 47vw, 100vw"
+            sizes="47vw"
             caption={
               <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: DIM }}>
                 <Marker size={6} /> Peaks weeks apart by region
@@ -107,7 +108,7 @@ export default function CovidForecastingPage() {
           <Plate
             src={capacityImg}
             alt="A projected demand curve cresting above a dashed capacity line, with the gap between them — the shortfall — shaded in."
-            sizes="(min-width: 640px) 47vw, 100vw"
+            sizes="47vw"
             caption={
               <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: DIM }}>
                 <Marker size={6} /> Projected demand vs. capacity
@@ -116,7 +117,7 @@ export default function CovidForecastingPage() {
           />
         </div>
 
-        <p style={{ fontSize: 15, lineHeight: 1.6, color: DIM, marginTop: 28, maxWidth: 600, textWrap: "pretty" }}>
+        <p style={{ fontSize: "clamp(13px, 3.7vw, 15px)", lineHeight: 1.6, color: DIM, marginTop: "clamp(18px, 5vw, 28px)", maxWidth: 600, textWrap: "pretty" }}>
           Same idea as my transit work: the forecast people can act on isn’t the most{" "}
           <span style={{ color: INK }}>confident</span> one, it’s the one that’s honest about how
           wrong it might be.
@@ -125,8 +126,8 @@ export default function CovidForecastingPage() {
 
       {/* ── Footer nav ── */}
       <section
-        className="px-page flex items-center justify-between"
-        style={{ paddingTop: 24, paddingBottom: 36, borderTop: `1px solid ${FAINT}` }}
+        className="px-page band band-lead band-tail flex items-center justify-between"
+        style={{ borderTop: `1px solid ${FAINT}` }}
       >
         <Link
           href="/work"

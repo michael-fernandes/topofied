@@ -85,19 +85,19 @@ export default function UncertaintyDisplaysPage() {
       </TopoHero>
 
       {/* ── Heads-up data ── */}
-      <section className="px-page" style={{ paddingTop: 24, paddingBottom: 48 }}>
+      <section className="px-page band band-lead">
         <MetaRow items={META} />
       </section>
 
       {/* ── Fold 2 — process → interface ── */}
-      <section className="px-page" style={{ paddingTop: 40, paddingBottom: 48, borderTop: `1px solid ${FAINT}` }}>
-        <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 md:gap-[60px] items-start">
+      <section className="px-page band" style={{ borderTop: `1px solid ${FAINT}` }}>
+        <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-5 md:gap-[60px] items-start">
           <Eyebrow style={{ paddingTop: 6 }}>How it was made</Eyebrow>
           <div>
             <h2 className="font-medium" style={headingStyle}>
               We started from how people already ride.
             </h2>
-            <p style={{ fontSize: 15, lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 600, textWrap: "pretty" }}>
+            <p style={{ fontSize: "clamp(13px, 3.7vw, 15px)", lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 600, textWrap: "pretty" }}>
               Rather than invent from scratch, we built on earlier interviews and ethnographic studies of how riders
               weigh waiting against risk — which pointed to a handful of ways to picture uncertainty. We rebuilt those
               into <span style={{ color: INK }}>OneBusAway</span>, a real transit app, then refined them through
@@ -105,7 +105,7 @@ export default function UncertaintyDisplaysPage() {
             </p>
           </div>
         </div>
-        <div style={{ maxWidth: 680, margin: "28px auto 0" }}>
+        <div style={{ maxWidth: 680, margin: "clamp(18px, 5vw, 28px) auto 0" }}>
           <Plate
             src={interfaceImg}
             alt="OneBusAway before and after: the standard app beside our version, which shows each bus's spread of likely arrival times."
@@ -116,14 +116,14 @@ export default function UncertaintyDisplaysPage() {
       </section>
 
       {/* ── Fold 3 — large quantitative study → finding ── */}
-      <section className="px-page" style={{ paddingTop: 40, paddingBottom: 48, borderTop: `1px solid ${FAINT}` }}>
-        <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 md:gap-[60px] items-start">
+      <section className="px-page band" style={{ borderTop: `1px solid ${FAINT}` }}>
+        <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-5 md:gap-[60px] items-start">
           <Eyebrow style={{ paddingTop: 6 }}>Does it help?</Eyebrow>
           <div>
             <h2 className="font-medium" style={headingStyle}>
               Then we tested it at scale.
             </h2>
-            <p style={{ fontSize: 15, lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 600, textWrap: "pretty" }}>
+            <p style={{ fontSize: "clamp(13px, 3.7vw, 15px)", lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 600, textWrap: "pretty" }}>
               408 people made real, incentivized bus-catching decisions — rewarded for good calls, penalized for
               waiting in the rain. Of ten ways to show uncertainty, quantile dot plots and CDFs produced the best,
               most consistent decisions: about <span style={{ color: INK }}>97% of the best-possible payoff</span>,
@@ -132,8 +132,12 @@ export default function UncertaintyDisplaysPage() {
           </div>
         </div>
 
-        {/* The displays — a single tick (status quo) → the two that won. */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4" style={{ marginTop: 28 }}>
+        {/* The displays — a single tick (status quo) → the two that won.
+            These stay stacked on mobile while the rest of the site goes
+            half/third-width: the plates are 2.65:1, so a third-width column
+            is a 40px sliver, and the CDF's shaded mass — already low
+            contrast — disappears entirely at that size. */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4" style={{ marginTop: "clamp(18px, 5vw, 28px)" }}>
           <Plate
             src={controlImg}
             alt="A single tick on a timeline — one predicted arrival time, with no uncertainty shown."
@@ -162,7 +166,7 @@ export default function UncertaintyDisplaysPage() {
           />
         </div>
 
-        <p style={{ fontSize: 15, lineHeight: 1.6, color: DIM, marginTop: 28, maxWidth: 600, textWrap: "pretty" }}>
+        <p style={{ fontSize: "clamp(13px, 3.7vw, 15px)", lineHeight: 1.6, color: DIM, marginTop: "clamp(18px, 5vw, 28px)", maxWidth: 600, textWrap: "pretty" }}>
           The takeaway: shown well, uncertainty doesn&apos;t overwhelm people — it quietly raises{" "}
           <span style={{ color: INK }}>everyone&apos;s</span> decisions, not just the experts&apos;.
         </p>
@@ -170,8 +174,8 @@ export default function UncertaintyDisplaysPage() {
 
       {/* ── Footer nav ── */}
       <section
-        className="px-page flex items-center justify-between"
-        style={{ paddingTop: 24, paddingBottom: 36, borderTop: `1px solid ${FAINT}` }}
+        className="px-page band band-lead band-tail flex items-center justify-between"
+        style={{ borderTop: `1px solid ${FAINT}` }}
       >
         <Link
           href="/work"

@@ -54,14 +54,19 @@ export function SectionHeader({
   title,
   subtitle,
   maxTitle = 900,
+  gap = "clamp(22px, 5.5vw, 34px)",
 }: {
   kicker: string;
   title: string;
   subtitle?: string;
   maxTitle?: number;
+  /** Space below the header. Default stays tight — the band padding around the
+   *  section is what separates features, so a header has to read as part of its
+   *  own. Override per-section when a header needs to sit off on its own. */
+  gap?: string;
 }) {
   return (
-    <div style={{ marginBottom: 40 }}>
+    <div style={{ marginBottom: gap }}>
       <Eyebrow style={{ marginBottom: 14 }}>{kicker}</Eyebrow>
       <h2
         className="font-medium"
@@ -164,9 +169,17 @@ export function Plate({
         />
       </div>
       {caption && (
+        // Plates sit two- and three-up in places now, so the caption's tracking
+        // has to relax as the column narrows or a two-word label won't fit.
         <figcaption
           className="font-mono uppercase"
-          style={{ marginTop: 10, fontSize: 9, letterSpacing: "0.22em", color: FAINT, lineHeight: 1.5 }}
+          style={{
+            marginTop: "clamp(6px, 2vw, 10px)",
+            fontSize: "clamp(8px, 2.2vw, 9px)",
+            letterSpacing: "clamp(0.08em, 0.55vw, 0.22em)",
+            color: FAINT,
+            lineHeight: 1.5,
+          }}
         >
           {caption}
         </figcaption>
@@ -240,12 +253,16 @@ export function MetaRow({ items }: { items: { k: string; v: string }[] }) {
         ["--meta-row-cols" as string]: items.length,
       }}
     >
-      {items.map((it) => (
-        <div key={it.k} style={{ background: "#1f1a16", padding: "20px 22px" }}>
+      {items.map((it, i) => (
+        <div
+          key={it.k}
+          className={items.length % 2 === 1 && i === items.length - 1 ? "meta-row-wide" : undefined}
+          style={{ background: "#1f1a16", padding: "clamp(12px, 3.4vw, 16px) clamp(12px, 3.6vw, 18px)" }}
+        >
           <dt className="font-mono uppercase" style={{ fontSize: 10, letterSpacing: "0.22em", color: FAINT, marginBottom: 10 }}>
             {it.k}
           </dt>
-          <dd className="m-0" style={{ fontSize: 16, color: INK, letterSpacing: "-0.005em" }}>
+          <dd className="m-0" style={{ fontSize: "clamp(12.5px, 3.4vw, 15px)", color: INK, letterSpacing: "-0.005em" }}>
             {it.v}
           </dd>
         </div>

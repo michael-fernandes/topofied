@@ -50,27 +50,134 @@ body {
   transform: translateX(3px);
 }
 
-/* Responsive horizontal page padding */
-.px-page {
-  padding-left: 20px;
-  padding-right: 20px;
+/* Responsive horizontal page padding. Held in a token so a full-bleed child
+   (see .scroll-strip) can cancel it out exactly. */
+:root {
+  --page-x: 20px;
 }
 @media (min-width: 768px) {
-  .px-page {
-    padding-left: 60px;
-    padding-right: 60px;
+  :root {
+    --page-x: 60px;
   }
 }
 
+.px-page {
+  padding-left: var(--page-x);
+  padding-right: var(--page-x);
+}
+
 .mx-page {
-  margin-left: 20px;
-  margin-right: 20px;
+  margin-left: var(--page-x);
+  margin-right: var(--page-x);
+}
+
+/* Featured project card — sits in the terrain rather than covering it. Full
+   width on a phone, two-thirds of the column from md, and the rows stack flush
+   left on the section header's margin. The relief comes from the art inside
+   them (see .field-art and the data-topo-* on the wrappers), not from shunting
+   the cards around: the card itself is deliberately low, broad ground. */
+.field-card {
+  position: relative;
+  width: 100%;
+}
+/* Between rows only — no trailing margin fighting the section's band padding. */
+.field-card + .field-card {
+  margin-top: var(--field-gap);
+}
+
+/* The art is the summit. On a phone it stacks under the copy, and at full card
+   width it swamped the row — so pull it back to a partial-width band and push
+   it to whichever side it occupies on desktop. The summits then still alternate
+   left/right at phone width instead of sitting dead centre, and the plate stops
+   outweighing the text it belongs to. Full width again from md, where it has a
+   column of its own. */
+.field-art {
+  width: 64%;
+}
+.field-art--right {
+  margin-left: auto;
 }
 @media (min-width: 768px) {
-  .mx-page {
-    margin-left: 60px;
-    margin-right: 60px;
+  .field-card {
+    width: 66%;
   }
+  .field-art,
+  .field-art--right {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+/* Horizontal scroll strip — the small projects. Cards in a row that runs off
+   both page margins, so the set reads as a transect across the terrain rather
+   than a block of tiles sitting side by side. The negative margin cancels
+   .px-page and the padding puts the first and last card back on the text
+   column, so the strip bleeds to the edge without the ends looking clipped. */
+.scroll-strip {
+  display: flex;
+  gap: var(--card-gap);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  margin-left: calc(-1 * var(--page-x));
+  margin-right: calc(-1 * var(--page-x));
+  padding-left: var(--page-x);
+  padding-right: var(--page-x);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-strip::-webkit-scrollbar {
+  display: none;
+}
+.scroll-strip > * {
+  flex: 0 0 auto;
+  width: clamp(196px, 58vw, 248px);
+  scroll-snap-align: start;
+}
+
+/* ── Section rhythm ───────────────────────────────────────────────────
+   Sections are the terrain features; the padding between them is the open
+   ground where the contour field is allowed to read. So the air goes
+   *between* bands and never inside them — everything within a section stays
+   tight enough to read as one landform, and adjacent bands leave a full
+   2×--band gap of bare terrain between features.
+
+   Mobile gets nearly as much air as desktop on purpose: the cards shrink to
+   half/third width there, which buys back the height the gaps spend.
+
+   /about is deliberately exempt — it runs its own JoyDivision backdrop and
+   doesn't use these classes. */
+:root {
+  --band: 104px;
+  /* Gap between cards inside a section. Deliberately larger than it needs to
+     be for rhythm alone: the terrain reads between the cards too, not just
+     between the sections. */
+  --card-gap: 16px;
+  /* Space between the staggered featured rows. Bigger than --card-gap on
+     purpose: these alternate sides, so the ground between them is where the
+     contours actually get to show through. */
+  --field-gap: 46px;
+}
+@media (min-width: 768px) {
+  :root {
+    --band: 168px;
+    --card-gap: 26px;
+    --field-gap: 84px;
+  }
+}
+
+.band {
+  padding-top: var(--band);
+  padding-bottom: var(--band);
+}
+/* Source order matters: these override .band's matching side. */
+.band-lead {
+  /* First band under a hero — the hero already supplies the air above. */
+  padding-top: calc(var(--band) * 0.6);
+}
+.band-tail {
+  /* Footer nav — sits above the fixed instrument strip, so it runs tighter. */
+  padding-bottom: calc(var(--band) * 0.45);
 }
 
 /* MetaRow — stacks to 2-up on mobile, full row at desktop width */
@@ -80,5 +187,16 @@ body {
 @media (min-width: 640px) {
   .meta-row {
     grid-template-columns: repeat(var(--meta-row-cols), minmax(0, 1fr));
+  }
+}
+/* An odd number of items leaves a hole in the 2-up mobile grid, and the hole
+   shows the strip's own FAINT background as a solid block. Let the last cell
+   take the full row instead. */
+.meta-row > .meta-row-wide {
+  grid-column: span 2;
+}
+@media (min-width: 640px) {
+  .meta-row > .meta-row-wide {
+    grid-column: auto;
   }
 }
