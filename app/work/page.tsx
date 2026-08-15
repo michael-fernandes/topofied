@@ -3,6 +3,7 @@ import Link from "next/link";
 import PageShell from "../components/page-shell";
 import TopoHero from "../components/topo-hero";
 import {
+  BG,
   INK,
   DIM,
   FAINT,
@@ -48,6 +49,7 @@ const SMALL_PROJECTS: {
       description: "A radial take on the radar chart — categories ring outward instead of sharing one center.",
       link: "https://observablehq.com/@michael-fernandes/concentric-radar-chart/2",
       external: true,
+      video: "/small-projects/concentric-radar-chart.mov",
     },
     {
       title: "Simulation",
@@ -59,7 +61,6 @@ const SMALL_PROJECTS: {
       description: "IHME's Local Burden of Disease atlas of under-5 mortality, mapped down to the district level.",
       link: "https://web.archive.org/web/20210421060225if_/https://vizhub.healthdata.org/child-mortality",
       external: true,
-      video: "/small-projects/child-mortality.mov",
     },
     {
       title: "Bingo Vision Card",
@@ -209,7 +210,7 @@ export default function WorkPage() {
               }}
             >
               {p.video ? (
-                <div style={{ height: MEDIA_H, border: `1px solid ${FAINT}`, background: "#1f1a16", overflow: "hidden" }}>
+                <div style={{ height: MEDIA_H, border: `1px solid ${FAINT}`, background: BG, overflow: "hidden" }}>
                   <video
                     src={p.video}
                     autoPlay
@@ -225,7 +226,7 @@ export default function WorkPage() {
                 // seeing (headers, first row) is always at the top of the frame.
                 <div
                   className="relative"
-                  style={{ height: MEDIA_H, border: `1px solid ${FAINT}`, background: "#1f1a16", overflow: "hidden" }}
+                  style={{ height: MEDIA_H, border: `1px solid ${FAINT}`, background: BG, overflow: "hidden" }}
                 >
                   <Image
                     src={p.image}

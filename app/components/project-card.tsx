@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
-const INK = "#ebe2d4";
-const DIM = "#a89a86";
-const FAINT = "#5a4f43";
+import { INK, DIM, FAINT, CARD_BG } from "./kit";
 
 export type Project = {
   id: string;
@@ -36,7 +33,7 @@ export default function ProjectCard({ project }: { project: Project }) {
       onMouseLeave={() => setHover(false)}
       style={{
         border: `1px solid ${border}`,
-        background: "rgba(235,226,212,0.012)",
+        background: CARD_BG,
         padding: 18,
         display: "flex",
         flexDirection: "column",

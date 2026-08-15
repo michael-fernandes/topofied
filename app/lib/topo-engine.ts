@@ -327,10 +327,16 @@ export function buildLevels(
   // t = 0 (valley floor) → t = 1 (peak). Ranges are [low, high].
   // "index" lines are the bold accent lines every `indexEvery` levels.
   const DARK = {
-    index:   { lit: 55,  alpha: 0.50, width: 1.2 },
+    // Index lines carry the accent; they're the field's pop. Base lines stay
+    // where they were — brightening those costs text legibility.
+    index:   { lit: 68,  alpha: 0.62, width: 1.35 },
     lineLit:   [44, 56]  as [number, number],  // lightness range low→high
     lineAlpha: [0.28, 0.39] as [number, number], // opacity range low→high
-    lineWidth: [0.5, 0.7]   as [number, number],
+    // A hair wider than hairline: presence comes from weight here, not opacity.
+    lineWidth: [0.6, 0.85]   as [number, number],
+    // Base lines take a trace of the accent's warmth instead of pure grey, so
+    // the field sits in the palette rather than reading as neutral smoke.
+    lineSat: 14,
   };
   const PAPER = {
     index:   { lit: 8,   alpha: 0.75, width: 1.2 },
@@ -359,7 +365,7 @@ export function buildLevels(
       const lit   = isIndex ? C.index.lit   : C.lineLit[0]   + t * (C.lineLit[1]   - C.lineLit[0]);
       const alpha = isIndex ? C.index.alpha : C.lineAlpha[0] + t * (C.lineAlpha[1] - C.lineAlpha[0]);
       sw           = isIndex ? C.index.width : C.lineWidth[0] + t * (C.lineWidth[1] - C.lineWidth[0]);
-      stroke = `hsla(${isIndex ? accentHue : baseHue},${isIndex ? accentSat : 0}%,${lit}%,${alpha})`;
+      stroke = `hsla(${accentHue},${isIndex ? accentSat : C.lineSat}%,${lit}%,${alpha})`;
     }
 
     // Curve threshold distribution toward valleys: exp > 1 packs more

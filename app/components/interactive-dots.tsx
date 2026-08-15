@@ -7,6 +7,7 @@ import * as d3 from "d3";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { SyntheticEvent } from "react";
 import { easings, useSpring, animated } from "react-spring";
+import { BG } from "./kit";
 
 const LONG_ANIMATION = 600;
 const SHORT_ANIMATION = 400;
@@ -152,7 +153,13 @@ export default function InteractiveDots({
   }, [isClient, ref.current, innerWidth, showDots]);
 
   return (
-    <section className="h-full w-full overflow-visible flex items-center justify-center">
+    // The canvas is transparent between dots, so the component carries its own
+    // opaque ground — otherwise the terrain reads straight through the
+    // simulation wherever this gets dropped on a page.
+    <section
+      className="h-full w-full overflow-visible flex items-center justify-center"
+      style={{ background: BG }}
+    >
       {showDots && (
         <animated.canvas
           style={{ ...fadeIn, maxWidth: "100%", height: "auto" }}

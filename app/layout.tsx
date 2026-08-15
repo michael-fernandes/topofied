@@ -68,7 +68,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <div className="relative min-h-screen bg-[#1f1a16] text-[#ebe2d4] font-sans overflow-x-hidden">
+        <div className="relative min-h-screen bg-[#241d18] text-[#f4ece0] font-sans overflow-x-hidden">
           <TerrainShell>{children}</TerrainShell>
         </div>
       </body>

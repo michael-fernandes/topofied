@@ -22,6 +22,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { BG } from "./kit";
 import {
   buildField,
   buildLevels,
@@ -480,7 +481,7 @@ export default function JoyDivision() {
       // the strokes of ridges above them.
       const ridgeG = document.createElementNS(svgNS, "g");
       const fill = document.createElementNS(svgNS, "path");
-      fill.setAttribute("fill", "#1f1a16");
+      fill.setAttribute("fill", BG);
       fill.setAttribute("stroke", "none");
       fill.setAttribute("d", r.fillD_joy);
       ridgeG.appendChild(fill);
@@ -664,7 +665,7 @@ export default function JoyDivision() {
         style={{
           position: "fixed",
           inset: 0,
-          background: "#1f1a16",
+          background: BG,
           pointerEvents: "none",
           zIndex: 1,
         }}
@@ -686,7 +687,7 @@ export default function JoyDivision() {
       <button
         type="button"
         onClick={toggle}
-        className="fixed bottom-10 right-4 z-30 font-mono px-3 py-1.5 text-[10px] uppercase tracking-[0.25em] border border-[#5a4f43] bg-[#1f1a16]/80 backdrop-blur-sm text-[#a89a86] hover:text-[#ebe2d4] hover:border-[hsl(24_22%_70%)] transition-colors"
+        className="fixed bottom-10 right-4 z-30 font-mono px-3 py-1.5 text-[10px] uppercase tracking-[0.25em] border border-[#7d6e5d] bg-[#241d18]/80 backdrop-blur-sm text-[#c3b4a0] hover:text-[#f4ece0] hover:border-[hsl(26_46%_72%)] transition-colors"
       >
         {mode === "topo" ? "Unknown Pleasures" : "Topo Map"}
       </button>

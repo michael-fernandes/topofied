@@ -7,13 +7,22 @@
 import type { CSSProperties, ReactNode } from "react";
 import Image, { type StaticImageData } from "next/image";
 
-export const INK = "#ebe2d4";
-export const DIM = "#a89a86";
-export const FAINT = "#5a4f43";
-export const ACCENT = "hsl(24 22% 70%)";
-export const ACCENT_DIM = "hsl(24 22% 55%)";
+// Single source of truth for the palette — imported by every page and by
+// terrain-shell. The tiers are spaced so each one still reads at a glance on
+// the warm dark ground: INK for text, DIM for prose, FAINT for hairlines and
+// captions (the tier that carries most of the page's structure), ACCENT for
+// the warm survey marks.
+export const BG = "#241d18";
+export const INK = "#f4ece0";
+export const DIM = "#c3b4a0";
+export const FAINT = "#7d6e5d";
+export const ACCENT = "hsl(26 46% 72%)";
+export const ACCENT_DIM = "hsl(26 38% 58%)";
 
-export const CARD_BG = "rgba(235,226,212,0.012)";
+// Semi-opaque warm ground, a shade above BG. The terrain now reads brightly
+// enough that a transparent card let contours run straight through the copy —
+// this damps what's behind the text while still lifting the card off the page.
+export const CARD_BG = "rgba(54,44,36,0.62)";
 
 /** Small rotated square — reads as a survey / benchmark marker. */
 export function Marker({ size = 8, color = ACCENT, style }: { size?: number; color?: string; style?: CSSProperties }) {
@@ -149,7 +158,7 @@ export function Plate({
 }) {
   return (
     <figure style={{ margin: 0 }}>
-      <div className="relative" style={{ border: `1px solid ${FAINT}`, background: "#1f1a16", overflow: "hidden" }}>
+      <div className="relative" style={{ border: `1px solid ${FAINT}`, background: BG, overflow: "hidden" }}>
         <Image
           src={src}
           alt={alt}
@@ -257,7 +266,7 @@ export function MetaRow({ items }: { items: { k: string; v: string }[] }) {
         <div
           key={it.k}
           className={items.length % 2 === 1 && i === items.length - 1 ? "meta-row-wide" : undefined}
-          style={{ background: "#1f1a16", padding: "clamp(12px, 3.4vw, 16px) clamp(12px, 3.6vw, 18px)" }}
+          style={{ background: BG, padding: "clamp(12px, 3.4vw, 16px) clamp(12px, 3.6vw, 18px)" }}
         >
           <dt className="font-mono uppercase" style={{ fontSize: 10, letterSpacing: "0.22em", color: FAINT, marginBottom: 10 }}>
             {it.k}

@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import TopoScene from "../lib/topo-scene";
+import { INK, DIM, ACCENT } from "./kit";
 
 const PAGES = [
   { href: "/", label: "Home" },
@@ -100,8 +101,8 @@ export default function TerrainShell({
     <TopoScene
       fill
       seed={SHARED_SEED}
-      accentHue={24}
-      accentSat={22}
+      accentHue={26}
+      accentSat={44}
       hoverBoost={22}
       theme="dark"
       res={5}
@@ -118,7 +119,7 @@ export default function TerrainShell({
           inset: 0,
           zIndex: 1,
           pointerEvents: "none",
-          background: `linear-gradient(to bottom, transparent 0%, transparent 70vh, rgba(31,26,22,0.70) 110vh, rgba(31,26,22,0.70) 100%)`,
+          background: `linear-gradient(to bottom, transparent 0%, transparent 70vh, rgba(36,29,24,0.46) 110vh, rgba(36,29,24,0.46) 100%)`,
         }}
       />
 
@@ -147,10 +148,10 @@ export default function TerrainShell({
                   style={{
                     fontSize: 11,
                     letterSpacing: "0.25em",
-                    color: active ? "#ebe2d4" : "#a89a86",
+                    color: active ? INK : DIM,
                     textDecoration: "none",
                     borderBottom: active
-                      ? "1px solid hsl(24 22% 70%)"
+                      ? `1px solid ${ACCENT}`
                       : "1px solid transparent",
                     paddingBottom: 3,
                   }}
@@ -170,17 +171,17 @@ export default function TerrainShell({
       </div>
 
       {/* Bottom instrument strip — a single quiet map nod: a scale bar. */}
-      <div className="fixed bottom-0 left-0 right-0 z-[21] flex items-center justify-between px-6 py-2 border-t border-[#5a4f43]/50 bg-[#1f1a16]/80 backdrop-blur-sm font-mono text-[10px] uppercase tracking-wider text-[#5a4f43]">
+      <div className="fixed bottom-0 left-0 right-0 z-[21] flex items-center justify-between px-6 py-2 border-t border-[#7d6e5d]/60 bg-[#241d18]/80 backdrop-blur-sm font-mono text-[10px] uppercase tracking-wider text-[#8d7e6c]">
         <span>Michael Fernandes</span>
         <div className="flex items-center gap-2">
           <span>0</span>
           <div className="relative h-1.5 w-24">
-            <div className="absolute left-0 right-0 top-1/2 h-px bg-[#5a4f43]" />
-            <div className="absolute left-0 top-0 h-full w-px bg-[#5a4f43]" />
-            <div className="absolute left-1/4 top-[3px] h-[3px] w-px bg-[#5a4f43]" />
-            <div className="absolute left-1/2 top-[2px] h-[4px] w-px bg-[#5a4f43]" />
-            <div className="absolute left-3/4 top-[3px] h-[3px] w-px bg-[#5a4f43]" />
-            <div className="absolute right-0 top-0 h-full w-px bg-[#5a4f43]" />
+            <div className="absolute left-0 right-0 top-1/2 h-px bg-[#8d7e6c]" />
+            <div className="absolute left-0 top-0 h-full w-px bg-[#8d7e6c]" />
+            <div className="absolute left-1/4 top-[3px] h-[3px] w-px bg-[#8d7e6c]" />
+            <div className="absolute left-1/2 top-[2px] h-[4px] w-px bg-[#8d7e6c]" />
+            <div className="absolute left-3/4 top-[3px] h-[3px] w-px bg-[#8d7e6c]" />
+            <div className="absolute right-0 top-0 h-full w-px bg-[#8d7e6c]" />
           </div>
           <span>500 PX</span>
         </div>

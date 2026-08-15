@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PageShell from "../components/page-shell";
 import TopoHero from "../components/topo-hero";
 import {
+  BG,
   INK,
   DIM,
   FAINT,
@@ -86,7 +87,7 @@ export default function CollaboratePage() {
             <div
               key={s}
               style={{
-                background: "#1f1a16",
+                background: BG,
                 padding: "clamp(9px, 2.6vw, 14px) clamp(8px, 2.4vw, 13px)",
                 minHeight: "clamp(74px, 21vw, 98px)",
               }}

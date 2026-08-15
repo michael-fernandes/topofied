@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #1f1a16;
-  --foreground: #d0d0d0;
+  --background: #241d18;
+  --foreground: #e8dfd2;
 }
 
 @theme inline {
@@ -27,8 +27,8 @@ body {
   transition: border-color 200ms ease, background-color 200ms ease, transform 200ms ease;
 }
 .topo-card:hover {
-  border-color: hsl(24 22% 52%);
-  background-color: rgba(235, 226, 212, 0.03);
+  border-color: hsl(26 46% 62%);
+  background-color: rgba(235, 226, 212, 0.06);
 }
 .topo-card--lift:hover {
   transform: translateY(-2px);
@@ -39,8 +39,8 @@ body {
   transition: border-color 200ms ease, background-color 200ms ease, transform 200ms ease;
 }
 .cta-btn:hover {
-  border-color: hsl(24 22% 72%);
-  background-color: rgba(235, 226, 212, 0.06);
+  border-color: hsl(26 52% 78%);
+  background-color: rgba(235, 226, 212, 0.10);
   transform: translateY(-1px);
 }
 .cta-btn__arrow {

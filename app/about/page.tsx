@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PageShell from "../components/page-shell";
 import TopoHero from "../components/topo-hero";
 import JoyDivision from "../components/joy-division";
+import { BG, INK, DIM, FAINT, ACCENT, ACCENT_DIM } from "../components/kit";
 
 export const metadata: Metadata = {
   title: "About",
@@ -15,12 +16,6 @@ export const metadata: Metadata = {
     url: "/about",
   },
 };
-
-const INK = "#ebe2d4";
-const DIM = "#a89a86";
-const FAINT = "#5a4f43";
-const ACCENT = "hsl(24 22% 70%)";
-const ACCENT_DIM = "hsl(24 22% 55%)";
 
 export default function AboutPage() {
   return (
@@ -135,7 +130,7 @@ function Scrim({
         style={{
           position: "absolute",
           inset: "-32px -56px",
-          background: "#1f1a16",
+          background: BG,
           opacity: 0.82,
           filter: "blur(28px)",
           pointerEvents: "none",

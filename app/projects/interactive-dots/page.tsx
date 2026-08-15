@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PageShell from "../../components/page-shell";
 import TopoHero from "../../components/topo-hero";
-import { INK, DIM, FAINT, ACCENT, Eyebrow } from "../../components/kit";
+import { BG, INK, DIM, FAINT, ACCENT, Eyebrow } from "../../components/kit";
 import InteractiveDots from "../../components/interactive-dots";
 
 export const metadata: Metadata = {
@@ -60,7 +60,7 @@ export default function InteractiveDotsPage() {
       </TopoHero>
 
       <section className="px-page band band-lead">
-        <div style={{ border: `1px solid ${FAINT}`, background: "#1f1a16", overflow: "hidden" }}>
+        <div style={{ border: `1px solid ${FAINT}`, background: BG, overflow: "hidden" }}>
           <InteractiveDots />
         </div>
       </section>
