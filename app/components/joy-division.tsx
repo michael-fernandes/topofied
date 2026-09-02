@@ -153,12 +153,16 @@ function buildPeaks(W: number, H: number): Peak[] {
 // follow the content"). Joy mode is left untouched — its spike stack keeps
 // the full-amplitude Unknown Pleasures look, so only the resting map shifts.
 const TOPO_X_BIAS = 0; // shift peaks right by this fraction of width
+// Drop the whole massif below the fold's midline so the hero's upper band
+// stays open and the terrain gathers under the content instead of behind it.
+const TOPO_Y_BIAS = 0.12; // shift peaks down by this fraction of height
 const TOPO_HEIGHT_SCALE = 0.66; // lower the central massif's prominence
 
-function biasPeaksForTopo(peaks: Peak[], W: number): Peak[] {
+function biasPeaksForTopo(peaks: Peak[], W: number, H: number): Peak[] {
   return peaks.map((p) => ({
     ...p,
     x: p.x + W * TOPO_X_BIAS,
+    y: p.y + H * TOPO_Y_BIAS,
     h: p.h * TOPO_HEIGHT_SCALE,
   }));
 }
@@ -178,9 +182,9 @@ function biasPeaksForTopo(peaks: Peak[], W: number): Peak[] {
 // organic iso-lines that hug the words. Tune with the four constants; the
 // two satellite summits are placed relative to the primary's radius.
 const TITLE_PEAK_X = 0.2; // primary center x, as a fraction of viewport width
-const TITLE_PEAK_Y = 0.37; // primary center y, as a fraction of viewport height
-const TITLE_PEAK_H = 0.5; // primary prominence, same 0–~0.6 scale as buildPeaks
-const TITLE_PEAK_R = 0.1; // primary radius, as a fraction of min(W, H)
+const TITLE_PEAK_Y = 0.49; // primary center y, as a fraction of viewport height
+const TITLE_PEAK_H = 0.50; // primary prominence, same 0–~0.6 scale as buildPeaks
+const TITLE_PEAK_R = 0.115; // primary radius, as a fraction of min(W, H)
 
 function titlePeaksForTopo(W: number, H: number): Peak[] {
   const R = Math.min(W, H);
@@ -196,25 +200,44 @@ function titlePeaksForTopo(W: number, H: number): Peak[] {
   ];
 }
 
-// On every other route the active nav tab reads as the header summit, drawn by
-// TerrainShell's own TopoScene. On About that scene is masked by this
-// component's opaque backdrop, so the header lost its summit. Re-add it here:
-// a peak at the active ("About") tab — top-right, since the nav is
-// right-aligned — sized to ~TerrainShell's ACTIVE_H (46) so the About header
-// carries about the same terrain weight as the other pages'.
-const NAV_PEAK_X = 0.86; // active-tab center x (nav is right-aligned)
-const NAV_PEAK_Y = 0.04; // near the very top of the viewport
-const NAV_PEAK_H = 0.46; // ≈ ACTIVE_H (46) after buildEnginePeaks' ×100 scale
-const NAV_PEAK_R = 0.14; // spread, as a fraction of min(W, H)
+// On every other route the header terrain comes from TerrainShell's own
+// TopoScene, which turns each nav LINK into a peak (its real rect, plus the
+// falloff/sharpness/height on its data-topo-* attributes). On About that scene
+// is masked by this component's backdrop, so the header must be rebuilt here.
+// Rather than approximate it with one hand-placed blob — which read as a
+// single oversized swell, nothing like the other routes — measure the actual
+// nav links and mirror TerrainShell's constants exactly.
+const NAV_ACTIVE_H = 46; // = TerrainShell ACTIVE_H
+const NAV_INACTIVE_H = 12; // = TerrainShell INACTIVE_H
+const NAV_FALLOFF = 76;
+const NAV_SHARPNESS = 1.45;
+// Header noise damping, same as TerrainShell's noiseTopFade, so incidental
+// hills stay below the nav links instead of massing beside them.
+const NAV_RING_REACH = NAV_FALLOFF * 4.5;
+const HEADER_NOISE_MIN = 0.55;
 
-function navPeakForTopo(W: number, H: number): Peak {
-  const R = Math.min(W, H);
-  return {
-    x: W * NAV_PEAK_X,
-    y: H * NAV_PEAK_Y,
-    h: NAV_PEAK_H,
-    r: R * NAV_PEAK_R,
-  };
+// Document-space peaks for the nav links. Heights come from the constants,
+// not the live data-topo-height, because that value is mid-glide right after a
+// client-side navigation into this page.
+function measureNavPeaks(): EnginePeak[] {
+  const links = document.querySelectorAll<HTMLElement>('[data-topo-id^="nav-"]');
+  const peaks: EnginePeak[] = [];
+  for (const el of links) {
+    const r = el.getBoundingClientRect();
+    if (r.width < 4 || r.height < 4) continue;
+    peaks.push({
+      x: r.left + window.scrollX,
+      y: r.top + window.scrollY,
+      w: r.width,
+      h: r.height,
+      height: el.hasAttribute("data-topo-important")
+        ? NAV_ACTIVE_H
+        : NAV_INACTIVE_H,
+      falloff: NAV_FALLOFF,
+      sharpness: NAV_SHARPNESS,
+    });
+  }
+  return peaks;
 }
 
 // Domain warp (same recipe as the site's topo engine): perturb (x,y) before
@@ -270,8 +293,12 @@ function buildEnginePeaks(peaks: Peak[]): EnginePeak[] {
     w: p.r * 2,
     h: p.r * 2,
     height: p.h * 100,
-    falloff: p.r * 0.55,
-    sharpness: 1.6,
+    // Broad, gently-sloped summits (falloff ≈ the peak's own radius, matching
+    // the 110–150px falloffs the rest of the site uses). A short falloff makes
+    // the slope steep, and contour spacing is elevation-step ÷ slope — which is
+    // what packed the rings into a tight nest here.
+    falloff: p.r * 1.15,
+    sharpness: 1.35,
   }));
 }
 
@@ -402,16 +429,21 @@ export default function JoyDivision() {
     // Topo mode: the real engine, same params TerrainShell uses for the
     // site's persistent background, so this reads as the same contour map.
     const enginePeaks = buildEnginePeaks([
-      ...biasPeaksForTopo(buildPeaks(size.w, size.h), size.w),
+      ...biasPeaksForTopo(buildPeaks(size.w, size.h), size.w, size.h),
       ...titlePeaksForTopo(size.w, size.h),
-      navPeakForTopo(size.w, size.h),
     ]);
+    enginePeaks.push(...measureNavPeaks());
     const fr = buildField({
       width: size.w,
       height: size.h,
       peaks: enginePeaks,
       seed: SEED,
       res: 5,
+      noiseTopFade: {
+        from: NAV_RING_REACH,
+        to: NAV_RING_REACH * 2,
+        min: HEADER_NOISE_MIN,
+      },
     });
     const levels = fr
       ? buildLevels(fr, {
