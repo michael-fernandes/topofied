@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import PageShell from "../components/page-shell";
 import TopoHero from "../components/topo-hero";
 import JoyDivision from "../components/joy-division";
-import { BG, INK, DIM, FAINT, ACCENT, ACCENT_DIM } from "../components/kit";
+import VolcanoSurvey from "../components/volcano-survey";
+import { BG, INK, DIM, FAINT, ACCENT, ACCENT_DIM, SectionHeader } from "../components/kit";
 
 export const metadata: Metadata = {
   title: "About",
@@ -54,32 +55,48 @@ export default function AboutPage() {
         {/* Desktop: writeup sits narrower and centered, tucked close under the
             hero title. Full width on mobile. */}
         <div className="md:mx-auto md:max-w-[500px]">
-        <Scrim>
-          <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: 0 }}>
-            I started my career in software development — prototyping,
-            developing, and user-testing data visualizations used for
-            decision-making around uncertainty. That experience never left
-            me. After college I began work as a UX designer. Seeing the
-            relationship between design and engineering made me feel that
-            engineering was, at the time, the more powerful tool for bringing
-            ideas to life. I wanted to be a part of that process, so I
-            transitioned into software engineering.
-          </p>
-          <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: "20px 0 0" }}>
-            Ever since, I have lived on the edge of design and engineering,
-            communicating with designers and engineers to create products
-            that are both functional and user-friendly. My background in UX
-            design allows me to approach software development with a unique
-            perspective, ensuring that the end product not only meets
-            technical requirements but also provides an intuitive and
-            engaging user experience.
-          </p>
-          <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: "20px 0 0" }}>
-            In my career I&apos;ve worked in global health, green tech, and now
-            in both the B2B and direct-to-consumer spaces, creating highly
-            structured experiences around AI.
-          </p>
-        </Scrim>
+          <Scrim>
+            <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: 0 }}>
+              I started my career in software development — prototyping,
+              developing, and user-testing data visualizations used for
+              decision-making around uncertainty. That experience never left
+              me. After college I began work as a UX designer. Seeing the
+              relationship between design and engineering made me feel that
+              engineering was, at the time, the more powerful tool for bringing
+              ideas to life. I wanted to be a part of that process, so I
+              transitioned into software engineering.
+            </p>
+            <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: "20px 0 0" }}>
+              Ever since, I have lived on the edge of design and engineering,
+              communicating with designers and engineers to create products
+              that are both functional and user-friendly. My background in UX
+              design allows me to approach software development with a unique
+              perspective, ensuring that the end product not only meets
+              technical requirements but also provides an intuitive and
+              engaging user experience.
+            </p>
+            <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: "20px 0 0" }}>
+              In my career I&apos;ve worked in global health, green tech, and now
+              in both the B2B and direct-to-consumer spaces, creating highly
+              structured experiences around AI.
+            </p>
+          </Scrim>
+        </div>
+      </section>
+
+      <section
+        className="mx-page"
+        style={{ borderTop: `1px solid ${FAINT}`, paddingTop: 44, paddingBottom: 56 }}
+      >
+        <div className="mx-auto" style={{ maxWidth: 880 }}>
+          <Scrim>
+            <SectionHeader
+              kicker="Off the clock"
+              title="Skiing the Cascade volcanoes"
+              subtitle="I'm an avid ski tourer in my free time. An ongoing side project I'm doing is skiing from the summit of every volcano on the West Coast. This involves using specialized ski touring equipment to ascend the mountain, switch it into downhill mode and enjoy the ride down."
+            />
+            <VolcanoSurvey />
+          </Scrim>
         </div>
       </section>
 
@@ -90,21 +107,21 @@ export default function AboutPage() {
         {/* Match the writeup's centered column so the contact row reads as
             part of the same content track (full-width divider above stays). */}
         <div className="md:mx-auto md:max-w-[500px]">
-        <Scrim className="flex flex-col md:flex-row md:justify-center md:items-baseline gap-4">
-        <a
-          href="https://github.com/michael-fernandes"
-          className="font-mono uppercase no-underline"
-          style={{
-            fontSize: 11,
-            letterSpacing: "0.22em",
-            color: DIM,
-            borderBottom: `1px solid ${ACCENT}`,
-            paddingBottom: 4,
-          }}
-        >
-            github.com/michael-fernandes →
-          </a>
-        </Scrim>
+          <Scrim className="flex flex-col md:flex-row md:justify-center md:items-baseline gap-4">
+            <a
+              href="https://github.com/michael-fernandes"
+              className="font-mono uppercase no-underline"
+              style={{
+                fontSize: 11,
+                letterSpacing: "0.22em",
+                color: DIM,
+                borderBottom: `1px solid ${ACCENT}`,
+                paddingBottom: 4,
+              }}
+            >
+              github.com/michael-fernandes →
+            </a>
+          </Scrim>
         </div>
       </section>
     </PageShell>
