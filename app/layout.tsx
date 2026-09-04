@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import TerrainShell from "./components/terrain-shell";
+import GaOptOut from "./components/ga-optout";
 
 const GA_MEASUREMENT_ID = "G-PTLDE59E1B";
 
@@ -73,7 +74,10 @@ export default function RootLayout({
         </div>
       </body>
       {process.env.NODE_ENV === "production" && (
-        <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
+        <>
+          <GaOptOut gaId={GA_MEASUREMENT_ID} />
+          <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
+        </>
       )}
     </html>
   );
