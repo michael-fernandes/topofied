@@ -4,7 +4,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import TerrainShell from "./components/terrain-shell";
 
-const GA_MEASUREMENT_ID = "G-1NW3VMXTZB";
+const GA_MEASUREMENT_ID = "G-PTLDE59E1B";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
