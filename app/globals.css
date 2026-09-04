@@ -22,16 +22,38 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Bordered cards / rows — subtle warm hover, on-theme */
-.topo-card {
+/* Interactive surface. A bordered box that reacts means "this goes somewhere" —
+   so only links carry it, and the focus ring gives keyboard users the same cue. */
+.topo-link-card {
   transition: border-color 200ms ease, background-color 200ms ease, transform 200ms ease;
 }
-.topo-card:hover {
+.topo-link-card:hover {
   border-color: hsl(26 46% 62%);
   background-color: rgba(235, 226, 212, 0.06);
-}
-.topo-card--lift:hover {
   transform: translateY(-2px);
+}
+.topo-link-card:focus-visible {
+  outline: 1px solid hsl(26 46% 72%);
+  outline-offset: 3px;
+}
+.card-arrow {
+  transition: transform 200ms ease;
+}
+.topo-link-card:hover .card-arrow {
+  transform: translateX(3px);
+}
+
+/* Static surface — border and fill, nothing reactive. */
+.topo-panel {
+  border: 1px solid #7d6e5d;
+  background-color: rgba(54, 44, 36, 0.62);
+}
+
+/* Un-boxed info column — a rule above instead of a box around, so the terrain
+   reads through and the copy can't be mistaken for a target. */
+.field-note {
+  border-top: 1px solid #7d6e5d;
+  padding-top: clamp(12px, 3.2vw, 16px);
 }
 
 /* Prominent outbound CTA — doubles as the hero terrain summit */
@@ -86,25 +108,20 @@ body {
 }
 
 /* The art is the summit. On a phone it stacks under the copy, and at full card
-   width it swamped the row — so pull it back to a partial-width band and push
-   it to whichever side it occupies on desktop. The summits then still alternate
-   left/right at phone width instead of sitting dead centre, and the plate stops
-   outweighing the text it belongs to. Full width again from md, where it has a
-   column of its own. */
+   width it swamped the row — so pull it back to a partial-width band. It stays
+   on the copy's left edge there: below md the copy runs full width, so a
+   right-pushed plate shares an edge with nothing and reads as adrift. The
+   left/right alternation belongs to md+, where copy and art sit side by side.
+   Full width again from md, where it has a column of its own. */
 .field-art {
   width: 64%;
-}
-.field-art--right {
-  margin-left: auto;
 }
 @media (min-width: 768px) {
   .field-card {
     width: 66%;
   }
-  .field-art,
-  .field-art--right {
+  .field-art {
     width: 100%;
-    margin-left: 0;
   }
 }
 

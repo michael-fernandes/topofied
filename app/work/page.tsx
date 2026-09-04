@@ -7,6 +7,7 @@ import {
   INK,
   DIM,
   FAINT,
+  ACCENT,
   CARD_BG,
   Eyebrow,
   SectionHeader,
@@ -131,7 +132,7 @@ export default function WorkPage() {
           <Link
             key={p.id}
             href={`/work/${p.id}`}
-            className="topo-card field-card"
+            className="topo-link-card field-card"
             // The card itself is low, broad ground — the summit lives on the
             // art below, so the contours read as rising to the image rather
             // than outlining the whole panel. (An <a> would otherwise sit at
@@ -165,12 +166,12 @@ export default function WorkPage() {
                   {p.name}
                 </h3>
                 <p style={{ fontSize: "clamp(11px, 3vw, 12px)", lineHeight: 1.5, color: DIM, marginTop: 8, maxWidth: 300 }}>{p.note}</p>
-                <div className="font-mono uppercase" style={{ marginTop: "clamp(10px, 2.8vw, 13px)", fontSize: 9.5, letterSpacing: "0.2em", color: INK }}>
-                  Read the case study →
+                <div className="font-mono uppercase" style={{ marginTop: "clamp(10px, 2.8vw, 13px)", fontSize: 9.5, letterSpacing: "0.2em", color: ACCENT }}>
+                  Read the case study <span className="card-arrow inline-block">→</span>
                 </div>
               </div>
               <div
-                className={`field-art ${i % 2 === 1 ? "md:order-1" : "field-art--right"}`}
+                className={`field-art ${i % 2 === 1 ? "md:order-1" : ""}`}
                 data-topo-important=""
                 data-topo-id={`featured-art-${p.id}`}
                 data-topo-hover-id={`featured-art-${p.id}`}
@@ -199,7 +200,7 @@ export default function WorkPage() {
               href={p.link}
               target={p.external ? "_blank" : undefined}
               rel={p.external ? "noopener noreferrer" : undefined}
-              className="topo-card"
+              className="topo-link-card"
               style={{
                 display: "block",
                 textDecoration: "none",

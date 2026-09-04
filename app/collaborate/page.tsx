@@ -7,7 +7,6 @@ import {
   DIM,
   FAINT,
   ACCENT,
-  CARD_BG,
   Marker,
   Eyebrow,
 } from "../components/kit";
@@ -122,12 +121,10 @@ export default function CollaboratePage() {
           </div>
 
           <div
-            className="topo-card flex flex-col justify-between"
+            className="topo-panel flex flex-col justify-between"
             style={{
-              border: `1px solid ${FAINT}`,
               padding: "clamp(14px, 3.8vw, 19px)",
               minHeight: "clamp(160px, 44vw, 190px)",
-              background: CARD_BG,
             }}
           >
             <div>

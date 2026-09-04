@@ -5,6 +5,7 @@ import {
   INK,
   DIM,
   FAINT,
+  ACCENT,
   CARD_BG,
   Eyebrow,
   SectionHeader,
@@ -106,7 +107,7 @@ export default function LandingPage() {
               textWrap: "pretty",
             }}
           >
-            A designer who became an engineer, mostly so the designs would survive the trip.
+            Exploring the intersection of design and engineering often through the medium of data visualization and interactive data applications.
           </p>
         </div>
 
@@ -143,12 +144,7 @@ export default function LandingPage() {
           {SKILLS.map((s, i) => (
             <div
               key={s.title}
-              className={`topo-card${i === SKILLS.length - 1 ? " col-span-2 md:col-span-1" : ""}`}
-              style={{
-                border: `1px solid ${FAINT}`,
-                padding: "clamp(12px, 3.2vw, 16px) clamp(11px, 3vw, 15px)",
-                background: CARD_BG,
-              }}
+              className={`field-note${i === SKILLS.length - 1 ? " col-span-2 md:col-span-1" : ""}`}
             >
               <div style={{ marginBottom: "clamp(8px, 2.4vw, 10px)", marginLeft: -1 }}>
                 <SkillGlyph kind={s.kind} size={34} />
@@ -176,7 +172,7 @@ export default function LandingPage() {
           <Link
             key={p.id}
             href={`/work/${p.id}`}
-            className="topo-card field-card"
+            className="topo-link-card field-card"
             // The card itself is low, broad ground — the summit lives on the
             // art below, so the contours read as rising to the image rather
             // than outlining the whole panel. (An <a> would otherwise sit at
@@ -194,9 +190,8 @@ export default function LandingPage() {
             }}
           >
             <div
-              className={`grid grid-cols-1 gap-4 md:gap-7 items-center ${
-                i % 2 === 1 ? "md:grid-cols-[0.85fr_1fr]" : "md:grid-cols-[1fr_0.85fr]"
-              }`}
+              className={`grid grid-cols-1 gap-4 md:gap-7 items-center ${i % 2 === 1 ? "md:grid-cols-[0.85fr_1fr]" : "md:grid-cols-[1fr_0.85fr]"
+                }`}
             >
               <div
                 className={i % 2 === 1 ? "md:order-2" : undefined}
@@ -215,13 +210,13 @@ export default function LandingPage() {
                 <p style={{ fontSize: "clamp(11px, 3vw, 12px)", lineHeight: 1.5, color: DIM, marginTop: 8, maxWidth: 320 }}>{p.note}</p>
                 <div
                   className="font-mono uppercase"
-                  style={{ marginTop: "clamp(10px, 2.8vw, 13px)", fontSize: 9.5, letterSpacing: "0.2em", color: INK }}
+                  style={{ marginTop: "clamp(10px, 2.8vw, 13px)", fontSize: 9.5, letterSpacing: "0.2em", color: ACCENT }}
                 >
-                  Read the case study →
+                  Read the case study <span className="card-arrow inline-block">→</span>
                 </div>
               </div>
               <div
-                className={`field-art ${i % 2 === 1 ? "md:order-1" : "field-art--right"}`}
+                className={`field-art ${i % 2 === 1 ? "md:order-1" : ""}`}
                 data-topo-important=""
                 data-topo-id={`featured-art-${p.id}`}
                 data-topo-hover-id={`featured-art-${p.id}`}
@@ -244,7 +239,7 @@ export default function LandingPage() {
           className="font-mono uppercase"
           style={{
             display: "inline-block",
-            marginTop: 16,
+            marginTop: 48,
             fontSize: 11,
             letterSpacing: "0.22em",
             color: DIM,
