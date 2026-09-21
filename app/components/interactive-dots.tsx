@@ -11,12 +11,8 @@ import { BG } from "./kit";
 
 const LONG_ANIMATION = 600;
 const SHORT_ANIMATION = 400;
-
-function useIsClient() {
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => setIsClient(true), []);
-  return isClient;
-}
+const MAX_SIZE = 1000;
+const SMALL_SCREEN = 500;
 
 interface ForceNode {
   id: number;
@@ -29,28 +25,25 @@ interface ForceNode {
 }
 
 const gradient = d3.interpolateCool;
-const PAGE_PADDING_X = 20 * 2;
 
 export default function InteractiveDots({
   showDots = true,
 }: {
   showDots?: boolean;
 }) {
-  const isClient = useIsClient();
+  const ref = useRef<HTMLCanvasElement>(null);
+  // The canvas is a CSS-sized square; JS only mirrors that size into the
+  // backing store and into the simulation's origin, so the cluster stays
+  // centred at any container width.
+  const [size, setSize] = useState(0);
+  const sizeRef = useRef(0);
+  sizeRef.current = size;
 
-  const isSmallerScreen = isClient ? window?.innerWidth < 500 : false;
-
-  const width =
-    isClient && isSmallerScreen
-      ? (window?.innerWidth - PAGE_PADDING_X) * 2
-      : 1000;
-
-  const height = width;
+  const isSmallerScreen = size > 0 && size < SMALL_SCREEN;
   const iterations = isSmallerScreen ? 1 : 3;
   const radius = isSmallerScreen ? 3 : 4;
   const forceHat = isSmallerScreen ? 0.001 : 0.00075;
   const numNodes = isSmallerScreen ? 75 : 125;
-  const ref = useRef(null);
 
   const fadeIn = useSpring({
     from: { opacity: 0 },
@@ -68,89 +61,102 @@ export default function InteractiveDots({
       })),
     [numNodes, radius],
   );
-  const innerWidth = typeof window !== "undefined" ? window.innerWidth : 0;
 
-  useEffect((): any => {
-    if (ref.current) {
-      const canvas = ref.current as HTMLCanvasElement;
-      const ctx = canvas.getContext("2d");
-      const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio;
+  // Track the canvas' laid-out size (resize, rotation, font/zoom changes).
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas) return;
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry) setSize(Math.round(entry.contentRect.width));
+    });
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, [showDots]);
 
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx?.scale(dpr, dpr);
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
+  // Resize the backing store for the device pixel ratio.
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas || !size) return;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(size * dpr);
+    canvas.height = Math.round(size * dpr);
+    canvas.getContext("2d")?.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }, [size, showDots]);
 
-      const pointed = (event: SyntheticEvent) => {
-        let [x, y] = d3.pointer(event);
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas || !size) return;
+    const ctx = canvas.getContext("2d");
 
-        if (x < width / 4) {
-          x = x * -1;
-        }
-        if (y < height / 4) {
-          y = y * -1;
-        }
+    const pointed = (event: SyntheticEvent) => {
+      const extent = sizeRef.current;
+      let [x, y] = d3.pointer(event);
 
-        if (nodes[0]) {
-          nodes[0].fx = x - width / 2;
-          nodes[0].fy = y - height / 2;
-        }
-      };
-
-      const ticked = () => {
-        if (ctx) {
-          ctx.clearRect(0, 0, width * 2, height * 2);
-          ctx.save();
-          ctx.translate(width / 2, height / 2);
-          for (let i = 0; i < nodes.length; i++) {
-            const d: ForceNode | undefined = nodes[i];
-            if (d) {
-              ctx.beginPath();
-              ctx.moveTo((d.x || 0) + d.r, d.y || 0);
-              ctx.arc(d.x || 0, d.y || 0, d.r, 0, 2 * Math.PI);
-              ctx.fillStyle = d.id ? d.group : "transparent";
-              ctx.globalAlpha = 1;
-              ctx.fill();
-            }
-          }
-          ctx.globalCompositeOperation = "lighter";
-          ctx.restore();
-        }
-      };
-
-      const simulation = d3
-        .forceSimulation<ForceNode>(nodes)
-        .alpha(0.4)
-        .alphaDecay(0.01)
-        .alphaTarget(0.2)
-        .velocityDecay(0.025)
-        .force("x", d3.forceX().strength(forceHat))
-        .force("y", d3.forceY().strength(forceHat))
-        .force(
-          "collide",
-          d3
-            .forceCollide()
-            .radius((d: any) => d.r + 1)
-            .iterations(iterations),
-        )
-        .force(
-          "charge",
-          d3.forceManyBody().strength((d: any, i: number) => (i ? 0 : d.r)),
-        )
-        .on("tick", ticked);
-
-      if (ctx) {
-        d3.select(ctx.canvas)
-          .on("touchmove", (event: SyntheticEvent) => event.preventDefault())
-          .on("pointermove", pointed);
+      if (x < extent / 4) {
+        x = x * -1;
+      }
+      if (y < extent / 4) {
+        y = y * -1;
       }
 
-      return () => simulation.stop();
-    }
+      if (nodes[0]) {
+        nodes[0].fx = x - extent / 2;
+        nodes[0].fy = y - extent / 2;
+      }
+    };
+
+    const ticked = () => {
+      if (!ctx) return;
+      const extent = sizeRef.current;
+      ctx.clearRect(0, 0, extent, extent);
+      ctx.save();
+      ctx.translate(extent / 2, extent / 2);
+      for (let i = 0; i < nodes.length; i++) {
+        const d: ForceNode | undefined = nodes[i];
+        if (d) {
+          ctx.beginPath();
+          ctx.moveTo((d.x || 0) + d.r, d.y || 0);
+          ctx.arc(d.x || 0, d.y || 0, d.r, 0, 2 * Math.PI);
+          ctx.fillStyle = d.id ? d.group : "transparent";
+          ctx.globalAlpha = 1;
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    };
+
+    const simulation = d3
+      .forceSimulation<ForceNode>(nodes)
+      .alpha(0.4)
+      .alphaDecay(0.01)
+      .alphaTarget(0.2)
+      .velocityDecay(0.025)
+      .force("x", d3.forceX().strength(forceHat))
+      .force("y", d3.forceY().strength(forceHat))
+      .force(
+        "collide",
+        d3
+          .forceCollide()
+          .radius((d: any) => d.r + 1)
+          .iterations(iterations),
+      )
+      .force(
+        "charge",
+        d3.forceManyBody().strength((d: any, i: number) => (i ? 0 : d.r)),
+      )
+      .on("tick", ticked);
+
+    d3.select(canvas)
+      .on("touchmove", (event: SyntheticEvent) => event.preventDefault())
+      .on("pointermove", pointed);
+
+    return () => {
+      simulation.stop();
+    };
+    // `size` only gates the first run — resizes are picked up via sizeRef,
+    // so the simulation isn't torn down mid-drag.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isClient, ref.current, innerWidth, showDots]);
+  }, [nodes, size > 0, showDots, iterations, forceHat]);
 
   return (
     // The canvas is transparent between dots, so the component carries its own
@@ -162,10 +168,14 @@ export default function InteractiveDots({
     >
       {showDots && (
         <animated.canvas
-          style={{ ...fadeIn, maxWidth: "100%", height: "auto" }}
-          height={height}
-          width={width}
           ref={ref}
+          style={{
+            ...fadeIn,
+            display: "block",
+            width: "100%",
+            maxWidth: MAX_SIZE,
+            aspectRatio: "1 / 1",
+          }}
         />
       )}
     </section>
