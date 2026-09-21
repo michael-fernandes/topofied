@@ -2,7 +2,21 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PageShell from "../../components/page-shell";
 import TopoHero from "../../components/topo-hero";
-import { INK, DIM, FAINT, ACCENT, Eyebrow, MetaRow, Plate, Marker, CtaButton } from "../../components/kit";
+import {
+  INK,
+  DIM,
+  FAINT,
+  ACCENT,
+  Eyebrow,
+  MetaRow,
+  Plate,
+  Marker,
+  CtaButton,
+  FindingsPanel,
+  Finding,
+  bodyStyle,
+  foldHeadingStyle,
+} from "../../components/kit";
 import JsonLd from "../../components/json-ld";
 import { caseStudyJsonLd } from "../../lib/seo";
 import interfaceImg from "@/media/uncertainty/interface.png";
@@ -46,17 +60,6 @@ const META = [
   { k: "Google Scholar Citations", v: "242" },
 ];
 
-// Section heading shared by the two content folds.
-const headingStyle = {
-  fontSize: "clamp(16px, 1.5vw, 20px)",
-  letterSpacing: "-0.015em",
-  lineHeight: 1.15,
-  margin: 0,
-  color: INK,
-  maxWidth: 560,
-  textWrap: "balance" as const,
-};
-
 export default function UncertaintyDisplaysPage() {
   return (
     <PageShell current="/work" seed="uncertainty-displays-for-transit">
@@ -73,7 +76,7 @@ export default function UncertaintyDisplaysPage() {
             data-topo-height="48"
             data-topo-falloff="110"
           >
-            <Eyebrow style={{ marginBottom: 16 }}>Case study</Eyebrow>
+            <Eyebrow style={{ marginBottom: 16 }}>Academic research work</Eyebrow>
             <h1
               className="font-medium m-0"
               style={{
@@ -85,11 +88,10 @@ export default function UncertaintyDisplaysPage() {
                 textWrap: "balance",
               }}
             >
-              Decisions when the answer is only “probably.”
+              Uncertainty displays for on the go decision making
             </h1>
             <p style={{ fontSize: 14, lineHeight: 1.55, color: DIM, marginTop: 14, maxWidth: 480, textWrap: "pretty" }}>
-              Everyday apps give you one confident number — but most real choices, like when to leave for the bus,
-              are decisions made under uncertainty.
+              Everyday apps give you one confident number you are asked to make a decision on. Numeric predictions like how long it will take to commute, what temprature it will be and when a bus might arrive are numeric point estimates which obfusicate uncertainty
             </p>
           </div>
           <CtaButton
@@ -103,29 +105,39 @@ export default function UncertaintyDisplaysPage() {
       </TopoHero>
 
       {/* ── Heads-up data ── */}
-      <section className="px-page band band-lead">
+      {/* Runs tight at the bottom: fold 2 follows with no rule between them, so
+          the two bands' padding would otherwise stack into a ~270px hole. */}
+      <section className="px-page band band-lead" style={{ paddingBottom: "calc(var(--band) * 0.45)" }}>
         <MetaRow items={META} />
       </section>
 
       {/* ── Fold 2 — process → interface ── */}
-      <section className="px-page band" style={{ borderTop: `1px solid ${FAINT}` }}>
+      {/* No borderTop, and the tighter lead padding: the MetaRow strip above
+          already closes with a hairline, so this fold sits up against it. */}
+      <section className="px-page band band-lead">
         <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-5 md:gap-[60px] items-start">
           <Eyebrow style={{ paddingTop: 6 }}>How it was made</Eyebrow>
           <div>
-            <h2 className="font-medium" style={headingStyle}>
+            <h2 className="font-medium" style={foldHeadingStyle}>
               High-level description
             </h2>
-            <p style={{ fontSize: "clamp(13px, 3.7vw, 15px)", lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 600, textWrap: "pretty" }}>
-              This was the 2nd part of NIH grant-funded research epic figuring out how people make decisions under uncertainty in everyday transit contexts. I worked with a rockstar team of research assistants and professors to design, implement and evaluate various encodings of uncertainty. Eventually presenting the paper at CHI 2018, where it received an Honourable Mention for Best Paper.
+            <p style={bodyStyle}>
+              This was the second part of an NIH grant-funded research program into how people make decisions under
+              uncertainty in everyday transit. I worked with a rockstar team of research assistants and professors to
+              design, implement and evaluate a range of uncertainty encodings — eventually presenting the paper at
+              CHI 2018, where it received an Honourable Mention for Best Paper.
             </p>
 
-            <h2>Findings</h2>
-            <ul>
-              <li>
-                - Dot plots and Cumulative Distribution Functions (CDFs) were the most effective visualizations for conveying uncertainty to users.
-                - Even users that unfamilar with mathematical representations made better decisions when those decisions were made with some type of uncertainty representation.
-              </li>
-            </ul>
+            <FindingsPanel>
+              <Finding>
+                Quantile dot plots and cumulative distribution functions (CDFs) were the most effective displays for
+                conveying uncertainty to users.
+              </Finding>
+              <Finding>
+                Even users unfamiliar with mathematical representations made better decisions when some form of
+                uncertainty was shown.
+              </Finding>
+            </FindingsPanel>
           </div>
         </div>
         <div style={{ maxWidth: 680, margin: "clamp(18px, 5vw, 28px) auto 0" }}>
@@ -136,18 +148,15 @@ export default function UncertaintyDisplaysPage() {
             caption="OneBusAway, before → after — the same app, now showing each bus's spread of likely arrivals."
           />
         </div>
-      </section>
 
-      {/* ── Fold 3 — large quantitative study → finding ── */}
-      <section className="px-page band" style={{ borderTop: `1px solid ${FAINT}` }}>
         <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-5 md:gap-[60px] items-start">
           <Eyebrow style={{ paddingTop: 6 }}>Does it help?</Eyebrow>
           <div>
-            <h2 className="font-medium" style={headingStyle}>
-              Then we tested it at scale.
+            <h2 className="font-medium" style={foldHeadingStyle}>
+              We tested 8 different uncertainty displays at scale.
             </h2>
-            <p style={{ fontSize: "clamp(13px, 3.7vw, 15px)", lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 600, textWrap: "pretty" }}>
-              408 people made real, incentivized bus-catching decisions — rewarded for good calls, penalized for
+            <p style={bodyStyle}>
+              408 people made real, incentivized bus-catching decisions. People were rewarded for good calls, penalized for
               waiting in the rain. Of ten ways to show uncertainty, quantile dot plots and CDFs produced the best,
               most consistent decisions: about <span style={{ color: INK }}>97% of the best-possible payoff</span>,
               and steadily better as people learned to read them.
@@ -188,11 +197,6 @@ export default function UncertaintyDisplaysPage() {
             }
           />
         </div>
-
-        <p style={{ fontSize: "clamp(13px, 3.7vw, 15px)", lineHeight: 1.6, color: DIM, marginTop: "clamp(18px, 5vw, 28px)", maxWidth: 600, textWrap: "pretty" }}>
-          The takeaway: shown well, uncertainty doesn&apos;t overwhelm people — it quietly raises{" "}
-          <span style={{ color: INK }}>everyone&apos;s</span> decisions, not just the experts&apos;.
-        </p>
       </section>
 
       {/* ── Footer nav ── */}

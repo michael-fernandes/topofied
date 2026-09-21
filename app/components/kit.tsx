@@ -237,45 +237,111 @@ export function CtaButton({
         gap: 12,
         fontSize: 11,
         letterSpacing: "0.22em",
-        color: INK,
+        color: BG,
         textDecoration: "none",
         border: `1px solid ${ACCENT}`,
-        background: "rgba(235,226,212,0.03)",
+        background: ACCENT,
         padding: "13px 22px",
         ...style,
       }}
     >
       {children}
-      <span aria-hidden className="cta-btn__arrow" style={{ color: ACCENT }}>
+      <span aria-hidden className="cta-btn__arrow" style={{ color: BG }}>
         →
       </span>
     </a>
   );
 }
 
-/** Quiet key/value strip used for project "heads-up" metadata. */
+/** Body copy for the content folds. */
+export const bodyStyle: CSSProperties = {
+  fontSize: "clamp(13px, 3.7vw, 15px)",
+  lineHeight: 1.6,
+  color: DIM,
+  marginTop: 14,
+  maxWidth: 600,
+  textWrap: "pretty",
+};
+
+/** Fold heading, paired with a left-gutter Eyebrow. */
+export const foldHeadingStyle: CSSProperties = {
+  fontSize: "clamp(16px, 1.5vw, 20px)",
+  letterSpacing: "-0.015em",
+  lineHeight: 1.15,
+  margin: 0,
+  color: INK,
+  maxWidth: 560,
+  textWrap: "balance",
+};
+
+/** Findings read as survey readings: a ruled panel, each line pinned by a marker. */
+export function FindingsPanel({ label = "Findings", children }: { label?: string; children: ReactNode }) {
+  return (
+    <div
+      style={{
+        marginTop: "clamp(22px, 5vw, 30px)",
+        maxWidth: 600,
+        border: `1px solid ${FAINT}`,
+        background: CARD_BG,
+        padding: "clamp(16px, 4vw, 22px)",
+      }}
+    >
+      <Eyebrow style={{ marginBottom: 16 }}>{label}</Eyebrow>
+      <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: 14 }}>{children}</ul>
+    </div>
+  );
+}
+
+export function Finding({ children }: { children: ReactNode }) {
+  return (
+    <li
+      style={{
+        display: "grid",
+        gridTemplateColumns: "auto 1fr",
+        gap: 14,
+        alignItems: "start",
+        fontSize: "clamp(13px, 3.7vw, 15px)",
+        lineHeight: 1.6,
+        color: INK,
+        textWrap: "pretty",
+      }}
+    >
+      <Marker size={6} style={{ marginTop: 8 }} />
+      <span>{children}</span>
+    </li>
+  );
+}
+
+/**
+ * Quiet key/value strip used for project "heads-up" metadata.
+ *
+ * A ruled ledger, not a table: hairlines above and below, columns sized to
+ * their own content. Boxing each pair forced equal-width cells, so a one-word
+ * value sat in the same block as a two-line one. The solid BG is doing real
+ * work — it masks the contours running behind the strip.
+ */
 export function MetaRow({ items }: { items: { k: string; v: string }[] }) {
   return (
     <dl
-      className="grid meta-row"
+      className="flex flex-wrap"
       style={{
-        gap: 1,
-        background: FAINT,
-        border: `1px solid ${FAINT}`,
+        columnGap: "clamp(22px, 5vw, 54px)",
+        rowGap: "clamp(16px, 4vw, 22px)",
         margin: 0,
-        ["--meta-row-cols" as string]: items.length,
+        background: BG,
+        borderTop: `1px solid ${FAINT}`,
+        borderBottom: `1px solid ${FAINT}`,
+        padding: "clamp(24px, 5vw, 34px) 0",
       }}
     >
-      {items.map((it, i) => (
-        <div
-          key={it.k}
-          className={items.length % 2 === 1 && i === items.length - 1 ? "meta-row-wide" : undefined}
-          style={{ background: BG, padding: "clamp(12px, 3.4vw, 16px) clamp(12px, 3.6vw, 18px)" }}
-        >
+      {/* The min width is what wraps the strip: pairs drop to their own line on
+          a phone instead of spilling past the gutter. */}
+      {items.map((it) => (
+        <div key={it.k} style={{ maxWidth: 260, minWidth: "min(180px, 100%)" }}>
           <dt className="font-mono uppercase" style={{ fontSize: 10, letterSpacing: "0.22em", color: FAINT, marginBottom: 10 }}>
             {it.k}
           </dt>
-          <dd className="m-0" style={{ fontSize: "clamp(12.5px, 3.4vw, 15px)", color: INK, letterSpacing: "-0.005em" }}>
+          <dd className="m-0" style={{ fontSize: "clamp(12.5px, 3.4vw, 15px)", color: INK, letterSpacing: "-0.005em", lineHeight: 1.45 }}>
             {it.v}
           </dd>
         </div>

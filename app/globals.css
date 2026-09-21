@@ -61,8 +61,8 @@ body {
   transition: border-color 200ms ease, background-color 200ms ease, transform 200ms ease;
 }
 .cta-btn:hover {
-  border-color: hsl(26 52% 78%);
-  background-color: rgba(235, 226, 212, 0.10);
+  border-color: hsl(26 52% 80%);
+  background-color: hsl(26 52% 80%);
   transform: translateY(-1px);
 }
 .cta-btn__arrow {
@@ -214,23 +214,3 @@ body {
   padding-bottom: calc(var(--band) * 0.45);
 }
 
-/* MetaRow — stacks to 2-up on mobile, full row at desktop width */
-.meta-row {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-@media (min-width: 640px) {
-  .meta-row {
-    grid-template-columns: repeat(var(--meta-row-cols), minmax(0, 1fr));
-  }
-}
-/* An odd number of items leaves a hole in the 2-up mobile grid, and the hole
-   shows the strip's own FAINT background as a solid block. Let the last cell
-   take the full row instead. */
-.meta-row > .meta-row-wide {
-  grid-column: span 2;
-}
-@media (min-width: 640px) {
-  .meta-row > .meta-row-wide {
-    grid-column: auto;
-  }
-}
