@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-
-const SITE_URL = "https://mferns.com";
+import { SITE_URL } from "./lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number }[] = [
@@ -10,12 +9,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/work/uncertainty-displays-for-transit", changeFrequency: "yearly", priority: 0.8 },
     { path: "/projects/interactive-dots", changeFrequency: "yearly", priority: 0.5 },
     { path: "/about", changeFrequency: "monthly", priority: 0.7 },
-    { path: "/collaborate", changeFrequency: "monthly", priority: 0.6 },
+    // /collaborate is noindex while its copy is still placeholder.
   ];
 
   return routes.map((r) => ({
     url: `${SITE_URL}${r.path}`,
-    lastModified: "2026-07-15",
+    lastModified: "2026-09-20",
     changeFrequency: r.changeFrequency,
     priority: r.priority,
   }));

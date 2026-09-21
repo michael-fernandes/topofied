@@ -3,15 +3,17 @@ import Link from "next/link";
 import PageShell from "../../components/page-shell";
 import TopoHero from "../../components/topo-hero";
 import { INK, DIM, FAINT, ACCENT, Eyebrow, MetaRow, Plate, Marker, CtaButton } from "../../components/kit";
+import JsonLd from "../../components/json-ld";
+import { caseStudyJsonLd } from "../../lib/seo";
 import interfaceImg from "@/media/uncertainty/interface.png";
 import dotImg from "@/media/uncertainty/dot.png";
 import cdfImg from "@/media/uncertainty/cdf.png";
 import controlImg from "@/media/uncertainty/control.png";
 
 export const metadata: Metadata = {
-  title: "Uncertainty You Can Act On",
+  title: { absolute: "Uncertainty Displays for Transit — Data Viz Case Study" },
   description:
-    "A CHI 2018 study (Honourable Mention) on how a transit app should show what it doesn't know — a 408-person study showing the right uncertainty display makes better decisions.",
+    "A data visualization case study and CHI 2018 paper (Honourable Mention): how a transit app should show what it doesn't know — a 408-person study showing quantile dotplots help riders make better decisions.",
   alternates: { canonical: "/work/uncertainty-displays-for-transit" },
   openGraph: {
     title: "Uncertainty you can act on — Michael Fernandes",
@@ -22,11 +24,26 @@ export const metadata: Metadata = {
   },
 };
 
+const JSON_LD = caseStudyJsonLd({
+  path: "/work/uncertainty-displays-for-transit",
+  name: "Uncertainty displays for transit",
+  description:
+    "A CHI 2018 study (Honourable Mention for Best Paper) on how a transit app should visualize what it doesn't know — quantile dotplots against a 408-person experiment.",
+  datePublished: "2018-04-21",
+  keywords: [
+    "uncertainty visualization",
+    "quantile dotplot",
+    "data visualization research",
+    "ACM CHI 2018",
+    "transit app design",
+  ],
+});
+
 const META = [
   { k: "Role", v: "Development + Mixed-methods researcher" },
-  { k: "Year", v: "2018" },
   { k: "Venue", v: "ACM CHI 2018" },
-  { k: "Recognition", v: "Honourable Mention" },
+  { k: "Recognition", v: "Honourable Mention for best paper (top 5%)" },
+  { k: "Google Scholar Citations", v: "242" },
 ];
 
 // Section heading shared by the two content folds.
@@ -43,6 +60,7 @@ const headingStyle = {
 export default function UncertaintyDisplaysPage() {
   return (
     <PageShell current="/work" seed="uncertainty-displays-for-transit">
+      <JsonLd data={JSON_LD} />
       <TopoHero height={430}>
         <div
           style={{ position: "absolute", left: 20, right: 20, top: 116, padding: 4 }}
@@ -95,14 +113,19 @@ export default function UncertaintyDisplaysPage() {
           <Eyebrow style={{ paddingTop: 6 }}>How it was made</Eyebrow>
           <div>
             <h2 className="font-medium" style={headingStyle}>
-              We started from how people already ride.
+              High-level description
             </h2>
             <p style={{ fontSize: "clamp(13px, 3.7vw, 15px)", lineHeight: 1.6, color: DIM, marginTop: 14, maxWidth: 600, textWrap: "pretty" }}>
-              Rather than invent from scratch, we built on earlier interviews and ethnographic studies of how riders
-              weigh waiting against risk — which pointed to a handful of ways to picture uncertainty. We rebuilt those
-              into <span style={{ color: INK }}>OneBusAway</span>, a real transit app, then refined them through
-              think-aloud sessions and 80+ pilot runs until people read them the way we intended.
+              This was the 2nd part of NIH grant-funded research epic figuring out how people make decisions under uncertainty in everyday transit contexts. I worked with a rockstar team of research assistants and professors to design, implement and evaluate various encodings of uncertainty. Eventually presenting the paper at CHI 2018, where it received an Honourable Mention for Best Paper.
             </p>
+
+            <h2>Findings</h2>
+            <ul>
+              <li>
+                - Dot plots and Cumulative Distribution Functions (CDFs) were the most effective visualizations for conveying uncertainty to users.
+                - Even users that unfamilar with mathematical representations made better decisions when those decisions were made with some type of uncertainty representation.
+              </li>
+            </ul>
           </div>
         </div>
         <div style={{ maxWidth: 680, margin: "clamp(18px, 5vw, 28px) auto 0" }}>

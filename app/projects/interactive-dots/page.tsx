@@ -6,9 +6,9 @@ import { BG, INK, DIM, FAINT, ACCENT, Eyebrow } from "../../components/kit";
 import InteractiveDots from "../../components/interactive-dots";
 
 export const metadata: Metadata = {
-  title: "Simulation",
+  title: { absolute: "D3 Force Simulation — Michael Fernandes" },
   description:
-    "A force-simulated cluster of dots that scatters away from the pointer, built with d3 and ported from an Observable collision-detection example.",
+    "A force-simulated cluster of dots that scatters away from the pointer — a small D3 data visualization experiment by Michael Fernandes, ported from an Observable collision-detection example.",
   alternates: { canonical: "/projects/interactive-dots" },
   openGraph: {
     title: "Simulation — Michael Fernandes",

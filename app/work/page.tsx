@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageShell from "../components/page-shell";
@@ -9,6 +10,7 @@ import {
   FAINT,
   ACCENT,
   CARD_BG,
+  PAPER,
   Eyebrow,
   SectionHeader,
   Plate,
@@ -18,14 +20,16 @@ import Image, { type StaticImageData } from "next/image";
 import cardImg from "@/media/uncertainty/card.png";
 import covidCardImg from "@/media/covid-forecasting/card.png";
 import goalGridImg from "@/media/small-projects/goal-grid.png";
+import proteinAuditImg from "@/media/small-projects/protein-audit.png";
+import childMortalityImg from "@/media/small-projects/child-mortality.png";
 
 export const metadata: Metadata = {
-  title: "Work",
+  title: { absolute: "Data Visualization Work — Michael Fernandes" },
   description:
-    "Case studies and small projects by Michael Fernandes — an IHME COVID-19 forecast dashboard, a CHI-published uncertainty display for transit, and experiments in data visualization.",
+    "Data visualization case studies by Michael Fernandes — the IHME COVID-19 forecast dashboard, a CHI-published uncertainty display for transit, and smaller D3 and React dataviz experiments.",
   alternates: { canonical: "/work" },
   openGraph: {
-    title: "Work — Michael Fernandes",
+    title: "Work — data visualization case studies by Michael Fernandes",
     description:
       "A field survey of the work: the IHME COVID-19 forecast dashboard, a CHI-published uncertainty display for transit, and smaller dataviz experiments.",
     url: "/work",
@@ -36,6 +40,30 @@ export const metadata: Metadata = {
 // placeholder so every card in the scroll strip lines up.
 const MEDIA_H = "clamp(104px, 30vw, 132px)";
 
+// The art is shown whole, so whatever it doesn't fill has to read as the page it
+// was cut from: PAPER for a light screenshot, the site's own BG for art that is
+// already dark.
+// No inset: the art runs to the border. Each source already carries whatever
+// margin it needs baked in, so a gutter here only shrinks the picture.
+const mediaWindow = (ground: string): CSSProperties => ({
+  height: MEDIA_H,
+  border: `1px solid ${FAINT}`,
+  background: ground,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  overflow: "hidden",
+});
+
+// Contained, never cropped: the art scales down to fit the window whole, and
+// the ground fills whatever band its aspect ratio leaves over.
+const mediaArt: CSSProperties = {
+  width: "100%",
+  height: "100%",
+  objectFit: "contain",
+  display: "block",
+};
+
 const SMALL_PROJECTS: {
   title: string;
   description: string;
@@ -44,7 +72,17 @@ const SMALL_PROJECTS: {
   video?: string;
   image?: StaticImageData;
   alt?: string;
+  ground?: string;
 }[] = [
+    {
+      title: "Protein Audit",
+      description:
+        "Add what you actually eat and see which essential amino acid runs out first — and which food fixes it.",
+      link: "https://www.proteinaudit.com",
+      external: true,
+      image: proteinAuditImg,
+      alt: "Protein Audit scoring a plate of bread and black beans — 18 g complete protein, with each essential amino acid charted against the WHO/FAO reference.",
+    },
     {
       title: "Concentric Radar Chart",
       description: "A radial take on the radar chart — categories ring outward instead of sharing one center.",
@@ -62,6 +100,8 @@ const SMALL_PROJECTS: {
       description: "IHME's Local Burden of Disease atlas of under-5 mortality, mapped down to the district level.",
       link: "https://web.archive.org/web/20210421060225if_/https://vizhub.healthdata.org/child-mortality",
       external: true,
+      image: childMortalityImg,
+      alt: "A district-level choropleth of Peru's under-5 death rate — dense coastal districts shading green against the paler interior.",
     },
     {
       title: "Bingo Vision Card",
@@ -70,6 +110,7 @@ const SMALL_PROJECTS: {
       link: "https://www.bingovisioncard.com",
       external: true,
       image: goalGridImg,
+      ground: BG,
       alt: "The Goal Grid board — five pillar columns of goal cards, the finished ones struck through and checked off.",
     },
   ];
@@ -189,10 +230,9 @@ export default function WorkPage() {
       {/* ── Small projects ── */}
       <section className="px-page band" style={{ borderTop: `1px solid ${FAINT}` }}>
         <SectionHeader kicker="Small projects" title="The smaller ones." />
-        {/* A horizontal strip rather than a grid — cards sitting side by side
-            in rows fight the contour field; a single scrolling line reads as a
-            transect across it. Runs off both page margins (see .scroll-strip),
-            so the card clipped at the right edge is its own scroll cue. */}
+        {/* On a phone a horizontal scrolling strip, running off both page
+            margins so the clipped card is its own scroll cue. From md it wraps
+            instead — four to a row, then the next drops below. */}
         <div className="scroll-strip">
           {SMALL_PROJECTS.map((p) => (
             <Link
@@ -211,31 +251,24 @@ export default function WorkPage() {
               }}
             >
               {p.video ? (
-                <div style={{ height: MEDIA_H, border: `1px solid ${FAINT}`, background: BG, overflow: "hidden" }}>
+                <div style={mediaWindow(p.ground ?? PAPER)}>
                   <video
                     src={p.video}
                     autoPlay
                     loop
                     muted
                     playsInline
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                    style={mediaArt}
                   />
                 </div>
               ) : p.image ? (
-                // Same window as the video card. Screenshots are taller than
-                // the window, so they cover from the top — the part worth
-                // seeing (headers, first row) is always at the top of the frame.
-                <div
-                  className="relative"
-                  style={{ height: MEDIA_H, border: `1px solid ${FAINT}`, background: BG, overflow: "hidden" }}
-                >
+                <div style={mediaWindow(p.ground ?? PAPER)}>
                   <Image
                     src={p.image}
                     alt={p.alt ?? p.title}
-                    fill
                     sizes="248px"
                     placeholder="blur"
-                    style={{ objectFit: "cover", objectPosition: "center top" }}
+                    style={mediaArt}
                   />
                 </div>
               ) : (

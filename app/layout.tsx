@@ -4,6 +4,15 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import TerrainShell from "./components/terrain-shell";
 import GaOptOut from "./components/ga-optout";
+import JsonLd from "./components/json-ld";
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_DESCRIPTION,
+  personJsonLd,
+  webSiteJsonLd,
+} from "./lib/seo";
 
 const GA_MEASUREMENT_ID = "G-PTLDE59E1B";
 
@@ -17,11 +26,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_URL = "https://mferns.com";
-const SITE_TITLE = "Michael Fernandes — UX Engineer & Data Visualization";
-const SITE_DESCRIPTION =
-  "Portfolio of Michael Fernandes, a Seattle-based UX engineer and data visualization designer. Case studies include the IHME COVID-19 forecast dashboard and a CHI-published uncertainty display for transit.";
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -31,22 +35,31 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   keywords: [
     "Michael Fernandes",
+    "data visualization developer",
+    "data viz developer",
+    "data visualization design engineer",
+    "data viz design engineer",
+    "design engineer",
     "UX engineer",
-    "data visualization",
+    "D3.js developer",
     "dataviz portfolio",
     "uncertainty visualization",
-    "design systems",
-    "front-end developer Seattle",
+    "data visualization developer Seattle",
   ],
   authors: [{ name: "Michael Fernandes", url: SITE_URL }],
   creator: "Michael Fernandes",
   alternates: {
     canonical: "/",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
   openGraph: {
     type: "website",
     url: SITE_URL,
-    siteName: "Michael Fernandes",
+    siteName: SITE_NAME,
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     locale: "en_US",
@@ -69,6 +82,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <JsonLd data={[personJsonLd(), webSiteJsonLd()]} />
         <div className="relative min-h-screen bg-[#241d18] text-[#f4ece0] font-sans overflow-x-hidden">
           <TerrainShell>{children}</TerrainShell>
         </div>

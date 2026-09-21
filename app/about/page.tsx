@@ -6,14 +6,14 @@ import VolcanoSurvey from "../components/volcano-survey";
 import { BG, INK, DIM, FAINT, ACCENT, ACCENT_DIM, SectionHeader } from "../components/kit";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: { absolute: "About Michael Fernandes — Data Viz Developer, Seattle" },
   description:
-    "Michael Fernandes is a Seattle-based software engineer with a UX design background — living on the edge of design and engineering across global health, green tech, and AI products.",
+    "Michael Fernandes is a Seattle-based data visualization developer and design engineer with a UX design background — building interactive data applications across global health, green tech, and AI products.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "About — Michael Fernandes",
+    title: "About — Michael Fernandes, data visualization developer",
     description:
-      "A software engineer with a UX design background, living on the edge of design and engineering — global health, green tech, and highly structured experiences around AI.",
+      "A data visualization developer and design engineer living on the edge of design and engineering — global health, green tech, and highly structured experiences around AI.",
     url: "/about",
   },
 };
@@ -57,6 +57,10 @@ export default function AboutPage() {
         <div className="md:mx-auto md:max-w-[500px]">
           <Scrim>
             <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: 0 }}>
+              I&apos;m a data visualization developer and design engineer in
+              Seattle.
+            </p>
+            <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: "20px 0 0" }}>
               I started my career in software development — prototyping,
               developing, and user-testing data visualizations used for
               decision-making around uncertainty. That experience never left

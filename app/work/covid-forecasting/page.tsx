@@ -3,14 +3,16 @@ import Link from "next/link";
 import PageShell from "../../components/page-shell";
 import TopoHero from "../../components/topo-hero";
 import { INK, DIM, FAINT, ACCENT, Eyebrow, MetaRow, Plate, Marker } from "../../components/kit";
+import JsonLd from "../../components/json-ld";
+import { caseStudyJsonLd } from "../../lib/seo";
 import forecastImg from "@/media/covid-forecasting/forecast.png";
 import timingImg from "@/media/covid-forecasting/timing.png";
 import capacityImg from "@/media/covid-forecasting/capacity.png";
 
 export const metadata: Metadata = {
-  title: "A Forecast You Could Plan Around",
+  title: { absolute: "COVID-19 Forecast Dashboard — Data Viz Case Study" },
   description:
-    "How Michael Fernandes helped build one of the first public forecasts of when COVID-19 would peak, and whether hospitals would have the room to meet it — used by millions, briefed by the White House.",
+    "A data visualization case study: how Michael Fernandes helped build the IHME COVID-19 forecast dashboard — one of the first public forecasts of when the pandemic would peak and whether hospitals would have the room to meet it. Used by millions, briefed by the White House.",
   alternates: { canonical: "/work/covid-forecasting" },
   openGraph: {
     title: "A forecast you could plan around — Michael Fernandes",
@@ -21,6 +23,22 @@ export const metadata: Metadata = {
   },
 };
 
+const JSON_LD = caseStudyJsonLd({
+  path: "/work/covid-forecasting",
+  name: "IHME COVID-19 forecast dashboard",
+  description:
+    "A public data visualization of when COVID-19 would peak and whether hospitals would have the beds to meet it, built at IHME.",
+  datePublished: "2020-03-26",
+  keywords: [
+    "data visualization",
+    "COVID-19 forecast",
+    "dashboard design",
+    "uncertainty visualization",
+    "D3.js",
+    "IHME",
+  ],
+});
+
 const META = [
   { k: "Role", v: "Data viz · design eng" },
   { k: "Year", v: "2020" },
@@ -30,6 +48,7 @@ const META = [
 export default function CovidForecastingPage() {
   return (
     <PageShell current="/work" seed="covid-forecasting">
+      <JsonLd data={JSON_LD} />
       <TopoHero height={360}>
         <div
           data-topo-id="project"

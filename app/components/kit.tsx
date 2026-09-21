@@ -24,6 +24,10 @@ export const ACCENT_DIM = "hsl(26 38% 58%)";
 // this damps what's behind the text while still lifting the card off the page.
 export const CARD_BG = "rgba(54,44,36,0.62)";
 
+// The page a light screenshot was cut from. Not site chrome — it belongs to the
+// artifact, and only shows behind art that doesn't fill its window.
+export const PAPER = "#fff";
+
 /** Small rotated square — reads as a survey / benchmark marker. */
 export function Marker({ size = 8, color = ACCENT, style }: { size?: number; color?: string; style?: CSSProperties }) {
   return (

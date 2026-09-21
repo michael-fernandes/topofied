@@ -152,6 +152,23 @@ body {
   scroll-snap-align: start;
 }
 
+/* From md the strip wraps instead of scrolling: four cards to a row, then the
+   fifth drops to the next. Max-width is exactly four cards plus their gaps, so
+   a wide viewport adds ground on the right rather than a fifth card. */
+@media (min-width: 768px) {
+  .scroll-strip {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    scroll-snap-type: none;
+    row-gap: var(--field-gap);
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    max-width: calc(4 * 248px + 3 * var(--card-gap));
+  }
+}
+
 /* ── Section rhythm ───────────────────────────────────────────────────
    Sections are the terrain features; the padding between them is the open
    ground where the contour field is allowed to read. So the air goes

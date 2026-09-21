@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import PageShell from "../../components/page-shell";
 import TopoHero from "../../components/topo-hero";
@@ -10,6 +11,11 @@ import {
   MetaRow,
   Placeholder,
 } from "../../components/kit";
+
+// Placeholder scaffold for un-written case studies — never index it.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 function labelFor(slug: string) {
   return slug

@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   description:
     "Work with Michael Fernandes, a Seattle-based UX engineer and data visualization designer, on internal tooling, design systems, and dataviz prototyping.",
   alternates: { canonical: "/collaborate" },
+  // Still placeholder copy — keep it out of search until it says something.
+  robots: { index: false, follow: true },
   openGraph: {
     title: "Collaborate — Michael Fernandes",
     description:

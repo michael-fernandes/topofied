@@ -81,7 +81,7 @@ export default function LandingPage() {
             style={{ display: "inline-block", padding: "12px 32px 12px 4px" }}
           >
             <Eyebrow rule={false} style={{ marginBottom: 10 }}>
-              ▲ Design engineer
+              ▲ Data viz developer · Design engineer
             </Eyebrow>
             <h1
               className="font-medium"
@@ -107,7 +107,8 @@ export default function LandingPage() {
               textWrap: "pretty",
             }}
           >
-            Exploring the intersection of design and engineering often through the medium of data visualization and interactive data applications.
+            Seattle-based data visualization developer working at the intersection of
+            design and engineering — interactive, data-heavy applications built end to end.
           </p>
         </div>
 
