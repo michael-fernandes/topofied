@@ -118,7 +118,7 @@ const SMALL_PROJECTS: {
 const FEATURED: { id: string; name: string; note: string; image: StaticImageData; alt: string }[] = [
   {
     id: "uncertainty-displays-for-transit",
-    name: "Uncertainty you can act on",
+    name: "Uncertainty displays for on the go decision making",
     note: "How a transit app should show what it doesn't know — and a 408-person study showing the right display makes better decisions.",
     image: cardImg,
     alt: "The OneBusAway interface showing a bus's arrival uncertainty as a quantile dotplot.",
@@ -202,8 +202,7 @@ export default function WorkPage() {
                 data-topo-falloff="105"
                 data-topo-sharpness="2.2"
               >
-                <Eyebrow style={{ marginBottom: "clamp(8px, 2.4vw, 10px)" }}>{`Project · 0${i + 1}`}</Eyebrow>
-                <h3 className="font-medium" style={{ fontSize: "clamp(14px, 3.8vw, 16px)", letterSpacing: "-0.015em", lineHeight: 1.1, margin: 0, color: INK }}>
+                <h3 className="font-medium" style={{ fontSize: "clamp(15px, 4vw, 18px)", letterSpacing: "-0.015em", lineHeight: 1.15, margin: 0, color: INK, maxWidth: 300, textWrap: "balance" }}>
                   {p.name}
                 </h3>
                 <p style={{ fontSize: "clamp(11px, 3vw, 12px)", lineHeight: 1.5, color: DIM, marginTop: 8, maxWidth: 300 }}>{p.note}</p>
