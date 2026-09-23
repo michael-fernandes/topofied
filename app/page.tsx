@@ -136,17 +136,10 @@ export default function LandingPage() {
           subtitle="The stuff I'm good at and genuinely like doing."
         />
 
-        {/* Half-width tiles on mobile. Three cards don't halve evenly, so the
-            last one takes the full row rather than leaving an orphan — two
-            square tiles over one wide one reads as a deliberate 2+1 block,
-            and the irregular silhouette suits the terrain better than a
-            uniform stack would. */}
-        <div className="grid grid-cols-2 md:grid-cols-3" style={{ gap: "var(--card-gap)" }}>
-          {SKILLS.map((s, i) => (
-            <div
-              key={s.title}
-              className={`field-note${i === SKILLS.length - 1 ? " col-span-2 md:col-span-1" : ""}`}
-            >
+        {/* One per row on mobile — half-width tiles squeezed the note copy. */}
+        <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: "var(--card-gap)" }}>
+          {SKILLS.map((s) => (
+            <div key={s.title} className="field-note">
               <div style={{ marginBottom: "clamp(8px, 2.4vw, 10px)", marginLeft: -1 }}>
                 <SkillGlyph kind={s.kind} size={34} />
               </div>
