@@ -23,10 +23,25 @@ export const STAND_INS = [
   "/volcanoes/stand-in/03.jpg",
 ];
 
-/** A volcano's photo set, falling back to the shared stand-ins. */
+const STAND_IN_COUNT = 6;
+
+/** A volcano's photo set, falling back to six cycled stand-ins. */
 export function photosOf(v: Volcano): string[] {
-  return v.photos ?? STAND_INS;
+  return v.photos ?? Array.from({ length: STAND_IN_COUNT }, (_, i) => STAND_INS[i % STAND_INS.length]);
 }
+
+export type WallPhoto = { src: string; peak: number; photo: number; count: number };
+
+/** Every photo, N → S, tagged with its peak and position within that peak. */
+export function allPhotos(list: Volcano[] = VOLCANOES): WallPhoto[] {
+  return list.flatMap((v, peak) => {
+    const ps = photosOf(v);
+    return ps.map((src, photo) => ({ src, peak, photo, count: ps.length }));
+  });
+}
+
+export const ft = (n: number) => n.toLocaleString("en-US");
+export const nn = (i: number) => String(i + 1).padStart(2, "0");
 
 // North → south, the order the map and roster both read in.
 export const VOLCANOES: Volcano[] = [

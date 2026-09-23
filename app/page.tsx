@@ -30,8 +30,13 @@ const SKILLS: { kind: GlyphKind; title: string; note: string }[] = [
   },
   {
     kind: "hcd",
-    title: "Research & prototyping",
+    title: "Rapid Iteration",
     note: "Learning from real people, then prototyping fast — testing ideas in days, not months.",
+  },
+  {
+    kind: "accessibility",
+    title: "Accessibility",
+    note: "Making tools appealing and usable for a wide variety of use cases and users.",
   },
 ];
 
@@ -80,9 +85,6 @@ export default function LandingPage() {
             data-topo-sharpness="1.45"
             style={{ display: "inline-block", padding: "12px 32px 12px 4px" }}
           >
-            <Eyebrow rule={false} style={{ marginBottom: 10 }}>
-              ▲ Data viz developer · Design engineer
-            </Eyebrow>
             <h1
               className="font-medium"
               style={{
@@ -96,20 +98,12 @@ export default function LandingPage() {
             >
               Michael Fernandes
             </h1>
+            <Eyebrow rule={false} style={{ marginBottom: 10 }}>
+              ▲ Data Focused Design engineer
+            </Eyebrow>
+
           </div>
-          <p
-            style={{
-              maxWidth: 440,
-              margin: "8px 0 0",
-              fontSize: 14,
-              lineHeight: 1.55,
-              color: DIM,
-              textWrap: "pretty",
-            }}
-          >
-            Seattle-based data visualization developer working at the intersection of
-            design and engineering — interactive, data-heavy applications built end to end.
-          </p>
+
         </div>
 
         {/* Quiet scroll cue — no labels. */}
@@ -132,12 +126,11 @@ export default function LandingPage() {
       <section className="px-page band band-lead">
         <SectionHeader
           kicker="01 — What I do"
-          title="Three things I do."
-          subtitle="The stuff I'm good at and genuinely like doing."
+          title="Four things I do."
+          subtitle="While I'm capable of full stack engineering, here's some of the stuff I'm the best at and genuinely like doing."
         />
-
         {/* One per row on mobile — half-width tiles squeezed the note copy. */}
-        <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: "var(--card-gap)" }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4" style={{ gap: "var(--card-gap)" }}>
           {SKILLS.map((s) => (
             <div key={s.title} className="field-note">
               <div style={{ marginBottom: "clamp(8px, 2.4vw, 10px)", marginLeft: -1 }}>

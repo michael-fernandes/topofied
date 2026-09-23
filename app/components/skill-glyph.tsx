@@ -8,7 +8,7 @@
 import { useEffect, useState } from "react";
 import { ACCENT, ACCENT_DIM } from "./kit";
 
-export type GlyphKind = "tools" | "viz" | "hcd";
+export type GlyphKind = "tools" | "viz" | "hcd" | "accessibility";
 
 export default function SkillGlyph({ kind, size = 48 }: { kind: GlyphKind; size?: number }) {
   const [t, setT] = useState(0);
@@ -63,6 +63,24 @@ export default function SkillGlyph({ kind, size = 48 }: { kind: GlyphKind; size?
           <circle cx={r(32 + Math.cos(t * 1.2) * 16)} cy={r(32 + Math.sin(t * 1.2) * 16)} r={2.4} fill={cw} />
         </>
       )}
+
+      {kind === "accessibility" &&
+        (() => {
+          // A ramp up to the same ground everyone else is on — a node walks it,
+          // pausing at the top before the next climb.
+          const p = (t * 0.2 + 0.4) % 1; // offset so the still frame is mid-climb
+          const e = Math.min(1, p / 0.8); // last fifth of the cycle is a hold
+          // Fade in at the bottom and out at the top so the reset never snaps.
+          const op = r(Math.max(0, Math.min(1, p / 0.08, (1 - p) / 0.14)));
+          return (
+            <>
+              <path d="M8,48 H56" stroke={c} strokeWidth="0.8" fill="none" opacity="0.5" />
+              <path d="M8,48 L50,22" stroke={c} strokeWidth="1.2" fill="none" />
+              <path d="M16,48 L50,27" stroke={c} strokeWidth="0.8" fill="none" opacity="0.4" />
+              <circle cx={r(8 + e * 42)} cy={r(48 - e * 26)} r={2.6} fill={cw} opacity={op} />
+            </>
+          );
+        })()}
 
       {kind === "hcd" &&
         (() => {

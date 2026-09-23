@@ -187,6 +187,18 @@ body {
   }
 }
 
+/* A strip that keeps scrolling at every width (volcano locations). */
+@media (min-width: 768px) {
+  .scroll-strip.strip-always {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    max-width: none;
+    mask-image: linear-gradient(to right, #000 88%, transparent);
+    -webkit-mask-image: linear-gradient(to right, #000 88%, transparent);
+  }
+}
+
 /* ── Section rhythm ───────────────────────────────────────────────────
    Sections are the terrain features; the padding between them is the open
    ground where the contour field is allowed to read. So the air goes
@@ -232,3 +244,107 @@ body {
   padding-bottom: calc(var(--band) * 0.45);
 }
 
+
+/* ── Volcano photo wall ──────────────────────────────────────────────
+   A bounded, internally scrolling grid ~2.5 rows tall. Row height comes
+   from container width, so the viewport stays 2.5 rows at any size. */
+.photo-wall-frame {
+  container-type: inline-size;
+  --cols: 3;
+  --gap: 8px;
+  --cap: 20px;
+}
+
+/* Survey layout: stacked on mobile; from md the strip + photos sit right of
+   the map. `contain: size` keeps the photos from growing the row, so the
+   side column takes the map's height and the wall scrolls inside it. */
+.survey > svg {
+  max-width: 186px;
+  margin: 0 auto;
+}
+.survey-side {
+  margin-top: 28px;
+}
+.survey-photos {
+  margin-top: 18px;
+}
+@media (min-width: 768px) {
+  .survey {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 48px;
+  }
+  .survey > svg {
+    max-width: none;
+  }
+  .survey-side {
+    margin-top: 0;
+    contain: size;
+    display: flex;
+    flex-direction: column;
+  }
+  .survey-photos {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .survey-photos > .photo-wall-frame {
+    flex: 1;
+    min-height: 0;
+  }
+  .photo-wall-frame {
+    --gap: 12px;
+  }
+  .survey-photos .photo-wall {
+    height: 100%;
+  }
+}
+.photo-wall {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: var(--gap);
+  padding: 18px 0;
+  height: calc(((100cqw - (var(--cols) - 1) * var(--gap)) / var(--cols) * 2 / 3 + var(--cap)) * 2.5 + 2 * var(--gap) + 36px);
+  overflow-y: auto;
+  scrollbar-width: none;
+  mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent);
+}
+.photo-wall::-webkit-scrollbar {
+  display: none;
+}
+.wall-thumb {
+  opacity: 0.2;
+  transform: scale(0.9);
+  transition: opacity 500ms ease, transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.wall-thumb[data-in] {
+  opacity: 1;
+  transform: none;
+}
+
+.survey-fade {
+  animation: survey-fade 380ms ease both;
+}
+@keyframes survey-fade {
+  from { opacity: 0; }
+}
+
+.cover-slide {
+  transition: transform 450ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 450ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wall-thumb {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .survey-fade {
+    animation: none;
+  }
+  .cover-slide {
+    transition: none;
+  }
+}

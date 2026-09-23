@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PageShell from "../components/page-shell";
 import TopoHero from "../components/topo-hero";
 import JoyDivision from "../components/joy-division";
-import VolcanoSurvey from "../components/volcano-survey";
+import VolcanoSurvey from "../components/volcano/survey";
 import { BG, INK, DIM, FAINT, ACCENT, ACCENT_DIM, SectionHeader } from "../components/kit";
 
 export const metadata: Metadata = {
@@ -57,18 +57,13 @@ export default function AboutPage() {
         <div className="md:mx-auto md:max-w-[500px]">
           <Scrim>
             <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: 0 }}>
-              I&apos;m a data visualization developer and design engineer in
-              Seattle.
+              I&apos;m a data visualization developer and design engineer.
             </p>
             <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: "20px 0 0" }}>
               I started my career in software development — prototyping,
-              developing, and user-testing data visualizations used for
+              user-testing and developing data visualizations used for
               decision-making around uncertainty. That experience never left
-              me. After college I began work as a UX designer. Seeing the
-              relationship between design and engineering made me feel that
-              engineering was, at the time, the more powerful tool for bringing
-              ideas to life. I wanted to be a part of that process, so I
-              transitioned into software engineering.
+              me. After college I started working as a UX designer on complex products. I saw the user experience shaped as much by engineering decisions as by design ones. So I became a full stack engineer, carrying that design lens through every layer of the product.
             </p>
             <p style={{ fontSize: 16, lineHeight: 1.75, color: DIM, margin: "20px 0 0" }}>
               Ever since, I have lived on the edge of design and engineering,
@@ -97,7 +92,7 @@ export default function AboutPage() {
             <SectionHeader
               kicker="Off the clock"
               title="Skiing the Cascade volcanoes"
-              subtitle="I'm an avid ski tourer in my free time. An ongoing side project I'm doing is skiing from the summit of every volcano on the West Coast. This involves using specialized ski touring equipment to ascend the mountain, switch it into downhill mode and enjoy the ride down."
+              subtitle="I'm an avid ski tourer in my free time. As an ongoing side project I am attempting to ski from the summit of every volcano on the West Coast. On a good day this involves using specialized ski touring equipment to ascend the mountain, a quick mechanical transition to switch it into downhill mode and enjoy the ride down. On a bad day this involves a ton of bush-whacking, getting lost and wondering why I thought this was a good idea in the first place."
             />
             <VolcanoSurvey />
           </Scrim>

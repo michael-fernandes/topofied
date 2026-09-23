@@ -137,28 +137,41 @@ export default function WorkPage() {
     <PageShell current="/work" seed="work-hero">
       <TopoHero height={340}>
         <div
-          data-topo-id="work"
-          data-topo-hover-id="work"
-          data-topo-important=""
-          data-topo-height="80"
-          data-topo-falloff="120"
-          style={{ position: "absolute", left: 20, right: 20, top: 130, padding: 4 }}
+          style={{ position: "absolute", left: 20, right: 20, top: 130 }}
           className="md:left-[60px] md:right-[60px]"
         >
-          <Eyebrow style={{ marginBottom: 16 }}>Work</Eyebrow>
-          <h1
-            className="font-medium m-0"
-            style={{
-              fontSize: "clamp(18px, 1.8vw, 24px)",
-              letterSpacing: "-0.02em",
-              lineHeight: 1.1,
-              color: INK,
-              maxWidth: 560,
-              textWrap: "balance",
-            }}
+          {/* A heading-sized summit plus a lower shoulder offset below-right,
+              so the rings read as terrain rather than the text's bounding box. */}
+          <div
+            data-topo-id="work"
+            data-topo-hover-id="work"
+            data-topo-important=""
+            data-topo-height="80"
+            data-topo-falloff="132"
+            data-topo-sharpness="1.45"
+            style={{ display: "inline-block", padding: 4 }}
           >
-            A field survey of the work.
-          </h1>
+            <Eyebrow style={{ marginBottom: 16 }}>Work</Eyebrow>
+            <h1
+              className="font-medium m-0"
+              style={{
+                fontSize: "clamp(18px, 1.8vw, 24px)",
+                letterSpacing: "-0.02em",
+                lineHeight: 1.1,
+                color: INK,
+                textWrap: "balance",
+              }}
+            >
+              A field survey of the work.
+            </h1>
+          </div>
+          <div
+            data-topo-peak=""
+            data-topo-height="40"
+            data-topo-falloff="110"
+            aria-hidden
+            style={{ width: 60, height: 20, marginLeft: 150, marginTop: 60 }}
+          />
         </div>
       </TopoHero>
 
@@ -228,7 +241,7 @@ export default function WorkPage() {
 
       {/* ── Small projects ── */}
       <section className="px-page band" style={{ borderTop: `1px solid ${FAINT}` }}>
-        <SectionHeader kicker="Small projects" title="The smaller ones." />
+        <SectionHeader kicker="Experiments" title="Side projects." />
         {/* On a phone a horizontal scrolling strip, running off both page
             margins so the clipped card is its own scroll cue. From md it wraps
             instead — four to a row, then the next drops below. */}
