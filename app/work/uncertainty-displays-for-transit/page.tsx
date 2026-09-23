@@ -27,12 +27,12 @@ import controlImg from "@/media/uncertainty/control.png";
 export const metadata: Metadata = {
   title: { absolute: "Uncertainty Displays for Transit — Data Viz Case Study" },
   description:
-    "A data visualization case study and CHI 2018 paper (Honourable Mention): how a transit app should show what it doesn't know — a 408-person study showing quantile dotplots help riders make better decisions.",
+    "A data visualization case study and CHI 2018 paper (Honourable Mention): how a transit app should show what it doesn't know — showing riders the spread of likely arrivals led to better decisions.",
   alternates: { canonical: "/work/uncertainty-displays-for-transit" },
   openGraph: {
-    title: "Uncertainty you can act on — Michael Fernandes",
+    title: "Uncertainty displays for on the go decision making — Michael Fernandes",
     description:
-      "How a transit app should show what it doesn't know — and a 408-person study showing the right display makes better decisions.",
+      "Showing riders the spread of likely arrivals, not one confident number, led to better decisions — a CHI 2018 Honourable Mention.",
     url: "/work/uncertainty-displays-for-transit",
     type: "article",
   },
@@ -42,7 +42,7 @@ const JSON_LD = caseStudyJsonLd({
   path: "/work/uncertainty-displays-for-transit",
   name: "Uncertainty displays for transit",
   description:
-    "A CHI 2018 study (Honourable Mention for Best Paper) on how a transit app should visualize what it doesn't know — quantile dotplots against a 408-person experiment.",
+    "A CHI 2018 study (Honourable Mention for Best Paper) on how a transit app should visualize what it doesn't know — quantile dotplots and CDFs led riders to better decisions.",
   datePublished: "2018-04-21",
   keywords: [
     "uncertainty visualization",

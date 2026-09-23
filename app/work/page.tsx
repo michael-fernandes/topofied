@@ -119,14 +119,14 @@ const FEATURED: { id: string; name: string; note: string; image: StaticImageData
   {
     id: "uncertainty-displays-for-transit",
     name: "Uncertainty displays for on the go decision making",
-    note: "How a transit app should show what it doesn't know — and a 408-person study showing the right display makes better decisions.",
+    note: "Showing riders the spread of likely arrivals, not one confident number, led to better decisions — a CHI 2018 Honourable Mention.",
     image: cardImg,
     alt: "The OneBusAway interface showing a bus's arrival uncertainty as a quantile dotplot.",
   },
   {
     id: "covid-forecasting",
     name: "A forecast you could plan around",
-    note: "One of the first public forecasts of when COVID-19 would peak — and whether hospitals would have the room to meet it.",
+    note: "One of the first public forecasts of when COVID-19 would peak and whether hospitals would have room — used by millions and briefed by the White House.",
     image: covidCardImg,
     alt: "A region's COVID-19 daily-deaths forecast — observed so far, projected ahead, with the model's uncertainty fanning into the future.",
   },
