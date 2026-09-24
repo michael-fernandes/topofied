@@ -15,9 +15,15 @@ const SLOTS = 24; // more than ever fit; the frame clips the rest
 const EVERY_MS = 2600;
 const idOf = (p: WallPhoto) => `${p.peak}-${p.photo}`;
 
-export default function PhotoWall({ onOpen }: { onOpen: (peak: number, photo: number) => void }) {
+type Open = (peak: number, photo: number) => void;
+
+/**
+ * Fixed slots fed from a queue: returns the grid ref and current slots.
+ * Only slots visible inside the (clipped) grid get swapped.
+ */
+export function useMosaic(photos: WallPhoto[], slots: number) {
   const ref = useRef<HTMLDivElement>(null);
-  const [mosaic, setMosaic] = useState(() => seed(PHOTOS, SLOTS));
+  const [mosaic, setMosaic] = useState(() => seed(photos, slots));
   const visible = useRef(new Set<number>());
   const paused = useRef(false);
 
@@ -50,17 +56,21 @@ export default function PhotoWall({ onOpen }: { onOpen: (peak: number, photo: nu
     return () => clearInterval(t);
   }, []);
 
+  const hover = {
+    onPointerEnter: () => (paused.current = true),
+    onPointerLeave: () => (paused.current = false),
+  };
+  return { ref, slots: mosaic.slots, hover };
+}
+
+export default function PhotoWall({ onOpen }: { onOpen: Open }) {
+  const { ref, slots, hover } = useMosaic(PHOTOS, SLOTS);
   return (
     <div className="photo-wall-frame">
-      <div
-        ref={ref}
-        className="photo-wall"
-        onPointerEnter={() => (paused.current = true)}
-        onPointerLeave={() => (paused.current = false)}
-      >
-        {mosaic.slots.map((p, i) => (
+      <div ref={ref} className="photo-wall" {...hover}>
+        {slots.map((p, i) => (
           <div key={i} data-slot={i} className="wall-cell">
-            <Tile p={p} onOpen={onOpen} />
+            <Tile p={p} onOpen={onOpen} caption sizes="(max-width: 767px) 30vw, 140px" />
           </div>
         ))}
       </div>
@@ -69,7 +79,7 @@ export default function PhotoWall({ onOpen }: { onOpen: (peak: number, photo: nu
 }
 
 /** One cell; the incoming photo fades up over the outgoing one. */
-function Tile({ p, onOpen }: { p: WallPhoto; onOpen: (peak: number, photo: number) => void }) {
+export function Tile({ p, onOpen, caption, sizes }: { p: WallPhoto; onOpen: Open; caption?: boolean; sizes: string }) {
   const t = useTransition(p, {
     keys: idOf,
     initial: { opacity: 1, scale: 1 },
@@ -87,17 +97,24 @@ function Tile({ p, onOpen }: { p: WallPhoto; onOpen: (peak: number, photo: numbe
         className="wall-thumb"
         onClick={() => onOpen(peak, photo)}
         aria-label={`${v.name}, photo ${photo + 1}`}
-        style={{ ...style, position: "absolute", inset: 0, background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}
+        style={{ ...style, position: "absolute", inset: 0, display: "flex", flexDirection: "column", background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}
       >
-        <div className="relative" style={{ aspectRatio: "3 / 2", border: `1px solid ${FAINT}`, background: BG, overflow: "hidden" }}>
-          <Image src={src} alt="" fill sizes="(max-width: 767px) 30vw, 140px" style={{ objectFit: "cover" }} />
+        <div className="relative" style={{ flex: caption ? undefined : 1, aspectRatio: caption ? "3 / 2" : undefined, border: `1px solid ${FAINT}`, background: BG, overflow: "hidden" }}>
+          <Image src={src} alt="" fill sizes={sizes} style={{ objectFit: "cover" }} />
+          {!caption && (
+            <span className="font-mono tile-badge" style={{ color: ACCENT, background: BG }}>
+              {nn(peak)}
+            </span>
+          )}
         </div>
-        <div
-          className="font-mono uppercase"
-          style={{ height: "var(--cap)", paddingTop: 5, fontSize: 8, letterSpacing: "0.16em", color: FAINT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
-        >
-          <span style={{ color: ACCENT }}>{nn(peak)}</span> {v.short}
-        </div>
+        {caption && (
+          <div
+            className="font-mono uppercase"
+            style={{ height: "var(--cap)", paddingTop: 5, fontSize: 8, letterSpacing: "0.16em", color: FAINT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+          >
+            <span style={{ color: ACCENT }}>{nn(peak)}</span> {v.short}
+          </div>
+        )}
       </animated.button>
     );
   });

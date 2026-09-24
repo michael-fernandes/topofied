@@ -255,12 +255,61 @@ body {
   --cap: 20px;
 }
 
-/* Survey layout: stacked on mobile; from md the strip + photos sit right of
-   the map. `contain: size` keeps the photos from growing the row, so the
-   side column takes the map's height and the wall scrolls inside it. */
-.survey > svg {
-  max-width: 186px;
-  margin: 0 auto;
+/* Survey layout: stacked on mobile with a wide, full-bleed map; from md a
+   tall map with the strip + photos to its right. `contain: size` keeps the
+   photos from growing the row, so the side column takes the map's height. */
+.survey-map {
+  display: block;
+  width: 100%;
+}
+/* Mobile stage: full-bleed map, photo column over its east side on a
+   backdrop that fades in from the left. */
+.survey-stage {
+  position: relative;
+  margin: 0 calc(-1 * var(--page-x));
+}
+.survey-stage::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: calc(42% + 28px);
+  background: linear-gradient(to right, transparent, rgba(36, 29, 24, 0.92) 28px);
+  pointer-events: none;
+  z-index: 1;
+}
+.photo-column {
+  position: absolute;
+  z-index: 2;
+  top: 6%;
+  bottom: 6%;
+  right: var(--page-x);
+  width: calc(42% - var(--page-x));
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 28px;
+  grid-auto-flow: row dense;
+  gap: 6px;
+  overflow: hidden;
+  mask-image: linear-gradient(#000 85%, transparent);
+  -webkit-mask-image: linear-gradient(#000 85%, transparent);
+}
+.tile-badge {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  padding: 1px 4px;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+}
+.survey-map-wide {
+  mask-image: linear-gradient(transparent, #000 8%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(transparent, #000 8%, #000 88%, transparent);
+}
+.survey-map-tall {
+  display: none;
 }
 .survey-side {
   margin-top: 28px;
@@ -268,14 +317,23 @@ body {
 .survey-photos {
   margin-top: 18px;
 }
+@media (max-width: 767px) {
+  /* The collage on the map replaces the wall on mobile. */
+  .survey-photos-wall {
+    display: none;
+  }
+}
 @media (min-width: 768px) {
   .survey {
     display: grid;
     grid-template-columns: 220px minmax(0, 1fr);
     gap: 48px;
   }
-  .survey > svg {
-    max-width: none;
+  .survey-stage {
+    display: none;
+  }
+  .survey-map-tall {
+    display: block;
   }
   .survey-side {
     margin-top: 0;
@@ -324,6 +382,30 @@ body {
   from { opacity: 0; }
 }
 
+/* The map's halo glides station to station; the picked diamond swells. */
+.map-halo {
+  transition: transform 560ms cubic-bezier(0.22, 0.8, 0.24, 1), opacity 300ms ease;
+}
+.map-station {
+  transition: transform 300ms ease, stroke 300ms ease;
+}
+
+/* Mobile: the location strip snaps card by card; the trailing spacer lets
+   the last card reach the snap line. */
+@media (max-width: 767px) {
+  .strip-snap {
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: var(--page-x);
+  }
+  .strip-snap > * {
+    scroll-snap-stop: always;
+  }
+  .strip-snap::after {
+    content: "";
+    flex: 0 0 calc(100vw - 2 * var(--page-x) - clamp(148px, 42vw, 176px) - var(--card-gap));
+  }
+}
+
 .cover-slide {
   transition: transform 450ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 450ms ease;
 }
@@ -332,7 +414,9 @@ body {
   .survey-fade {
     animation: none;
   }
-  .cover-slide {
+  .cover-slide,
+  .map-halo,
+  .map-station {
     transition: none;
   }
 }
