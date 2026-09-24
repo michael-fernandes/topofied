@@ -22,6 +22,7 @@ import covidCardImg from "@/media/covid-forecasting/card.png";
 import goalGridImg from "@/media/small-projects/goal-grid.png";
 import proteinAuditImg from "@/media/small-projects/protein-audit.png";
 import childMortalityImg from "@/media/small-projects/child-mortality.png";
+import interactiveDotsImg from "@/media/small-projects/interactive-dots.png";
 
 export const metadata: Metadata = {
   title: { absolute: "Data Visualization Work — Michael Fernandes" },
@@ -94,6 +95,9 @@ const SMALL_PROJECTS: {
       title: "Simulation",
       description: "A force-simulated cluster of dots that scatters away from the pointer.",
       link: "/projects/interactive-dots",
+      image: interactiveDotsImg,
+      ground: BG,
+      alt: "The simulation at rest — a round cluster of collision-packed dots, violet at the core shading out through blue to green at the rim.",
     },
     {
       title: "Child Mortality",
