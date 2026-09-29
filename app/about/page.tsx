@@ -6,14 +6,14 @@ import VolcanoSurvey from "../components/volcano/survey";
 import { BG, INK, DIM, FAINT, ACCENT, ACCENT_DIM, SectionHeader } from "../components/kit";
 
 export const metadata: Metadata = {
-  title: { absolute: "About Michael Fernandes — Data Viz Developer, Seattle" },
+  title: { absolute: "About Michael Fernandes — Design Engineer, Seattle" },
   description:
-    "Michael Fernandes is a Seattle-based data visualization developer and design engineer with a UX design background — building interactive data applications across global health, green tech, and AI products.",
+    "Michael Fernandes is a Seattle-based full-stack design engineer with a UX design background — building front-end-heavy, data-rich products across global health, green tech, and AI.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "About — Michael Fernandes, data visualization developer",
+    title: "About — Michael Fernandes, design engineer",
     description:
-      "A data visualization developer and design engineer living on the edge of design and engineering — global health, green tech, and highly structured experiences around AI.",
+      "A full-stack design engineer living on the edge of design and engineering — global health, green tech, and highly structured experiences around AI.",
     url: "/about",
   },
 };

@@ -5,23 +5,23 @@ export const SITE_URL = "https://mferns.com";
 export const SITE_NAME = "Michael Fernandes";
 
 /** The role phrasing recruiters actually search. Used in titles and JSON-LD. */
-export const ROLE = "Data Visualization Developer & Design Engineer";
+export const ROLE = "Full-Stack Design Engineer, Data Viz";
 export const LOCALITY = "Seattle";
 export const REGION = "WA";
 
 export const SITE_TITLE = `${SITE_NAME} — ${ROLE}`;
 
 export const SITE_DESCRIPTION =
-  "Michael Fernandes is a Seattle-based data visualization developer and design engineer — D3, React, and TypeScript. Case studies include the IHME COVID-19 forecast dashboard and a CHI-published uncertainty display for transit.";
+  "Michael Fernandes is a Seattle-based design engineer building front-end-heavy, full-stack products in React, TypeScript, and D3 — with a specialty in data visualization.";
 
 /** Alternate job titles Google can match against a recruiter's query. */
 export const JOB_TITLES = [
-  "Data Visualization Developer",
-  "Data Visualization Design Engineer",
-  "Data Viz Developer",
   "Design Engineer",
-  "UX Engineer",
+  "Full-Stack Engineer",
   "Front-End Engineer",
+  "Design Technologist",
+  "UX Engineer",
+  "Data Visualization Engineer",
 ];
 
 export const KNOWS_ABOUT = [
@@ -34,6 +34,7 @@ export const KNOWS_ABOUT = [
   "Interactive data applications",
   "Design systems",
   "Front-end engineering",
+  "Full-stack development",
   "Human-computer interaction",
 ];
 
